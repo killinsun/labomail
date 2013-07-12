@@ -13,10 +13,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -24,7 +27,7 @@ import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 
-public class FrmAddress extends JPanel {
+public class FrmAddress extends JPanel implements ActionListener{
 
 	//コンポーネントの準備
 	DefaultListModel listModel = new DefaultListModel();
@@ -39,11 +42,9 @@ public class FrmAddress extends JPanel {
 	private JLabel phoneNum = new JLabel();
 	private JLabel memoLabel = new JLabel();
 	private JTextField memoField = new JTextField();
-	private JButton editButton = new JButton();
+	private JButton editButton = new JButton("編集");
 
 	public FrmAddress() {
-		JPanel panel = new JPanel();
-		//[tab][list][label1][label2]
 		this.setLayout(new MigLayout("", "[][][grow]", "[grow]"));
 		
 		//縦型タブ
@@ -72,6 +73,7 @@ public class FrmAddress extends JPanel {
 		memoLabel.setText("メモ:");
 		memoField.setPreferredSize(new Dimension(400, 150));
 		memoField.setEnabled(false);
+		editButton.addActionListener(this);
 		this.add(rightPanel);
 			rightPanel.setLayout(new MigLayout("","[grow][grow]","[grow][grow][][][][][]"));
 			rightPanel.add(imageLabel,"span 1 2");
@@ -84,8 +86,23 @@ public class FrmAddress extends JPanel {
 			rightPanel.add(phoneLabel);
 			rightPanel.add(phoneNum,"wrap 30");
 			rightPanel.add(memoLabel,"wrap");
-			rightPanel.add(memoField,"span,grow,wrap");
+			rightPanel.add(memoField,"span,grow,wrap 20");
+			rightPanel.add(editButton,"span,r,b");
 
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String command = e.getActionCommand();
+		if(command.equals("編集")){
+			FrmEdit frmEdit = new FrmEdit();
+			frmEdit.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			frmEdit.setLocationRelativeTo(null);
+			frmEdit.setSize(400,500);
+			frmEdit.setTitle("編集");
+			frmEdit.setVisible(true);
+		}
+		
 	}
 
 }
