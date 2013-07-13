@@ -1,10 +1,10 @@
 /*
  *------やるべき事リスト------- 
- *◯一番左の縦型のタブっぽいの
- *◯アドレス帳追加画面 
- *◯追加画面で作成したデータをcsv形式に
- *◯csvから左側のリスト読み込み
- *◯50音ボタンでリスト位置を読み込みし直せるようにする
+ *☆一番左の縦型のタブっぽいの
+ *★アドレス帳追加画面 
+ *★追加画面で作成したデータをcsv形式に
+ *☆csvから左側のリスト読み込み
+ *☆50音ボタンでリスト位置を読み込みし直せるようにする
  */
 package AddressBook;
 
@@ -46,14 +46,27 @@ public class FrmAddress extends JPanel implements ActionListener{
 
 	public FrmAddress() {
 		this.setLayout(new MigLayout("", "[][][grow]", "[grow]"));
-		
+
 		//縦型タブ
-		
+
 		this.add(new JLabel("dammy"));
 		listModel.addElement("test1");
 		JList list = new JList(listModel);
 		this.add(list,"h 500,w 200");
+		
+		/*
+		 * csvファイルのデータを配列に全部読みだしておき、名前フィールドだけ抜き出して
+		 * JListにセットする。
+		 * List内のアイテムをセレクトされたら、アクションイベントを作動させる。
+		 * 動かすメソッドには、セレクトされたものに関連付けられた配列データを引数として渡す。
+		 * 右側のパネルに、受け取った引数をコンポーネントに貼り付けていく。
+		 * 
+		 */
 
+
+	}
+
+	void rightPanelAdding(){
 		/*
 		 * There is including of stab.
 		 * 
@@ -75,20 +88,19 @@ public class FrmAddress extends JPanel implements ActionListener{
 		memoField.setEnabled(false);
 		editButton.addActionListener(this);
 		this.add(rightPanel);
-			rightPanel.setLayout(new MigLayout("","[grow][grow]","[grow][grow][][][][][]"));
-			rightPanel.add(imageLabel,"span 1 2");
-			rightPanel.add(furiganaLabel,"wrap,left,bottom");
-			rightPanel.add(nameLabel,"wrap, left, top");
-			rightPanel.add(addressLabel1);
-			rightPanel.add(address1,"wrap");
-			rightPanel.add(addressLabel2);
-			rightPanel.add(address2,"wrap");
-			rightPanel.add(phoneLabel);
-			rightPanel.add(phoneNum,"wrap 30");
-			rightPanel.add(memoLabel,"wrap");
-			rightPanel.add(memoField,"span,grow,wrap 20");
-			rightPanel.add(editButton,"span,r,b");
-
+		rightPanel.setLayout(new MigLayout("","[grow][grow]","[grow][grow][][][][][]"));
+		rightPanel.add(imageLabel,"span 1 2");
+		rightPanel.add(furiganaLabel,"wrap,left,bottom");
+		rightPanel.add(nameLabel,"wrap, left, top");
+		rightPanel.add(addressLabel1);
+		rightPanel.add(address1,"wrap");
+		rightPanel.add(addressLabel2);
+		rightPanel.add(address2,"wrap");
+		rightPanel.add(phoneLabel);
+		rightPanel.add(phoneNum,"wrap 30");
+		rightPanel.add(memoLabel,"wrap");
+		rightPanel.add(memoField,"span,grow,wrap 20");
+		rightPanel.add(editButton,"span,r,b");
 	}
 
 	@Override
@@ -102,7 +114,7 @@ public class FrmAddress extends JPanel implements ActionListener{
 			frmEdit.setTitle("編集");
 			frmEdit.setVisible(true);
 		}
-		
+
 	}
 
 }
