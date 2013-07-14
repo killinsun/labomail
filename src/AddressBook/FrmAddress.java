@@ -8,13 +8,15 @@
  */
 package AddressBook;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -30,7 +32,7 @@ import net.miginfocom.swing.MigLayout;
 public class FrmAddress extends JPanel implements ActionListener{
 
 	//コンポーネントの準備
-	DefaultListModel listModel = new DefaultListModel();
+	DefaultListModel<String> listModel = new DefaultListModel();
 	private JLabel imageLabel = new JLabel();
 	private JLabel furiganaLabel = new JLabel();
 	private JLabel nameLabel = new JLabel();
@@ -53,15 +55,24 @@ public class FrmAddress extends JPanel implements ActionListener{
 		listModel.addElement("test1");
 		JList list = new JList(listModel);
 		this.add(list,"h 500,w 200");
-		
-		/*
-		 * csvファイルのデータを配列に全部読みだしておき、名前フィールドだけ抜き出して
-		 * JListにセットする。
-		 * List内のアイテムをセレクトされたら、アクションイベントを作動させる。
-		 * 動かすメソッドには、セレクトされたものに関連付けられた配列データを引数として渡す。
-		 * 右側のパネルに、受け取った引数をコンポーネントに貼り付けていく。
-		 * 
-		 */
+		rightPanelAdding();
+
+		try {
+			Class.forName("org.sqlite.JDBC");
+			Connection conn = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery( "select name from addresstable" );
+			while( rs.next() ) {
+				System.out.println( rs.getString( 1 ) );
+				listModel.addElement(rs.getString( 1 ));
+			}
+
+
+
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 
 	}
