@@ -91,6 +91,8 @@ public class FrmEdit extends JFrame implements ActionListener {
 		String delim = ",";
 		switch(command){
 		case "編集":
+//			名前,フリガナ,区分,PCメール,携帯メール,電話番号,メモ
+//			現時点では仮の形式
 			String csvData = name.getText() + delim 
 				+ furigana.getText() + delim 
 				+ kubun.getSelectedItem() + delim 

@@ -15,6 +15,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -44,6 +50,8 @@ public class FrmAddress extends JPanel implements ActionListener{
 	private JTextField memoField = new JTextField();
 	private JButton editButton = new JButton("編集");
 
+	String delim = ",";
+
 	public FrmAddress() {
 		this.setLayout(new MigLayout("", "[][][grow]", "[grow]"));
 
@@ -53,7 +61,8 @@ public class FrmAddress extends JPanel implements ActionListener{
 		listModel.addElement("test1");
 		JList list = new JList(listModel);
 		this.add(list,"h 500,w 200");
-		
+
+		readCsvFile();
 		/*
 		 * csvファイルのデータを配列に全部読みだしておき、名前フィールドだけ抜き出して
 		 * JListにセットする。
@@ -101,6 +110,42 @@ public class FrmAddress extends JPanel implements ActionListener{
 		rightPanel.add(memoLabel,"wrap");
 		rightPanel.add(memoField,"span,grow,wrap 20");
 		rightPanel.add(editButton,"span,r,b");
+	}
+
+	void readCsvFile(){
+		try{
+			File file = new File("address.csv");
+			FileReader filereader = null;
+			filereader = new FileReader(file);
+			BufferedReader br = new BufferedReader(filereader);
+			//			名前,フリガナ,区分,PCメール,携帯メール,電話番号,メモ
+			String str;
+			/*
+			 * 1.可変長のリストを用意する
+			 * 2.csvデータを1行読み込む
+			 * 3.カンマ区切りをスプリットし、配列にする。
+			 * 4.使いやすいようにArrayListに変換する
+			 */
+			ArrayList<ArrayList> oneLineData = new ArrayList<ArrayList>();
+			ArrayList<String> data = new ArrayList<String>();
+			while((str = br.readLine()) != null){
+				String[] addressData = str.split(delim);
+				for(String tmpdata:addressData){
+					System.out.println("added "+ tmpdata);
+					data.add(tmpdata);
+				}
+				oneLineData.add(data);
+				System.out.println("data:"+oneLineData);
+				System.out.println("---読んだ---");
+			}
+
+
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 
 	@Override
