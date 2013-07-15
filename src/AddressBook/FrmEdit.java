@@ -3,12 +3,9 @@ package AddressBook;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -19,8 +16,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
-import dbHelper.DbHelper;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -47,8 +42,9 @@ public class FrmEdit extends JFrame implements ActionListener {
 	String[] stabData = {"家族","学校"};
 	JComboBox kubun = new JComboBox(stabData);
 
-	JButton commit = new JButton("編集");
+	JButton commit = new JButton("登録");
 	JButton cancel = new JButton("キャンセル");
+	FrmAddress frmAddress = new FrmAddress();
 
 	public FrmEdit(){
 		this.setLayout(new MigLayout("", "[][][]", "[][][]"));	
@@ -96,20 +92,46 @@ public class FrmEdit extends JFrame implements ActionListener {
 		String command = e.getActionCommand();
 		String delim = ",";
 		switch(command){
-		//現状では新規追加。後で直す。
-		case "編集":
-			String sql ="insert into addresstable values(' " +
-					name.getText() + "','" +
-					furigana.getText() + "','" +
-					kubun.getSelectedItem() +"','" +
-					pcMail.getText() + "','" +
-					phoneMail.getText() + "','" +
-					tel.getText() + "','" +
-					memo.getText() +"');";
+		/*
+		 * なんかこのままだとコードが汚い
+		 */
+		case "登録":
+			try {
+				Class.forName("org.sqlite.JDBC");
+				Connection conn = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
+				Statement stmt = conn.createStatement();
 
-			DbHelper dbhelper = new DbHelper();
-			System.out.println(sql);
-			dbhelper.execSql(sql);
+				ResultSet rs = stmt.executeQuery("select count(*) from addresstable where name = '" + name.getText() +"';");
+				rs.next();
+				System.out.println( rs.getInt( 1 ) );
+				String sql;
+				if(rs.getInt(1) == 0){
+					sql ="insert into addresstable values(" +
+							"null,'" +
+							name.getText() + "','" +
+							furigana.getText() + "','" +
+							kubun.getSelectedItem() +"','" +
+							pcMail.getText() + "','" +
+							phoneMail.getText() + "','" +
+							tel.getText() + "','" +
+							memo.getText() +"');";
+				}else{
+					sql ="update addresstable set " +
+							"name ='"+ name.getText() + "'," +
+							"furigana ='" + furigana.getText() + "'," +
+							"kubun ='" + kubun.getSelectedItem() + "'," +
+							"pcmail ='" + pcMail.getText() + "'," +
+							"phonemail ='" + phoneMail.getText() + "'," +
+							"tel ='" + tel.getText() + "'," +
+							"memo ='" + memo.getText() +"' where name = '" + name.getText() +"';";
+				}
+				stmt.execute(sql);
+				conn.close();
+				frmAddress.updateList();
+
+			} catch (ClassNotFoundException | SQLException error) {
+				error.printStackTrace();
+			}
 			break;
 		case "キャンセル":
 			System.out.println("キャンセル");
