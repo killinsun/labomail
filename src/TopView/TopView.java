@@ -7,7 +7,6 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import net.miginfocom.swing.MigLayout;
-import AddressBook.FrmAddress;
 
 public class TopView extends JFrame {
 
