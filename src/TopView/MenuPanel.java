@@ -10,7 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import net.miginfocom.swing.MigLayout;
-import AddressBook.FrmAddress;
+import AddressBook.PaneAddress;
 
 public class MenuPanel extends JPanel implements ActionListener {
 
@@ -20,7 +20,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	JButton address = new JButton("アドレス帳");
 	JButton option = new JButton("設定");
 	JButton newFolder = new JButton("フォルダ作成");
-	FrmAddress frmAddress;
+	PaneAddress paneAddress;
 
 	public MenuPanel() {
 
@@ -55,9 +55,9 @@ public class MenuPanel extends JPanel implements ActionListener {
 			/*
 			 * 複数タブが生成されるのを防止する
 			 */
-			if(frmAddress == null){
-				frmAddress = new FrmAddress();
-				TopView.topViewAddTab("アドレス帳", frmAddress);
+			if(paneAddress == null){
+				paneAddress = new PaneAddress();
+				TopView.topViewAddTab("アドレス帳", paneAddress);
 			}
 			break;
 		case "設定":

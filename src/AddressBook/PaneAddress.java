@@ -33,7 +33,7 @@ import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 
-public class FrmAddress extends JPanel implements ActionListener{
+public class PaneAddress extends JPanel implements ActionListener{
 
 	//コンポーネントの準備
 	DefaultListModel listModel = new DefaultListModel();
@@ -52,7 +52,7 @@ public class FrmAddress extends JPanel implements ActionListener{
 
 	String delim = ",";
 
-	public FrmAddress() {
+	public PaneAddress() {
 		this.setLayout(new MigLayout("", "[][][grow]", "[grow]"));
 
 		//縦型タブ
