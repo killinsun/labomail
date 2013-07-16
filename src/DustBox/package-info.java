@@ -1,8 +1,0 @@
-/**
- * 
- */
-/**
- * @author takeuchiryouta
- *
- */
-package DustBox;
