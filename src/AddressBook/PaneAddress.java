@@ -17,6 +17,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -26,13 +27,18 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import dbHelper.DbHelper;
 
 import net.miginfocom.swing.MigLayout;
 
 //paneAddress ver0.8
-public class PaneAddress extends JPanel implements ActionListener{
+public class PaneAddress extends JPanel implements ActionListener,ListSelectionListener{
+
+	ArrayList<ArrayList> getDataModelRow = new ArrayList<ArrayList>();
+	ArrayList<Comparable> getDataModelCol = new ArrayList<Comparable>();
 
 	//コンポーネントの準備
 	DefaultListModel<String> listModel = new DefaultListModel();
@@ -50,6 +56,8 @@ public class PaneAddress extends JPanel implements ActionListener{
 	private JTextField memoField = new JTextField();
 	private JButton editButton = new JButton("編集");
 	private JButton addButton = new JButton("+");
+	private JList list = new JList(listModel);
+
 
 	public PaneAddress() {
 		this.setLayout(new MigLayout("", "[][][grow]", "[grow][]"));
@@ -58,8 +66,7 @@ public class PaneAddress extends JPanel implements ActionListener{
 		//縦型タブ
 
 		this.add(new JLabel("dammy"));
-
-		JList list = new JList(listModel);
+		list.addListSelectionListener(this);
 		this.add(list,"flowy,width 200,height 500");
 		updateList();
 		rightPanelAdding();
@@ -104,7 +111,7 @@ public class PaneAddress extends JPanel implements ActionListener{
 		rightPanel.add(memoLabel,"wrap");
 		rightPanel.add(memoField,"span,grow,wrap 20");
 		rightPanel.add(editButton,"span,r,b");
-		
+
 	}
 	public void updateList(){
 		listModel.clear();
@@ -112,16 +119,24 @@ public class PaneAddress extends JPanel implements ActionListener{
 			Class.forName("org.sqlite.JDBC");
 			Connection conn = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery( "select name from addresstable" );
+			ResultSet rs = stmt.executeQuery( "select id,name from addresstable" );
+			//  getDataModelCol = [id][name]
 			while( rs.next() ) {
-				System.out.println( rs.getString( 1 ) );
-				listModel.addElement(rs.getString( 1 ));
+				System.out.println(rs.getString(1));
+				getDataModelCol.add(rs.getInt(1));
+				getDataModelCol.add(rs.getString(2));
+
+				getDataModelRow.add(getDataModelCol);
 			}
-
-
-
+			for(int i=0;i<getDataModelRow.size();i++){
+				System.out.println("------"+i+"------");
+				for(int j=0;j<getDataModelCol.size();j++){
+					System.out.print("["+getDataModelCol.get(j)+"]");
+					
+				}
+				System.out.println("");
+			}
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -147,11 +162,31 @@ public class PaneAddress extends JPanel implements ActionListener{
 			frmAdd.setVisible(true);
 			break;
 
-			
+
 		}
 		updateList();
 
 
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		if (e.getValueIsAdjusting()){ //ここがミソのようです
+			System.out.println("list changed"); 
+			//		try {
+			//			Class.forName("org.sqlite.JDBC");
+			//			Connection conn = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
+			//			Statement stmt = conn.createStatement();
+			//			ResultSet rs = stmt.executeQuery( "select * from addresstable where name='"+e.getSource().toString());
+			System.out.println("select * from addresstable where name='"+list.getSelectedValue()+"'");
+			//			while( rs.next() ) {
+			//				listModel.addElement(rs.getString( 1 ));
+			//			}
+			//		} catch (ClassNotFoundException | SQLException e) {
+			//			e.printStackTrace();
+			//		}
+
+		}
 	}
 
 }
