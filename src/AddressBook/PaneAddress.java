@@ -70,11 +70,12 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 		list.addListSelectionListener(this);
 		this.add(list,"flowy,width 200,height 500");
 		updateList();
-		rightPanelAdding();
 
 		this.add(rightPanel);
 		addButton.addActionListener(this);
 		add(addButton, "cell 1 0");
+
+		
 
 
 	}
@@ -117,6 +118,7 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 	}
 	public void updateList(){
 		listModel.clear();
+		System.out.println("updateList() called!!");
 		try {
 			Class.forName("org.sqlite.JDBC");
 			Connection conn = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
@@ -138,7 +140,7 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 		String command = e.getActionCommand();
 		switch(command){
 		case "編集":
-			FrmEdit frmEdit = new FrmEdit();
+			FrmEdit frmEdit = new FrmEdit(this);
 			frmEdit.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frmEdit.setLocationRelativeTo(null);
 			frmEdit.setSize(400,500);
@@ -146,18 +148,14 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 			frmEdit.setVisible(true);
 			break;
 		case "+":
-			FrmEdit frmAdd= new FrmEdit();
+			FrmEdit frmAdd= new FrmEdit(this);
 			frmAdd.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frmAdd.setLocationRelativeTo(null);
 			frmAdd.setSize(400,500);
 			frmAdd.setTitle("追加");
 			frmAdd.setVisible(true);
 			break;
-
-
 		}
-		updateList();
-
 
 	}
 
@@ -187,6 +185,7 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 			} catch (ClassNotFoundException | SQLException error) {
 				error.printStackTrace();
 			}
+			validate();
 
 		}
 	}

@@ -44,9 +44,14 @@ public class FrmEdit extends JFrame implements ActionListener {
 
 	JButton commit = new JButton("登録");
 	JButton cancel = new JButton("キャンセル");
-	PaneAddress paneAddress = new PaneAddress();
+	PaneAddress paneAddress;
 
-	public FrmEdit(){
+	public FrmEdit(PaneAddress pane){
+		
+		//
+		paneAddress = pane;
+		//
+		
 		this.setLayout(new MigLayout("", "[][][]", "[][][]"));	
 
 		faceButton.setIcon(icon);
@@ -129,11 +134,12 @@ public class FrmEdit extends JFrame implements ActionListener {
 				}
 				stmt.execute(sql);
 				conn.close();
-				paneAddress.updateList();
+				
 
 			} catch (ClassNotFoundException | SQLException error) {
 				error.printStackTrace();
 			}
+			paneAddress.updateList();
 			break;
 		case "キャンセル":
 			System.out.println("キャンセル");

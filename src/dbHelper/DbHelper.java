@@ -17,7 +17,7 @@ public class DbHelper{
 			"KUBUN varchar(20) not null, " +
 			"PCMAIL varchar(100), " +
 			"PHONEMAIL varchar(100), " +
-			"PHONENUM varchar(13), " +
+			"TEL varchar(13), " +
 			"MEMO varchar(255) " +
 			//"FACEICON varchar(255)" +
 			")";
