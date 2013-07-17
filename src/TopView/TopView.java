@@ -10,20 +10,25 @@ import net.miginfocom.swing.MigLayout;
 
 public class TopView extends JFrame {
 
-	public static JTabbedPane tabbedPane = new JTabbedPane();
+	/** 画面下部の表示域。ここに各種JPanelを追加していく。 */
+	private static JTabbedPane tabbedPane = new JTabbedPane();
 	
 	public TopView() {
 
+		// フレームの設定
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("FJB-Mailer");
 		setSize(800,600);
 		setLocationRelativeTo(null);
 		
+		// レイアウト設定
 		getContentPane().setLayout(new MigLayout("", "[grow]", "[][grow]"));
 		
+		/** 画面上部のメニュー項目 */
 		JPanel menuPanel = new MenuPanel();
 		getContentPane().add(menuPanel, "c, wrap");
 		
+		/** TOPの送受信画面 */
 		JPanel mailAndViewPanel = new MailListViewPanel();
 		
 		tabbedPane.addTab("Top", mailAndViewPanel);
@@ -31,22 +36,42 @@ public class TopView extends JFrame {
 		getContentPane().add(tabbedPane, "grow");
 		
 	}
+	
 //	TopViewで生成されたタブのコンポーネントに対してアクセスできるようにメソッド作ったけど
 //	もっと賢いやり方あるかな？
 //	使い方
-//	別のクラスから　TopView.topViewAddTab(タブの名前,追加したいパネル);
+//	別のクラスから　TopView.addTab(タブの名前,追加したいパネル);
 //	そのまんまや。
 
-	public static void topViewAddTab(String tabName,Component compName){
+	/** 渡されたコンポーネントを追加し、表示します。 */
+	public static void addTab(String tabName,Component compName){
 		tabbedPane.addTab(tabName,compName);
+		showTab(compName);
+	}
+	
+	/** 渡されたタブが存在すれば、タブを切り替え表示し、trueを返します。
+	 * 渡されたタブが存在しなければ、falseを返します。 */
+	public static boolean showTab(Component showComponent) {
+		
+		// 追加されているコンポーネントすべてを取得
+		Component[] comps = tabbedPane.getComponents();
+		
+		for (Component comp : comps) {
+			if(comp == showComponent) {
+				// 存在していれば表示を切り替え
+				tabbedPane.setSelectedComponent(comp);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static void main(String[] args) {
 
 		TopView frame = new TopView();
 		frame.setVisible(true);
+		
 	}
 	
 	
-
 }

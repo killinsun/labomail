@@ -8,15 +8,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -101,9 +98,6 @@ public class FrmEdit extends JFrame implements ActionListener {
 		 */
 		case "登録":
 
-			Pattern checkKanaPattern = Pattern.compile("/^[ァ-ヾ]+$/u");
-			Matcher checkKana = checkKanaPattern.matcher(furigana.getText());
-
 			try {
 				Class.forName("org.sqlite.JDBC");
 				Connection conn = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
@@ -136,8 +130,6 @@ public class FrmEdit extends JFrame implements ActionListener {
 				stmt.execute(sql);
 				conn.close();
 				paneAddress.updateList();
-				repaint();
-				validate();
 
 			} catch (ClassNotFoundException | SQLException error) {
 				error.printStackTrace();
