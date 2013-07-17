@@ -92,10 +92,12 @@ public class FrmEdit extends JFrame implements ActionListener {
 		String command = e.getActionCommand();
 		String delim = ",";
 		switch(command){
+
 		/*
 		 * なんかこのままだとコードが汚い
 		 */
 		case "登録":
+
 			try {
 				Class.forName("org.sqlite.JDBC");
 				Connection conn = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
