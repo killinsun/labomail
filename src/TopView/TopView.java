@@ -70,6 +70,7 @@ public class TopView extends JFrame {
 
 		TopView frame = new TopView();
 		frame.setVisible(true);
+		
 	}
 	
 	
