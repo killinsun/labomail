@@ -19,6 +19,7 @@ public class DbHelper{
 			"PHONEMAIL varchar(100), " +
 			"TEL varchar(13), " +
 			"MEMO varchar(255) " +
+			"FACEICON varchar(255)" +
 			")";
 	public DbHelper(){
 		File file = new File("labomailer.db");

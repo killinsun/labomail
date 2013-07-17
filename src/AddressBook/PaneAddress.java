@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -32,7 +33,9 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 
 	//HashMap<key=name><Value=ID>
 	//keyを元に値を検索するので、今回はIDを検索するために名前を検索する
+	//重複が発生したら、keyの後ろに適当な乱数を生成して貼り付けるとどうにかなるかもしれない
 	HashMap<String,Integer> dataMap = new HashMap<String,Integer>();
+
 	protected String gettedName;
 	protected String gettedFurigana;
 	protected String gettedKubun;
@@ -40,6 +43,7 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 	protected String gettedPhoneMail;
 	protected String gettedTel;
 	protected String gettedMemo;
+	
 
 	//コンポーネントの準備
 	DefaultListModel<String> listModel = new DefaultListModel();
@@ -131,6 +135,8 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
+		validate();
+		repaint();
 	}
 
 	@Override
