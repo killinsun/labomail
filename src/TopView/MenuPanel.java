@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
 import net.miginfocom.swing.MigLayout;
-import AddressBook.FrmAddress;
+import AddressBook.PaneAddress;
 
 /** 画面上部のメニュー */
 public class MenuPanel extends JPanel {
@@ -28,7 +28,7 @@ public class MenuPanel extends JPanel {
 	JLabel option = new JLabel("設定", new ImageIcon("data/menuIcon/option.png"), JLabel.CENTER);
 	
 	// アイコンクリックで表示する各種JPanel
-	FrmAddress frmAddress;
+	PaneAddress paneAddress;
 	/** デバッグ用 */
 	JPanel dummyFrame;
 
@@ -99,9 +99,9 @@ public class MenuPanel extends JPanel {
 				// アドレス帳
 				System.out.println("addressBook!");
 				
-				if(!TopView.showTab(frmAddress)) {
-					frmAddress = new FrmAddress();
-					TopView.addTab("アドレス帳", frmAddress);
+				if(!TopView.showTab(paneAddress)) {
+					paneAddress = new PaneAddress();
+					TopView.addTab("アドレス帳", paneAddress);
 				}
 			}
 			else if (comp == option) {
