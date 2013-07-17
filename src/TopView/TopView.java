@@ -73,5 +73,4 @@ public class TopView extends JFrame {
 	}
 	
 	
-
 }
