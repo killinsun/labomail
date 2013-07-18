@@ -50,15 +50,17 @@ class TextImageRenderer extends JPanel implements ListCellRenderer {
 		
 		switch (mail.status) {
 		case RECEIVE:
-			label.setIcon(new ImageIcon("data/receive2.png"));
+			label.setIcon(new ImageIcon("data/menuIcon/receive.png"));
 			break;
 		case SENT:
-			label.setIcon(new ImageIcon("data/sent2.png"));
+			label.setIcon(new ImageIcon("data/menuIcon/sent.png"));
 			break;
-		case NOT_SEND:
-			label.setIcon(new ImageIcon("data/not_send2.png"));
+		case DRAFT:
+			label.setIcon(new ImageIcon("data/menuIcon/newMail.png"));
 			break;
-
+		case TRUSH:
+			label.setIcon(new ImageIcon("data/menuIcon/trush.png"));
+			break;
 		default:
 			label.setIcon(new ImageIcon("data/other2.png"));
 			break;

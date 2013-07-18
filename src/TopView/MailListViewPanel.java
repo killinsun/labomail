@@ -2,6 +2,8 @@ package TopView;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -31,14 +33,28 @@ public class MailListViewPanel extends JPanel {
 
 		DefaultListModel<MailObject> model = new DefaultListModel<>();
 		ArrayList<MailObject> mailList = new ArrayList<>();
-		mailList.add(new MailObject("hoge@foo.com", "ほげぇ", new Date(), "本文だよん"));
-		mailList.add(new MailObject("moge@ppp.co.jp", "もげぇ", new Date(), "本文\nなのです"));
-		mailList.add(new MailObject("poge@feaw.ne.jp", "ぽげぇ", new Date(), "本文\nである"));
-		mailList.add(new MailObject("fage@geaw.ac.jp", "ふぁげぇ", new Date(), "本文\n\n\nかもしれない"));
-		mailList.add(new MailObject("piyo@pipipi.com", "ぴよ", new Date(), "本文だった", Status.RECEIVE));
-		mailList.add(new MailObject("moge@mogeru.com", "もげ", new Date(), "本\n文\nの\nよ\nう\nな\nも\nの\n", Status.SENT));
-		mailList.add(new MailObject());
 		
+		try {
+			MailDB db = new MailDB(true);
+			ResultSet rSet = db.getAllMails();
+			while (rSet.next()) {
+				mailList.add(
+						new MailObject(
+								rSet.getInt("id"), 
+								rSet.getInt("mboxid"), 
+								rSet.getInt("boxid"), 
+								rSet.getString("mfrom"), 
+								rSet.getString("mto"), 
+								rSet.getString("subject"),
+								rSet.getString("data"),
+								rSet.getString("date"),
+								rSet.getString("path")
+								)
+						);
+			}
+		} catch (SQLException e) {
+			// TODO: handle exception
+		}
 		for(MailObject mail : mailList) {
 			model.addElement(mail);
 		}
@@ -76,7 +92,7 @@ public class MailListViewPanel extends JPanel {
 			
 			System.out.println(list.getSelectedValue() + "\n");
 			
-			mailTextPane.setText(list.getSelectedValue().getText());
+			mailTextPane.setText(list.getSelectedValue().getData());
 		}
 	}
 	
