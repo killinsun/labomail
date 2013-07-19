@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.text.DefaultEditorKit.InsertBreakAction;
@@ -127,7 +128,7 @@ public class MailDB {
 		return executeQuery("select * from master");
 	}
 	
-	public ResultSet getMails() {
+	public List<MailObject> getMailObjects() {
 		
 		return null;
 	}

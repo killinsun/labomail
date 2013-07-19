@@ -2,9 +2,11 @@ package TopView;
 
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -14,21 +16,25 @@ import javax.swing.border.BevelBorder;
 
 import net.miginfocom.swing.MigLayout;
 import AddressBook.PaneAddress;
+import DustBox.Dustbox_main;
 
 /** 画面上部のメニュー */
 public class MenuPanel extends JPanel {
 
 	// アイコンたち
-	JLabel newMail = new JLabel("新規作成", new ImageIcon("data/menuIcon/newMail.png"), JLabel.CENTER);
-	JLabel receiveBox = new JLabel("受信BOX", new ImageIcon("data/menuIcon/receive.png"), JLabel.CENTER);
-	JLabel sentBox = new JLabel("送信BOX", new ImageIcon("data/menuIcon/sent.png"), JLabel.CENTER);
-	JLabel notSendBox = new JLabel("未送信BOX", new ImageIcon("data/menuIcon/notsend.png"), JLabel.CENTER);
-	JLabel trush = new JLabel("ゴミ箱", new ImageIcon("data/menuIcon/trush.png"), JLabel.CENTER);
-	JLabel addressBook = new JLabel("アドレス帳", new ImageIcon("data/menuIcon/address.png"), JLabel.CENTER);
-	JLabel option = new JLabel("設定", new ImageIcon("data/menuIcon/option.png"), JLabel.CENTER);
+	JLabel newMail;
+	JLabel receiveBox;
+	JLabel sentBox;
+	JLabel notSendBox;
+	JLabel trush;
+	JLabel addressBook;
+	JLabel option;
+	
+	HashMap<String, IconSet> iconMap;
 	
 	// アイコンクリックで表示する各種JPanel
 	PaneAddress paneAddress;
+	Dustbox_main paneDustbox;
 	/** デバッグ用 */
 	JPanel dummyFrame;
 
@@ -37,8 +43,47 @@ public class MenuPanel extends JPanel {
 		// レイアウト設定
 		this.setLayout(new MigLayout("", "[]40[]40[]40[]40[]40[]", "[grow]"));
 		this.setBorder(new BevelBorder(BevelBorder.RAISED));
+		
+		// アイコンマップの設定
+		iconMap = new HashMap<>();
+		iconMap.put("newMail", new IconSet(
+				new ImageIcon("data/menuIcon/newMail.png"), 
+				new ImageIcon("data/menuIcon/newMail2.png")));
+		iconMap.put("receive", new IconSet(
+				new ImageIcon("data/menuIcon/receive.png"), 
+				new ImageIcon("data/menuIcon/receive2.png")));
+		iconMap.put("sent", new IconSet(
+				new ImageIcon("data/menuIcon/sent.png"), 
+				new ImageIcon("data/menuIcon/sent2.png")));
+		iconMap.put("notSend", new IconSet(
+				new ImageIcon("data/menuIcon/notSend.png"), 
+				new ImageIcon("data/menuIcon/notSend2.png")));
+		iconMap.put("trush", new IconSet(
+				new ImageIcon("data/menuIcon/trush.png"), 
+				new ImageIcon("data/menuIcon/trush2.png")));
+		iconMap.put("addressBook", new IconSet(
+				new ImageIcon("data/menuIcon/address.png"), 
+				new ImageIcon("data/menuIcon/address2.png")));
+		iconMap.put("option", new IconSet(
+				new ImageIcon("data/menuIcon/option.png"), 
+				new ImageIcon("data/menuIcon/option2.png")));
 
 		// 各種アイコンの設定と追加
+		JLabel newMail = new JLabel("新規作成", iconMap.get("newMail").getDefault(), JLabel.CENTER);
+		newMail.setName("newMail");
+		JLabel receiveBox = new JLabel("受信BOX", iconMap.get("receive").getDefault(), JLabel.CENTER);
+		receiveBox.setName("receive");
+		JLabel sentBox = new JLabel("送信BOX", iconMap.get("sent").getDefault(), JLabel.CENTER);
+		sentBox.setName("sent");
+		JLabel notSendBox = new JLabel("未送信BOX", iconMap.get("notSend").getDefault(), JLabel.CENTER);
+		notSendBox.setName("notSend");
+		JLabel trush = new JLabel("ゴミ箱", iconMap.get("trush").getDefault(), JLabel.CENTER);
+		trush.setName("trush");
+		JLabel addressBook = new JLabel("アドレス帳", iconMap.get("addressBook").getDefault(), JLabel.CENTER);
+		addressBook.setName("addressBook");
+		JLabel option = new JLabel("設定", iconMap.get("option").getDefault(), JLabel.CENTER);
+		option.setName("option");
+		
 		List<JLabel> menuIcons = Arrays.asList(newMail, receiveBox, sentBox, notSendBox, trush, addressBook, option);
 		for (JLabel menuIcon : menuIcons) {
 			menuIcon.setHorizontalTextPosition(JLabel.CENTER);
@@ -56,17 +101,20 @@ public class MenuPanel extends JPanel {
 			
 			// マウスカーソルを手の形に変える
 			Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-			Component comp = (Component)e.getSource();
-			comp.setCursor(cursor);
+			JLabel label = (JLabel)e.getSource();
+			label.setCursor(cursor);
 			
 			// マウスカーソルの変化だけでなく、アイコンに変化があれば、
 			// マウスが乗っかっているのがわかりやすくなりそうです。
 			
 			// アイコンに変化をつける（余裕あれば）
+			label.setIcon(iconMap.get(label.getName()).getOnMouse());
 		}
 		
 		public void mouseExited(MouseEvent e) {
 			// アイコンをもとに戻す（余裕あれば）
+			JLabel label = (JLabel)e.getSource();
+			label.setIcon(iconMap.get(label.getName()).getDefault());
 		}
 		
 		@Override
@@ -94,6 +142,11 @@ public class MenuPanel extends JPanel {
 			else if (comp == trush) {
 				// ゴミ箱
 				System.out.println("trush!");
+				
+				if(!TopView.showTab(paneDustbox)) {
+					paneDustbox = new Dustbox_main();
+					TopView.addTab("ゴミ箱", paneDustbox);
+				}
 			}
 			else if(comp == addressBook) {
 				// アドレス帳
