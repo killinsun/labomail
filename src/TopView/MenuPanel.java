@@ -20,6 +20,19 @@ import DustBox.Dustbox_main;
 
 /** 画面上部のメニュー */
 public class MenuPanel extends JPanel {
+	
+	// マップ
+	HashMap<String, IconSet> iconMap;
+	HashMap<String, JPanel> panelMap;
+	
+	// 一意に対応付けさせるための文字列
+	private final String newMailStr = "新規作成";
+	private final String receiveStr = "受信BOX";
+	private final String sentStr = "送信BOX";
+	private final String notSendStr = "未送信BOX";
+	private final String trushStr = "ゴミ箱";
+	private final String addressBookStr = "アドレス帳";
+	private final String optionStr = "設定";
 
 	// アイコンたち
 	JLabel newMail;
@@ -30,13 +43,11 @@ public class MenuPanel extends JPanel {
 	JLabel addressBook;
 	JLabel option;
 	
-	HashMap<String, IconSet> iconMap;
-	
 	// アイコンクリックで表示する各種JPanel
 	PaneAddress paneAddress;
 	Dustbox_main paneDustbox;
 	/** デバッグ用 */
-	JPanel dummyFrame;
+	JPanel dummyPanel;
 
 	public MenuPanel() {
 
@@ -46,43 +57,43 @@ public class MenuPanel extends JPanel {
 		
 		// アイコンマップの設定
 		iconMap = new HashMap<>();
-		iconMap.put("newMail", new IconSet(
+		iconMap.put(newMailStr, new IconSet(
 				new ImageIcon("data/menuIcon/newMail.png"), 
 				new ImageIcon("data/menuIcon/newMail2.png")));
-		iconMap.put("receive", new IconSet(
+		iconMap.put(receiveStr, new IconSet(
 				new ImageIcon("data/menuIcon/receive.png"), 
 				new ImageIcon("data/menuIcon/receive2.png")));
-		iconMap.put("sent", new IconSet(
+		iconMap.put(sentStr, new IconSet(
 				new ImageIcon("data/menuIcon/sent.png"), 
 				new ImageIcon("data/menuIcon/sent2.png")));
-		iconMap.put("notSend", new IconSet(
+		iconMap.put(notSendStr, new IconSet(
 				new ImageIcon("data/menuIcon/notSend.png"), 
 				new ImageIcon("data/menuIcon/notSend2.png")));
-		iconMap.put("trush", new IconSet(
+		iconMap.put(trushStr, new IconSet(
 				new ImageIcon("data/menuIcon/trush.png"), 
 				new ImageIcon("data/menuIcon/trush2.png")));
-		iconMap.put("addressBook", new IconSet(
+		iconMap.put(addressBookStr, new IconSet(
 				new ImageIcon("data/menuIcon/address.png"), 
 				new ImageIcon("data/menuIcon/address2.png")));
-		iconMap.put("option", new IconSet(
+		iconMap.put(optionStr, new IconSet(
 				new ImageIcon("data/menuIcon/option.png"), 
 				new ImageIcon("data/menuIcon/option2.png")));
 
-		// 各種アイコンの設定と追加
-		JLabel newMail = new JLabel("新規作成", iconMap.get("newMail").getDefault(), JLabel.CENTER);
-		newMail.setName("newMail");
-		JLabel receiveBox = new JLabel("受信BOX", iconMap.get("receive").getDefault(), JLabel.CENTER);
-		receiveBox.setName("receive");
-		JLabel sentBox = new JLabel("送信BOX", iconMap.get("sent").getDefault(), JLabel.CENTER);
-		sentBox.setName("sent");
-		JLabel notSendBox = new JLabel("未送信BOX", iconMap.get("notSend").getDefault(), JLabel.CENTER);
-		notSendBox.setName("notSend");
-		JLabel trush = new JLabel("ゴミ箱", iconMap.get("trush").getDefault(), JLabel.CENTER);
-		trush.setName("trush");
-		JLabel addressBook = new JLabel("アドレス帳", iconMap.get("addressBook").getDefault(), JLabel.CENTER);
-		addressBook.setName("addressBook");
-		JLabel option = new JLabel("設定", iconMap.get("option").getDefault(), JLabel.CENTER);
-		option.setName("option");
+		// 各種アイコンの設定と追加 
+		JLabel newMail = new JLabel(newMailStr, iconMap.get(newMailStr).getDefault(), JLabel.CENTER);
+		newMail.setName(newMailStr);
+		JLabel receiveBox = new JLabel(receiveStr, iconMap.get(receiveStr).getDefault(), JLabel.CENTER);
+		receiveBox.setName(receiveStr);
+		JLabel sentBox = new JLabel(sentStr, iconMap.get(sentStr).getDefault(), JLabel.CENTER);
+		sentBox.setName(sentStr);
+		JLabel notSendBox = new JLabel(notSendStr, iconMap.get(notSendStr).getDefault(), JLabel.CENTER);
+		notSendBox.setName(notSendStr);
+		JLabel trush = new JLabel(trushStr, iconMap.get(trushStr).getDefault(), JLabel.CENTER);
+		trush.setName(trushStr);
+		JLabel addressBook = new JLabel(addressBookStr, iconMap.get(addressBookStr).getDefault(), JLabel.CENTER);
+		addressBook.setName(addressBookStr);
+		JLabel option = new JLabel(optionStr, iconMap.get(optionStr).getDefault(), JLabel.CENTER);
+		option.setName(optionStr);
 		
 		List<JLabel> menuIcons = Arrays.asList(newMail, receiveBox, sentBox, notSendBox, trush, addressBook, option);
 		for (JLabel menuIcon : menuIcons) {
@@ -91,8 +102,25 @@ public class MenuPanel extends JPanel {
 			menuIcon.addMouseListener(new MenuIconsAction());
 			add(menuIcon, "");
 		}
+		
+		// パネル設定
+		paneAddress = new PaneAddress();
+		paneAddress.setName(addressBookStr);
+		paneDustbox = new Dustbox_main();
+		paneDustbox.setName(trushStr);
+		dummyPanel = new DummyPanel();
+		dummyPanel.setName(optionStr);
 
+		panelMap = new HashMap<>();
+		List<JPanel> panels = Arrays.asList(paneAddress, paneDustbox, dummyPanel);
+		for (JPanel panel : panels) {
+			panelMap.put(panel.getName(), panel);
+		}
 	}
+	
+//
+// MouseListener ----------------------------------------------------------------------------------------------------
+//
 	
 	class MenuIconsAction extends MouseAdapter {
 		
@@ -104,10 +132,7 @@ public class MenuPanel extends JPanel {
 			JLabel label = (JLabel)e.getSource();
 			label.setCursor(cursor);
 			
-			// マウスカーソルの変化だけでなく、アイコンに変化があれば、
-			// マウスが乗っかっているのがわかりやすくなりそうです。
-			
-			// アイコンに変化をつける（余裕あれば）
+			// アイコンに変化をつける
 			label.setIcon(iconMap.get(label.getName()).getOnMouse());
 		}
 		
@@ -120,88 +145,22 @@ public class MenuPanel extends JPanel {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			
-			Component comp = e.getComponent();
+			// 対応するパネルを表示
 			
-			// いまいちスマートじゃない…
-			if(comp == newMail) {
-				// 新規作成
-				System.out.println("newMail!");
+			Component comp = e.getComponent();
+			String name = comp.getName();
+			JPanel panel = panelMap.get(name);
+
+			System.out.println(name + " was called!");
+			if(panel == null) {
+				return;
 			}
-			else if (comp == receiveBox) {
-				// 受信BOX
-				System.out.println("receive!");
+			if(!TopView.showTab(comp)) {
+				TopView.addTab(name, panel);
 			}
-			else if(comp == sentBox) {
-				// 送信BOX
-				System.out.println("sent!");
-			}
-			else if (comp == notSendBox) {
-				// 未送信BOX
-				System.out.println("notSend!");
-			}
-			else if (comp == trush) {
-				// ゴミ箱
-				System.out.println("trush!");
-				
-				if(!TopView.showTab(paneDustbox)) {
-					paneDustbox = new Dustbox_main();
-					TopView.addTab("ゴミ箱", paneDustbox);
-				}
-			}
-			else if(comp == addressBook) {
-				// アドレス帳
-				System.out.println("addressBook!");
-				
-				if(!TopView.showTab(paneAddress)) {
-					paneAddress = new PaneAddress();
-					TopView.addTab("アドレス帳", paneAddress);
-				}
-			}
-			else if (comp == option) {
-				// 設定
-				System.out.println("option!");
-				
-				if(!TopView.showTab(dummyFrame)) {
-					dummyFrame = new DummyPanel();
-					TopView.addTab("ダミー", dummyFrame);
-				}
-			}
-				
+			
 		}
 	}
 
-// ↓ 一応残しておきます。そのうち消します。
-	
-//	@Override
-//	public void actionPerformed(ActionEvent e) {
-//		String buttonEvent = e.getActionCommand();
-//		switch(buttonEvent){
-//		case "新規作成":
-//			System.out.println("newMail!!");
-//			break;
-//		case "ゴミ箱":
-//			System.out.println("trush!");
-//			break;
-//		case "未送信":
-//			System.out.println("notSend");
-//			break;
-//		case "アドレス帳":
-//			/*
-//			 * 複数タブが生成されるのを防止する
-//			 */
-//			if(frmAddress == null){
-//				frmAddress = new FrmAddress();
-//				TopView.topViewAddTab("アドレス帳", frmAddress);
-//			}
-//			break;
-//		case "設定":
-//			System.out.println("option!");
-//			break;
-//		case "フォルダ作成":
-//			System.out.println("newFolder!");
-//			break;
-//		}
-//
-//	}
 
 }
