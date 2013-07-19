@@ -19,9 +19,12 @@ public class MailDB {
 	/** SQLのコンソール出力 */
 	boolean debug;
 	
+	Strategy strategy;
+	
 	public MailDB(boolean debug) {
 		
 		this.debug = debug;
+		strategy = new NewestFirstStrategy();
 
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -115,9 +118,17 @@ public class MailDB {
 		}
 	}
 	
+	public void setStrategy(Strategy s) {
+		this.strategy = s;
+	}
+	
 	public ResultSet getAllMails() throws SQLException {
 		
 		return executeQuery("select * from master");
 	}
 	
+	public ResultSet getMails() {
+		
+		return null;
+	}
 }
