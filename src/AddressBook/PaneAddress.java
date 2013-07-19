@@ -183,10 +183,10 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 				Connection conn = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
 				Statement stmt = conn.createStatement();
 				ResultSet rs = stmt.executeQuery( "select * from addresstable where id="+dataMap.get(list.getSelectedValue()));
-				System.out.println("select * from addresstable where id='"+dataMap.get(list.getSelectedValue())+"'");
 				//id,名前,フリガナ,区分,PCMail,PhoneMail,Tel,Memo,path
 				while( rs.next() ) {
 					gettedID = rs.getInt(1);
+
 					gettedName = rs.getString(2);
 					gettedFurigana = rs.getString(3);
 					gettedKubun = rs.getString(4);
