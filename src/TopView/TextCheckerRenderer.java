@@ -55,7 +55,7 @@ class TextCheckerRenderer extends JPanel implements ListCellRenderer {
 		case SENT:
 //			label.setIcon(new ImageIcon("data/sent2.png"));
 			break;
-		case NOT_SEND:
+		case DRAFT:
 //			label.setIcon(new ImageIcon("data/not_send2.png"));
 			break;
 
