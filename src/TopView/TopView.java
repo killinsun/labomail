@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import transceiver.MailListViewPanel;
 import net.miginfocom.swing.MigLayout;
 
 public class TopView extends JFrame {

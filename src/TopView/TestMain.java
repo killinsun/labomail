@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 
+import transceiver.MailDB;
+
 public class TestMain {
 
 	public static void main(String[] args) {
