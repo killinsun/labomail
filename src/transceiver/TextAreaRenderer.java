@@ -1,4 +1,4 @@
-package TopView;
+package transceiver;
 
 import java.awt.Color;
 import java.awt.Component;
