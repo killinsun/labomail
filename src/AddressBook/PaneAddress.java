@@ -60,7 +60,7 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 	private JTextField memoField = new JTextField();
 	private JButton editButton = new JButton("編集");
 	private JButton addButton = new JButton("+");
-	private JList list = new JList(listModel);
+	protected JList list = new JList(listModel);
 	FrmEdit frmAdd;
 	FrmEdit frmEdit;
 
@@ -75,6 +75,11 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 		this.add(new JLabel("dammy"));
 		list.addListSelectionListener(this);
 		this.add(list,"flowy,width 200,height 500");
+		addressLabel1.setText("PCメール:");
+		addressLabel2.setText("携帯:");
+		phoneLabel.setText("電話番号:");
+		memoLabel.setText("メモ:");
+		editButton.addActionListener(this);
 		updateList();
 
 		this.add(rightPanel);
@@ -88,22 +93,6 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 		 * There is including of stab.
 		 * 
 		 */
-		ImageIcon imI = new ImageIcon(gettedPath);
-		imageLabel.setIcon(imI);
-		furiganaLabel.setText(gettedFurigana);
-		nameLabel.setText(gettedName);
-		nameLabel.setFont(new Font("", Font.BOLD, 24));
-		addressLabel1.setText("PCメール:");
-		addressLabel2.setText("携帯:");
-		phoneLabel.setText("電話番号:");
-		address1.setText(gettedPcMail);
-		address2.setText(gettedPhoneMail);
-		phoneNum.setText(gettedTel);
-		memoLabel.setText("メモ:");
-		memoField.setPreferredSize(new Dimension(400, 150));
-		memoField.setText(gettedMemo);
-		memoField.setEnabled(false);
-		editButton.addActionListener(this);
 		rightPanel.setLayout(new MigLayout("","[grow][grow]","[grow][grow][][][][][]"));
 		rightPanel.add(imageLabel,"span 1 2");
 		rightPanel.add(furiganaLabel,"wrap,left,bottom");
@@ -118,6 +107,21 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 		rightPanel.add(memoField,"span,grow,wrap 20");
 		rightPanel.add(editButton,"span,r,b");
 
+	}
+	private void setUserData(){
+		
+		ImageIcon imI = new ImageIcon(gettedPath);
+		imageLabel.setIcon(imI);
+		furiganaLabel.setText(gettedFurigana);
+		nameLabel.setText(gettedName);
+		nameLabel.setFont(new Font("", Font.BOLD, 24));
+		address1.setText(gettedPcMail);
+		address2.setText(gettedPhoneMail);
+		phoneNum.setText(gettedTel);
+		memoField.setPreferredSize(new Dimension(400, 150));
+		memoField.setText(gettedMemo);
+		memoField.setEnabled(false);
+		rightPanelAdding();
 	}
 	public void updateList(){
 		listModel.clear();
@@ -138,8 +142,10 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 		}
 	}
 
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		System.out.println("Action");
 		String command = e.getActionCommand();
 		switch(command){
 		case "編集":
@@ -157,6 +163,7 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 			frmEdit.setSize(400,500);
 			frmEdit.setTitle("編集");
 			frmEdit.setVisible(true);
+			System.out.println("Open Edit frame");
 			break;
 		case "+":
 			for(int i=0;i<7;i++){
@@ -198,7 +205,7 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 
 				}
 				conn.close();
-				rightPanelAdding();
+				setUserData();
 			} catch (ClassNotFoundException | SQLException error) {
 				error.printStackTrace();
 			}
