@@ -22,9 +22,9 @@ public class MenuPanel extends JPanel {
 	JLabel newMail = new JLabel("新規作成", new ImageIcon("data/menuIcon/newMail.png"), JLabel.CENTER);
 	JLabel receiveBox = new JLabel("受信BOX", new ImageIcon("data/menuIcon/receive.png"), JLabel.CENTER);
 	JLabel sentBox = new JLabel("送信BOX", new ImageIcon("data/menuIcon/sent.png"), JLabel.CENTER);
-	JLabel notSendBox = new JLabel("未送信BOX", new ImageIcon("data/menuicon.png"), JLabel.CENTER);
+	JLabel notSendBox = new JLabel("未送信BOX", new ImageIcon("data/menuIcon/notsend.png"), JLabel.CENTER);
 	JLabel trush = new JLabel("ゴミ箱", new ImageIcon("data/menuIcon/trush.png"), JLabel.CENTER);
-	JLabel addressBook = new JLabel("アドレス帳", new ImageIcon("data/menuicon.png"), JLabel.CENTER);
+	JLabel addressBook = new JLabel("アドレス帳", new ImageIcon("data/menuIcon/address.png"), JLabel.CENTER);
 	JLabel option = new JLabel("設定", new ImageIcon("data/menuIcon/option.png"), JLabel.CENTER);
 	
 	// アイコンクリックで表示する各種JPanel

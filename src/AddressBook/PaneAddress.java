@@ -33,6 +33,8 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 	//HashMap<key=name><Value=ID>
 	//keyを元に値を検索するので、今回はIDを検索するために名前を検索する
 	HashMap<String,Integer> dataMap = new HashMap<String,Integer>();
+	protected String[] gettedData = new String[8];
+	protected int gettedID;
 	protected String gettedName;
 	protected String gettedFurigana;
 	protected String gettedKubun;
@@ -40,6 +42,7 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 	protected String gettedPhoneMail;
 	protected String gettedTel;
 	protected String gettedMemo;
+	protected String gettedPath;
 
 	//コンポーネントの準備
 	DefaultListModel<String> listModel = new DefaultListModel();
@@ -58,12 +61,15 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 	private JButton editButton = new JButton("編集");
 	private JButton addButton = new JButton("+");
 	private JList list = new JList(listModel);
+	FrmEdit frmAdd;
+	FrmEdit frmEdit;
 
 
 	public PaneAddress() {
 		this.setLayout(new MigLayout("", "[][][grow]", "[grow][]"));
 
 		DbHelper dh = new DbHelper();
+		
 		//縦型タブ
 
 		this.add(new JLabel("dammy"));
@@ -75,9 +81,6 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 		addButton.addActionListener(this);
 		add(addButton, "cell 1 0");
 
-		
-
-
 	}
 
 	void rightPanelAdding(){
@@ -85,7 +88,7 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 		 * There is including of stab.
 		 * 
 		 */
-		ImageIcon imI = new ImageIcon("data/debugFace.jpg");
+		ImageIcon imI = new ImageIcon(gettedPath);
 		imageLabel.setIcon(imI);
 		furiganaLabel.setText(gettedFurigana);
 		nameLabel.setText(gettedName);
@@ -140,7 +143,15 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 		String command = e.getActionCommand();
 		switch(command){
 		case "編集":
-			FrmEdit frmEdit = new FrmEdit(this);
+			gettedData[0] = gettedName;
+			gettedData[1] = gettedFurigana;
+			gettedData[2] = gettedKubun;
+			gettedData[3]= gettedPcMail;
+			gettedData[4] = gettedPhoneMail;
+			gettedData[5] = gettedTel;
+			gettedData[6] = gettedMemo;
+			gettedData[7] = gettedPath;
+			frmEdit = new FrmEdit(this,gettedData,gettedID);
 			frmEdit.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frmEdit.setLocationRelativeTo(null);
 			frmEdit.setSize(400,500);
@@ -148,7 +159,11 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 			frmEdit.setVisible(true);
 			break;
 		case "+":
-			FrmEdit frmAdd= new FrmEdit(this);
+			for(int i=0;i<7;i++){
+				gettedData[i] = null;
+			}
+			gettedData[7] = "data/faceIcon/default.jpg";
+			frmAdd= new FrmEdit(this,gettedData,gettedID);
 			frmAdd.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frmAdd.setLocationRelativeTo(null);
 			frmAdd.setSize(400,500);
@@ -169,8 +184,9 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 				Statement stmt = conn.createStatement();
 				ResultSet rs = stmt.executeQuery( "select * from addresstable where id="+dataMap.get(list.getSelectedValue()));
 				System.out.println("select * from addresstable where id='"+dataMap.get(list.getSelectedValue())+"'");
-				//id,名前,フリガナ,区分,PCMail,PhoneMail,Tel,Memo
+				//id,名前,フリガナ,区分,PCMail,PhoneMail,Tel,Memo,path
 				while( rs.next() ) {
+					gettedID = rs.getInt(1);
 					gettedName = rs.getString(2);
 					gettedFurigana = rs.getString(3);
 					gettedKubun = rs.getString(4);
@@ -178,6 +194,7 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 					gettedPhoneMail = rs.getString(6);
 					gettedTel = rs.getString(7);
 					gettedMemo = rs.getString(8);
+					gettedPath = rs.getString(9);
 
 				}
 				conn.close();
