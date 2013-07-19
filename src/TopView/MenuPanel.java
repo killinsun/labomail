@@ -137,7 +137,7 @@ public class MenuPanel extends JPanel {
 		}
 		
 		public void mouseExited(MouseEvent e) {
-			// アイコンをもとに戻す（余裕あれば）
+			// アイコンをもとに戻す
 			JLabel label = (JLabel)e.getSource();
 			label.setIcon(iconMap.get(label.getName()).getDefault());
 		}

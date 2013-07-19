@@ -6,6 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
@@ -15,32 +16,31 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
 import javax.swing.border.BevelBorder;
 
 import net.miginfocom.swing.MigLayout;
 
-public class MailListViewPanel extends JPanel {
+public class MailListPanel extends JPanel {
 	
-	MailDB db;
-	
-	private JTextPane mailTextPane;
+	private MailViewPanel mailView;
 	private DefaultListModel<MailObject> model;
 	private ArrayList<MailObject> mailList;
 	private JList<MailObject> jList;
-	
-	public MailListViewPanel() {
 
-		this.setLayout(new MigLayout("", "[][grow]", "[grow]"));
+	private MailDB db;
+
+	public MailListPanel(MailViewPanel mailView) {
 		
-		JPanel leftSidePanel = new JPanel(new MigLayout("", "[]", "[50][][grow]"));
-		leftSidePanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+		this.mailView = mailView;
 		
+		setLayout(new MigLayout("", "[]", "[50][][grow]"));
+		setBorder(new BevelBorder(BevelBorder.LOWERED));
+
 		JScrollPane listScrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
+		
 		model = new DefaultListModel<>();
 		mailList = new ArrayList<>();
-		
+
 		try {
 			db = new MailDB(true);
 			ResultSet rSet = db.getAllMails();
@@ -54,7 +54,7 @@ public class MailListViewPanel extends JPanel {
 								rSet.getString("mto"), 
 								rSet.getString("subject"),
 								rSet.getString("data"),
-								rSet.getString("date"),
+								Timestamp.valueOf(rSet.getString("date")),
 								rSet.getString("path")
 								)
 						);
@@ -76,19 +76,14 @@ public class MailListViewPanel extends JPanel {
 		JPanel showStatusPanel = new JPanel(new MigLayout("", "[grow][]", "[]"));
 		showStatusPanel.add(new JLabel("送受信リスト"));
 		showStatusPanel.add(new JLabel(new ImageIcon("data/not_send2.png")));
-		leftSidePanel.add(showStatusPanel,"grow, wrap");
+		add(showStatusPanel,"grow, wrap");
 		
-//		JComboBox<Strategy> comboBox = new JComboBox<>();
-//		comboBox.ad
+		JComboBox<Strategy> comboBox = new JComboBox<>();
+		comboBox.addItem(new NewestFirstStrategy());
+		comboBox.addItem(new OldestFirstStrategy());
+		add(comboBox, "grow, wrap");
 
-		leftSidePanel.add(listScrollPane, "grow");
-		this.add(leftSidePanel, "grow");
-		
-		JPanel textPanel = new JPanel(new MigLayout("", "[grow]", "[grow]"));
-		textPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
-		mailTextPane = new JTextPane();
-		textPanel.add(mailTextPane, "grow");
-		this.add(textPanel, "grow");
+		add(listScrollPane, "grow");
 
 	}
 	
@@ -103,7 +98,7 @@ public class MailListViewPanel extends JPanel {
 			
 			System.out.println(list.getSelectedValue() + "\n");
 			
-			mailTextPane.setText(list.getSelectedValue().getData());
+			mailView.setText(list.getSelectedValue().getData());
 		}
 	}
 	
@@ -116,7 +111,7 @@ public class MailListViewPanel extends JPanel {
 			
 			switch (key) {
 			case KeyEvent.VK_ENTER:
-				mailTextPane.setText(mailList.get(jList.getSelectedIndex()).getData());
+				mailView.setText(mailList.get(jList.getSelectedIndex()).getData());
 				break;
 
 			default:
@@ -124,4 +119,6 @@ public class MailListViewPanel extends JPanel {
 			}
 		}
 	}
+
+	
 }

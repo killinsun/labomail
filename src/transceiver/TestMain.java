@@ -1,10 +1,8 @@
-package TopView;
+package transceiver;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
-
-import transceiver.MailDB;
 
 public class TestMain {
 

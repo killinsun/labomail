@@ -13,3 +13,11 @@
 /TextAreaRenderer.class
 /TextCheckerRenderer.class
 /TextImageRenderer.class
+/TestMain.class
+/TransceiverPanel$ListClickAction.class
+/TransceiverPanel$ListKeyAction.class
+/TransceiverPanel.class
+/MailListPanel.class
+/MailViewPanel.class
+/MailListPanel$ListClickAction.class
+/MailListPanel$ListKeyAction.class
