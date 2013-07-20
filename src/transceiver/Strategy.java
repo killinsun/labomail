@@ -1,12 +1,11 @@
 package transceiver;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
 public interface Strategy {
 
-	ResultSet getMail(MailDB db) throws SQLException;
+	String getMailSql() throws SQLException;
 	@Override
 	public String toString();
 }
@@ -14,9 +13,9 @@ public interface Strategy {
 class NewestFirstStrategy implements Strategy {
 
 	@Override
-	public ResultSet getMail(MailDB db) throws SQLException {
+	public String getMailSql() throws SQLException {
 
-		return db.executeQuery("");
+		return "select * from master order by date desc";
 	}
 
 	@Override
@@ -28,9 +27,9 @@ class NewestFirstStrategy implements Strategy {
 class OldestFirstStrategy implements Strategy {
 
 	@Override
-	public ResultSet getMail(MailDB db) throws SQLException {
+	public String getMailSql() throws SQLException {
 		
-		return db.executeQuery("");
+		return "select * from master order by date asc";
 	}
 	
 	@Override

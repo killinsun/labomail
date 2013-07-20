@@ -1,5 +1,7 @@
 package transceiver;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -23,13 +25,16 @@ import net.miginfocom.swing.MigLayout;
 public class MailListPanel extends JPanel {
 	
 	private MailViewPanel mailView;
-	private DefaultListModel<MailObject> model;
-	private ArrayList<MailObject> mailList;
-	private JList<MailObject> jList;
+	private DefaultListModel<MailObject> listModel;
+	private ArrayList<MailObject> mailArrayList;
+	private JList<MailObject> mailJList;
+	JComboBox<Strategy> comboBox;
 
 	private MailDB db;
 
 	public MailListPanel(MailViewPanel mailView) {
+		
+		db = new MailDB(true);
 		
 		this.mailView = mailView;
 		
@@ -38,67 +43,73 @@ public class MailListPanel extends JPanel {
 
 		JScrollPane listScrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
-		model = new DefaultListModel<>();
-		mailList = new ArrayList<>();
+		listModel = new DefaultListModel<>();
+		mailArrayList = new ArrayList<>();
 
 		try {
-			db = new MailDB(true);
-			ResultSet rSet = db.getAllMails();
-			while (rSet.next()) {
-				mailList.add(
-						new MailObject(
-								rSet.getInt("id"), 
-								rSet.getInt("mboxid"), 
-								rSet.getInt("boxid"), 
-								rSet.getString("mfrom"), 
-								rSet.getString("mto"), 
-								rSet.getString("subject"),
-								rSet.getString("data"),
-								Timestamp.valueOf(rSet.getString("date")),
-								rSet.getString("path")
-								)
-						);
-			}
-		} catch (SQLException e) {
-			// TODO: handle exception
+			updateMailList();
 		}
-		for(MailObject mail : mailList) {
-			model.addElement(mail);
+		catch (SQLException e) {
+			System.err.println(e.getMessage());
 		}
 
-		jList = new JList<>(model);
-		jList.setCellRenderer(new TextImageRenderer());
-		jList.addMouseListener(new ListClickAction());
-		jList.addKeyListener(new ListKeyAction());
+		mailJList = new JList<>(listModel);
+		mailJList.setCellRenderer(new TextImageRenderer());
+		mailJList.addMouseListener(new ListClickAction());
+		mailJList.addKeyListener(new ListKeyAction());
 		
-		listScrollPane.setViewportView(jList);
+		listScrollPane.setViewportView(mailJList);
 		
 		JPanel showStatusPanel = new JPanel(new MigLayout("", "[grow][]", "[]"));
 		showStatusPanel.add(new JLabel("送受信リスト"));
 		showStatusPanel.add(new JLabel(new ImageIcon("data/not_send2.png")));
 		add(showStatusPanel,"grow, wrap");
 		
-		JComboBox<Strategy> comboBox = new JComboBox<>();
+		comboBox = new JComboBox<>();
 		comboBox.addItem(new NewestFirstStrategy());
 		comboBox.addItem(new OldestFirstStrategy());
+		comboBox.addActionListener(new comboBoxChangedAction());
 		add(comboBox, "grow, wrap");
 
 		add(listScrollPane, "grow");
 
 	}
 	
+	private void updateMailList() throws SQLException {
+		
+		listModel.setSize(0);
+		
+		ResultSet rSet = db.getMails();
+		while (rSet.next()) {
+			listModel.addElement(
+					new MailObject(
+							rSet.getInt("id"), 
+							rSet.getInt("mboxid"), 
+							rSet.getInt("boxid"), 
+							rSet.getString("mfrom"), 
+							rSet.getString("mto"), 
+							rSet.getString("subject"),
+							rSet.getString("data"),
+							Timestamp.valueOf(rSet.getString("date")),
+							rSet.getString("path")
+							)
+					);
+		}
+		validate();
+	}
+	
+	private void updateMailView(MailObject mailObject) {
+		
+		mailView.setMetaData(mailObject);
+		mailView.setText(mailObject.getData());
+	}
+	
 	class ListClickAction extends MouseAdapter {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-
-			System.out.println(e.getSource().getClass());
 			
-			JList<MailObject> list = (JList<MailObject>) e.getSource();
-			
-			System.out.println(list.getSelectedValue() + "\n");
-			
-			mailView.setText(list.getSelectedValue().getData());
+			updateMailView(mailJList.getSelectedValue());
 		}
 	}
 	
@@ -111,7 +122,7 @@ public class MailListPanel extends JPanel {
 			
 			switch (key) {
 			case KeyEvent.VK_ENTER:
-				mailView.setText(mailList.get(jList.getSelectedIndex()).getData());
+				updateMailView(mailJList.getSelectedValue());
 				break;
 
 			default:
@@ -120,5 +131,21 @@ public class MailListPanel extends JPanel {
 		}
 	}
 
+	class comboBoxChangedAction implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			System.out.println("ComboBox value changed!");
+			db.setStrategy(comboBox.getItemAt(comboBox.getSelectedIndex()));
+			try {
+				updateMailList();
+			} catch (SQLException e1) {
+				System.err.println(e1.getMessage());
+			}
+			validate();
+		}
+		
+	}
 	
 }

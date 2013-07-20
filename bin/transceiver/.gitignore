@@ -21,3 +21,4 @@
 /MailViewPanel.class
 /MailListPanel$ListClickAction.class
 /MailListPanel$ListKeyAction.class
+/MailListPanel$comboBoxChangedAction.class

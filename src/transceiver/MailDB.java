@@ -10,8 +10,6 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.swing.text.DefaultEditorKit.InsertBreakAction;
-
 
 public class MailDB {
 
@@ -38,7 +36,7 @@ public class MailDB {
 		}
 	}
 
-	public void execute(String sql) throws SQLException {
+	private void execute(String sql) throws SQLException {
 		
 		if(debug) {
 			System.out.println("exec => " + sql);
@@ -46,7 +44,7 @@ public class MailDB {
 		statement.execute(sql);
 	}
 	
-	public ResultSet executeQuery(String sql) throws SQLException {
+	private ResultSet executeQuery(String sql) throws SQLException {
 		
 		if(debug) {
 			System.out.println("exec => " + sql);
@@ -126,6 +124,11 @@ public class MailDB {
 	public ResultSet getAllMails() throws SQLException {
 		
 		return executeQuery("select * from master");
+	}
+	
+	public ResultSet getMails() throws SQLException {
+		
+		return executeQuery(strategy.getMailSql());
 	}
 	
 	public List<MailObject> getMailObjects() {
