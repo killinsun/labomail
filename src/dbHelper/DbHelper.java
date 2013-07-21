@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 public class DbHelper{
 
-
+//テーブルの作成
 	static final String createAddressTbl = "" +
 			"CREATE TABLE addresstable " +
 			"( ID integer primary key," +
@@ -21,8 +21,27 @@ public class DbHelper{
 			"MEMO varchar(255), " +
 			"FACEICON varchar(255)" +
 			")";
+	
+	static final String createMasuterTbl = "" +
+			"CREATE TABLE masutertbl　" +
+			"(ID integer primary key autoincrement," +
+			"MBOXID varchar(1) not null," +
+			"BOxID varchar(1) not null," +
+			"MFROM varchar(100) not null," +
+			"MTO varchar(100) not null," +
+			"SUJECT varchar(255)," +
+			"DATA varchar(255) not null," +
+			"DATE varchar('TIMESTAMP')," +
+			"PATH varchar(255) not null" +
+			")";
+	
+	static final String createBoxTbl = "" +
+			"CREATE TABLE boxtbl" +
+			"(BOXID integer primary key," +
+			"BOX varchar(20)" +
+			")";
 	public DbHelper(){
-		File f = new File("labomailer.db");
+		File f = new File("labomailer.db");//ファイルの使用
 		if(!f.exists()){
 			try{
 			Class.forName("org.sqlite.JDBC");
@@ -30,6 +49,8 @@ public class DbHelper{
 			Statement stmt = conn.createStatement();
 
 			stmt.execute(createAddressTbl);
+			stmt.execute(createMasuterTbl);
+			stmt.execute(createBoxTbl);
 			conn.close();
 			System.out.println("Database created!");
 			} catch(ClassNotFoundException | SQLException e){
