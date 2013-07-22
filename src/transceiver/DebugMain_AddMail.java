@@ -50,10 +50,12 @@ public class DebugMain_AddMail {
 		Class.forName("org.sqlite.JDBC");
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:blacky_test.db");
 		Statement st = connection.createStatement();
-		st.execute(String.format(
+		String sql = String.format(
 				"insert into master(mboxid, boxid, mfrom, mto, subject, data, date, path) "
 				+ "values(%d, %d, '%s', '%s', '%s', '%s', '%s', '%s')",
-				mBoxID, boxID, mFrom, mTo, subject, data, date.toString(), path));
+				mBoxID, boxID, mFrom, mTo, subject, data, date.toString(), path);
+		System.out.println(sql);
+		st.execute(sql);
 
 		System.out.println("success");
 	}

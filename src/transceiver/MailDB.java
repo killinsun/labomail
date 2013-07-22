@@ -29,37 +29,28 @@ public class MailDB {
 
 		try {
 			Class.forName("org.sqlite.JDBC");
-//			connection = DriverManager.getConnection("jdbc:sqlite:blacky_test.db");
-			// 自動commitを無効にする（トランザクション処理のため）
-//			connection.setAutoCommit(false);
+			connection = DriverManager.getConnection("jdbc:sqlite:blacky_test.db");
+			statement = connection.createStatement();
 			
-		} catch (/*SQLException |*/ ClassNotFoundException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			System.err.println(e.getMessage());
 		}
 	}
 
 	private void execute(String sql) throws SQLException {
 		
-		connection = DriverManager.getConnection("jdbc:sqlite:blacky_test.db");
-		statement = connection.createStatement();
 		if(debug) {
 			System.out.println("exec => " + sql);
 		}
 		statement.execute(sql);
-		statement.close();
-		connection.close();
 	}
 	
 	private ResultSet executeQuery(String sql) throws SQLException {
 
-		connection = DriverManager.getConnection("jdbc:sqlite:blacky_test.db");
-		statement = connection.createStatement();
 		if(debug) {
 			System.out.println("exec => " + sql);
 		}
 		ResultSet rSet = statement.executeQuery(sql);
-		statement.close();
-		connection.close();
 		return rSet;
 	}
 
@@ -85,11 +76,9 @@ public class MailDB {
 					+ "date timestamp default (datetime('now','localtime')),"
 					+ "path text"
 					+ ")");
-			connection.commit();
 			
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
-			connection.rollback();
 		}
 		
 	}
@@ -114,11 +103,9 @@ public class MailDB {
 						line[i++], line[i++], line[i++], line[i++], line[i++], 
 						line[i++], line[i++], line[i++], line[i++]));
 			}
-			connection.commit();
 
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
-			connection.rollback();
 		}
 	}
 	
