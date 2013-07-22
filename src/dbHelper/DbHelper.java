@@ -9,7 +9,7 @@ import java.sql.Statement;
 public class DbHelper{
 
 //テーブルの作成
-	static final String createAddressTbl = "" +
+	static final String createAddressTbl = "" + //createAddrrssTblの中身
 			"CREATE TABLE addresstable " +
 			"( ID integer primary key," +
 			"NAMEID varchar(20) not null, " +
@@ -22,7 +22,7 @@ public class DbHelper{
 			"FACEICON varchar(255)" +
 			")";
 	
-	static final String createMasuterTbl = "" +
+	static final String createMasuterTbl = "" + //createMasuterTblの中身
 			"CREATE TABLE masutertbl　" +
 			"(ID integer primary key autoincrement," +
 			"MBOXID varchar(1) not null," +
@@ -35,12 +35,12 @@ public class DbHelper{
 			"PATH varchar(255) not null" +
 			")";
 	
-	static final String createBoxTbl = "" +
+	static final String createBoxTbl = "" + //createBoxTblの中身
 			"CREATE TABLE boxtbl" +
 			"(BOXID integer primary key," +
-			"BOX varchar(20)" +
+			"BOX varchar(20)　not null," +
 			")";
-	public DbHelper(){
+	public DbHelper(){ //DbHelperの中身を指定
 		File f = new File("labomailer.db");//ファイルの使用
 		if(!f.exists()){
 			try{
