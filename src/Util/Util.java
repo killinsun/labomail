@@ -48,7 +48,6 @@ public class Util {
 		int width = sourceImage.getWidth();
 		double resizeHeight = 0;
 		double resizeWidth = 0;
-		String newFileName = "111.jpg";
 
 
 		if(height > RESIZE_INT && width > RESIZE_INT){
