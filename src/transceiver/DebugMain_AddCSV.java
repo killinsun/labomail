@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 
-public class TestMain {
+public class DebugMain_AddCSV {
 
 	public static void main(String[] args) {
 

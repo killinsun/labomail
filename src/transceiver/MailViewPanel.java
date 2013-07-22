@@ -38,7 +38,7 @@ public class MailViewPanel extends JPanel {
 		
 		JPanel textPanel = new JPanel(new MigLayout("", "[grow]", "[grow]"));
 		mailTextPane = new JTextPane();
-		mailTextPane.setText("てすと\nhoge\n\nふぉおふぉお");
+		mailTextPane.setText("");
 		mailTextPane.setEditable(false);
 		textPanel.add(mailTextPane, "grow");
 		

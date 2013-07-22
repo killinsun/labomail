@@ -22,3 +22,9 @@
 /MailListPanel$ListClickAction.class
 /MailListPanel$ListKeyAction.class
 /MailListPanel$comboBoxChangedAction.class
+/MailListPanel$modeChangeBtnAction.class
+/MailListPanel$ModeChangeBtnAction.class
+/MailListPanel$updateBtnAction.class
+/MailListPanel$UpdateBtnAction.class
+/DebugMain_AddMail.class
+/DebugMain_AddCSV.class
