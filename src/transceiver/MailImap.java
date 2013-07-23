@@ -1,15 +1,16 @@
 package transceiver;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Properties;
 
+import javax.mail.Address;
+import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Store;
 
@@ -17,179 +18,86 @@ public class MailImap {
 
 	String user;
 	String passwd;
+	String host;
+	int port;
+	
+	Session session;
+	Store store;
+	
 	
 	public MailImap(String user, String passwd) {
 		this.user = user;
 		this.passwd = passwd;
+		host = "imap.gmail.com";
+		port = 993;
+		
+		session = Session.getInstance(System.getProperties(), null);
+		try {
+			store = session.getStore("imaps");
+			store.connect(host, port, user, passwd);
+
+		} catch (MessagingException e) {
+			System.err.println(e.getMessage());
+		} 
 	}
 	
 	public List<MailObject> getMail() throws MessagingException, IOException {
 		
-		String host = "imap.gmail.com";
-		int port = 993;
 		String target_folder = "INBOX";
+		
+		ArrayList<MailObject> mails = new ArrayList<>();
 
-		Properties props = System.getProperties();
-		Session sess = Session.getInstance(props, null);
 //		sess.setDebug(true);
 
-		Store st = sess.getStore("imaps");
-		st.connect(host, port, user, passwd);
-		Folder fol = st.getFolder(target_folder);
+		Folder fol = store.getFolder(target_folder);
 		if(fol.exists()){
 			for(Folder f : fol.list()){
 				System.out.println(f.getName());
 			}
 			fol.open(Folder.READ_ONLY);
-			for(Message m : fol.getMessages()){
-				System.out.printf("%s - %d\n", m.getSubject(), m.getSize());
-				System.out.println(m.getContent());
+			int count = 1;
+			int msgCount = fol.getMessageCount();
+			Message[] messages = fol.getMessages(msgCount - 4, msgCount);
+			for(Message m : messages){
+				Address[] mfrom = m.getFrom();
+				Address[] mto = m.getReplyTo();
+				mails.add(new MailObject(
+						count++, 
+						1,
+						1,
+						mfrom[0].toString(),
+						mto[0].toString(), 
+						m.getSubject(), 
+						getText(m.getContent()), 
+						new Timestamp(m.getReceivedDate().getTime()), 
+						""));
+				System.out.println(m.getSubject());
 			}
 			fol.close(false);
 		}else{
 			System.out.printf("%s is not exist.", target_folder);
 		}
-		st.close();
+//		store.close();
 
-		return new List<MailObject>() {
-
-			@Override
-			public int size() {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			@Override
-			public boolean isEmpty() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public boolean contains(Object o) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public Iterator<MailObject> iterator() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public Object[] toArray() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public <T> T[] toArray(T[] a) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public boolean add(MailObject e) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public boolean remove(Object o) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public boolean containsAll(Collection<?> c) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public boolean addAll(Collection<? extends MailObject> c) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public boolean addAll(int index, Collection<? extends MailObject> c) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public boolean removeAll(Collection<?> c) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public boolean retainAll(Collection<?> c) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public void clear() {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public MailObject get(int index) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public MailObject set(int index, MailObject element) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public void add(int index, MailObject element) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public MailObject remove(int index) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public int indexOf(Object o) {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			@Override
-			public int lastIndexOf(Object o) {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			@Override
-			public ListIterator<MailObject> listIterator() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public ListIterator<MailObject> listIterator(int index) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public List<MailObject> subList(int fromIndex, int toIndex) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		};
+		return mails;
+	}
+	
+	private String getText(Object content) throws MessagingException, IOException {
+		
+		String text = null;
+	    StringBuffer sb = new StringBuffer();
+	
+	    if (content instanceof String) {
+	        sb.append((String) content);
+	    } else if (content instanceof Multipart) {
+	        Multipart mp = (Multipart) content;
+	        for (int i = 0; i < mp.getCount(); i++) {
+	            BodyPart bp = mp.getBodyPart(i);
+	            sb.append(getText(bp.getContent()));
+	        }
+	    }
+	
+	    text = sb.toString();
+	    return text;
 	}
 }

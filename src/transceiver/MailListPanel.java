@@ -6,13 +6,16 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.mail.MessagingException;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -30,13 +33,18 @@ public class MailListPanel extends JPanel {
 	private DefaultListModel<MailObject> listModel;
 	private ArrayList<MailObject> mailArrayList;
 	private JList<MailObject> mailJList;
-	JComboBox<Strategy> comboBox;
+	JComboBox<DBStrategy> comboBox;
+	JButton changeModeBtn;
 
 	private MailDB db;
+	private MailImap imap;
+	
+	private GetMailState getMailState;
 
 	public MailListPanel(MailViewPanel mailView) {
 		
 		db = new MailDB(true);
+		imap = new MailImap("laboaiueo@gmail.com", "labolabo");
 		
 		this.mailView = mailView;
 		
@@ -45,15 +53,17 @@ public class MailListPanel extends JPanel {
 
 		JScrollPane listScrollPane = new JScrollPane(
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		listModel = new DefaultListModel<>();
 		mailArrayList = new ArrayList<>();
+		
+		getMailState = new DBState();
 
 		try {
 			updateMailList();
 		}
-		catch (SQLException e) {
+		catch (SQLException | MessagingException | IOException e) {
 			System.err.println(e.getMessage());
 		}
 
@@ -66,7 +76,7 @@ public class MailListPanel extends JPanel {
 		
 		JPanel statusPanel = new JPanel(new MigLayout("", "[grow][]", "[]"));
 		statusPanel.add(new JLabel("送受信リスト"), "c");
-		JButton changeModeBtn = new JButton(new ImageIcon("data/not_send2.png"));
+		changeModeBtn = new JButton(new ImageIcon("data/not_send2.png"));
 		changeModeBtn.addActionListener(new ModeChangeBtnAction());
 		statusPanel.add(changeModeBtn);
 		add(statusPanel,"grow, wrap");
@@ -85,13 +95,14 @@ public class MailListPanel extends JPanel {
 
 	}
 	
-	private void updateMailList() throws SQLException {
+	private void updateMailList() throws SQLException, MessagingException, IOException {
 		
 		listModel.setSize(0);
 		
-		List<MailObject> mails = db.getMailObjects();
-		for (MailObject m : mails) {
-			listModel.addElement(m);
+		List<MailObject> mails = getMailState.getMailList();
+		
+		for (MailObject mailObject : mails) {
+			listModel.addElement(mailObject);
 		}
 		
 		validate();
@@ -101,6 +112,58 @@ public class MailListPanel extends JPanel {
 		
 		mailView.setMetaData(mailObject);
 		mailView.setText(mailObject.getData());
+	}
+	
+//
+// GetMailState -----------------------------------------------------------------------------------
+//
+	
+	interface GetMailState {
+		 void changeState();
+		 List<MailObject> getMailList() throws SQLException, MessagingException, IOException;
+		 Icon getIcon();
+	}
+	
+	class DBState implements GetMailState {
+
+		Icon icon = new ImageIcon("data/not_send2.png");
+		
+		@Override
+		public void changeState() {
+			getMailState = new ImapState();
+		}
+
+		@Override
+		public List<MailObject> getMailList() throws SQLException {
+			return db.getMailObjects();
+		}
+
+		@Override
+		public Icon getIcon() {
+			return icon;
+		}
+		
+	}
+	
+	class ImapState implements GetMailState {
+		
+		Icon icon = new ImageIcon("data/sent2.png");
+
+		@Override
+		public void changeState() {
+			getMailState = new DBState();
+		}
+
+		@Override
+		public List<MailObject> getMailList() throws MessagingException, IOException {
+			return imap.getMail();
+		}
+
+		@Override
+		public Icon getIcon() {
+			return icon;
+		}
+		
 	}
 	
 //
@@ -147,7 +210,7 @@ public class MailListPanel extends JPanel {
 			db.setStrategy(comboBox.getItemAt(comboBox.getSelectedIndex()));
 			try {
 				updateMailList();
-			} catch (SQLException e1) {
+			} catch (SQLException | MessagingException | IOException e1) {
 				System.err.println(e1.getMessage());
 			}
 			validate();
@@ -164,6 +227,13 @@ public class MailListPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
+			getMailState.changeState();
+			changeModeBtn.setIcon(getMailState.getIcon());
+			try {
+				updateMailList();
+			} catch (SQLException | MessagingException | IOException e1) {
+				System.err.println(e1.getMessage());
+			}
 		}
 		
 	}
@@ -172,10 +242,9 @@ public class MailListPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
 			try {
 				updateMailList();
-			} catch (SQLException e1) {
+			} catch (SQLException | MessagingException | IOException e1) {
 				System.err.println(e1.getMessage());
 			}
 		}

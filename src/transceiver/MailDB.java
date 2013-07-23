@@ -20,7 +20,7 @@ public class MailDB {
 	/** SQLのコンソール出力 */
 	boolean debug;
 	
-	Strategy strategy;
+	DBStrategy strategy;
 	
 	public MailDB(boolean debug) {
 		
@@ -109,7 +109,7 @@ public class MailDB {
 		}
 	}
 	
-	public void setStrategy(Strategy s) {
+	public void setStrategy(DBStrategy s) {
 		this.strategy = s;
 	}
 	

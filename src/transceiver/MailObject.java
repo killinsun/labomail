@@ -2,6 +2,10 @@ package transceiver;
 
 import java.sql.Timestamp;
 
+import javax.mail.search.FromStringTerm;
+
+import AddressBook.FrmEdit;
+
 
 enum Status {
 	RECEIVE,
@@ -90,13 +94,27 @@ public class MailObject {
 
 
 
-	public String getMfrom() {
+	public String getFrom() {
+
+		int fIndex = mfrom.indexOf("<");
+		int eIndex = mfrom.indexOf(">");
+		if(fIndex != -1 && eIndex != -1) {
+			return mfrom.substring(fIndex + 1, eIndex);
+		}
+
 		return mfrom;
 	}
 
 
 
-	public String getMto() {
+	public String getTo() {
+		
+		int fIndex = mto.indexOf("<");
+		int eIndex = mto.indexOf(">");
+		if(fIndex != -1 && eIndex != -1) {
+			return mto.substring(fIndex + 1, eIndex);
+		}
+		
 		return mto;
 	}
 
@@ -131,16 +149,28 @@ public class MailObject {
 	}
 
 
-
-	public String getListViewText() {
-		
-		return mfrom + "\n" + subject + "\n" + date;
-	}
-
-
 	@Override
 	public String toString() {
-		return mfrom + "\n" + subject + "\n" + date;
+		
+		System.out.println(mfrom);
+		
+		String from = mfrom;
+		String subj = subject;
+		
+		int fIndex = from.indexOf("<");
+		System.out.println(fIndex);
+		int eIndex = from.lastIndexOf(">");
+		System.out.println(eIndex);
+		if(fIndex != -1 && eIndex != -1) {
+			from = from.substring(fIndex + 1, eIndex);
+		}
+		if(from.length() > 20) {
+			from = from.substring(0, 20).concat("...");
+		}
+		if(subj.length() > 20) {
+			subj = subj.substring(0, 15).concat("...");
+		}
+		return from + "\n" + subj + "\n" + date;
 	}
 	
 }

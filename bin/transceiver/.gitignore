@@ -28,3 +28,13 @@
 /MailListPanel$UpdateBtnAction.class
 /DebugMain_AddMail.class
 /DebugMain_AddCSV.class
+/DebugMain_IMAP.class
+/NewestFirstStrategyFromDB.class
+/OldestFirstStrategyFromDB.class
+/DBStrategy.class
+/MailViewTextPane.class
+/MailListPanel$GetMailState.class
+/MailListPanel$dbState.class
+/MailListPanel$imapState.class
+/MailListPanel$DBState.class
+/MailListPanel$ImapState.class

@@ -3,14 +3,14 @@ package transceiver;
 import java.sql.SQLException;
 
 
-public interface Strategy {
+public interface DBStrategy {
 
 	String getMailSql() throws SQLException;
 	@Override
 	public String toString();
 }
 
-class NewestFirstStrategy implements Strategy {
+class NewestFirstStrategy implements DBStrategy {
 
 	@Override
 	public String getMailSql() throws SQLException {
@@ -24,7 +24,7 @@ class NewestFirstStrategy implements Strategy {
 	}
 }
 
-class OldestFirstStrategy implements Strategy {
+class OldestFirstStrategy implements DBStrategy {
 
 	@Override
 	public String getMailSql() throws SQLException {

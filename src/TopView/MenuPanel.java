@@ -35,13 +35,7 @@ public class MenuPanel extends JPanel {
 	private final String optionStr = "設定";
 
 	// アイコンたち
-	JLabel newMail;
-	JLabel receiveBox;
-	JLabel sentBox;
-	JLabel notSendBox;
-	JLabel trush;
-	JLabel addressBook;
-	JLabel option;
+	JLabel newMail, receiveBox, sentBox, notSendBox, trush, addressBook, option;
 	
 	// アイコンクリックで表示する各種JPanel
 	PaneAddress paneAddress;

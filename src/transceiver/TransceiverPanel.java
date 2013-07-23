@@ -12,7 +12,7 @@ public class TransceiverPanel extends JPanel {
 	
 	public TransceiverPanel() {
 
-		this.setLayout(new MigLayout("", "[][grow]", "[grow]"));
+		this.setLayout(new MigLayout("", "[grow][]", "[grow]"));
 		
 		MailViewPanel mailView = new MailViewPanel();
 		MailListPanel mailList = new MailListPanel(mailView);
