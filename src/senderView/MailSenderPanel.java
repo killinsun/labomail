@@ -24,9 +24,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
-import Util.MyUtils;
-
 import net.miginfocom.swing.MigLayout;
+import Util.MyUtils;
 
 /************** 項目 ****************/
 /*	メンバ変数						*/
@@ -252,8 +251,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 				);
 		JFrame frame = new JFrame();
 		frame.add(sender);
-		frame.setLocationRelativeTo(null);
-		frame.setSize(500, 700);
+		frame.setBounds(400, 20, 500, 700);
 		frame.setVisible(true);
 	}
 
