@@ -1,4 +1,4 @@
-package senderView;
+package Util;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -15,6 +15,13 @@ public class UndoTextArea extends JTextArea implements UndoableEditListener, Key
 	UndoManager uManager = new UndoManager();
 
 	public UndoTextArea() {
+		Document doc = this.getDocument();
+		doc.addUndoableEditListener(this);
+		this.addKeyListener(this);
+	}
+
+	public UndoTextArea(String text){
+		super(text);
 		Document doc = this.getDocument();
 		doc.addUndoableEditListener(this);
 		this.addKeyListener(this);
