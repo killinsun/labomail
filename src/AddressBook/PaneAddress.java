@@ -124,7 +124,7 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 			Class.forName("org.sqlite.JDBC");
 			Connection conn = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery( "select id,name from addresstable" );
+			ResultSet rs = stmt.executeQuery( "select id, nameid from addresstable" );
 			//  getDataModelCol = [id][name]
 			while( rs.next() ) {
 				listModel.addElement(rs.getString(2));

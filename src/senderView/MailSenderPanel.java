@@ -41,16 +41,6 @@ import dbHelper.DbHelper;
 /*	・なぜかバイナリファイルが		*/
 /*		添付できない				*/
 /* 	（おそらくエンコード問題？）	*/
-/*									*/
-/*	・なぜかテキストコンポを		*/
-/*	フォーカスしてから添付すると、	*/
-/*	添付ファイル名が表示されない。	*/
-/*	（なぜか件名を入力すると		*/
-/*		表示される）				*/
-/*									*/
-/*	・CC欄を＋、次にBCC欄を＋。		*/
-/*	またはその逆を試すと			*/
-/*	挙動がおかしい。				*/
 /************************************/
 
 
@@ -246,11 +236,12 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 	}
 
 	public static void main(String[] args){
-		MailSenderPanel sender = new MailSenderPanel(
-				new String[]{"a@a.a",  "b@b.b"},
-				new String[]{"c@c.c", "d@d.d"},
-				"subject", "detail"
-				);
+//		MailSenderPanel sender = new MailSenderPanel(
+//				new String[]{"a@a.a",  "b@b.b"},
+//				new String[]{"c@c.c", "d@d.d"},
+//				"subject", "detail"
+//				);
+		MailSenderPanel sender = new MailSenderPanel();
 		JFrame frame = new JFrame();
 		frame.add(sender);
 		frame.setBounds(400, 20, 500, 700);
@@ -317,7 +308,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 				pnlAttach.add(lblFileInfo);
 
 				//更新内容を表示
-				pnlAttach.validate();
+				this.validate();
 			}
 			//後で添付したファイルを削除できるようにしよう、<ArrayList>.remove(選択インデックス)？
 			break;
@@ -607,6 +598,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 	private void addCloseIcon(UndoTextArea to, int id){
 		to.setLayout(new BoxLayout(to, BoxLayout.PAGE_AXIS));
 		JLabel xIcon = getCloseIcon(id);
+		xIcon.addMouseListener(new MouseOverListener());
 		xIcon.setAlignmentX(1.0f);	//アイコン位置を右揃えにする。
 		to.add(xIcon);
 	}

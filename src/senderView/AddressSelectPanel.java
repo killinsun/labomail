@@ -23,9 +23,8 @@ import javax.swing.JOptionPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 
-import Util.MyUtils;
-
 import AddressBook.PaneAddress;
+import Util.MyUtils;
 
 public class AddressSelectPanel extends PaneAddress implements MouseListener {
 
@@ -184,7 +183,7 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 
 		try {
 			Statement st = con.createStatement();
-			ResultSet rs = st.executeQuery("SELECT pcmail FROM addresstable WHERE name='"+name+"';");
+			ResultSet rs = st.executeQuery("SELECT pcmail FROM addresstable WHERE nameid='"+name+"';");
 			rs.next();
 			address = rs.getString("pcmail");
 		} catch (SQLException e) {
