@@ -1,4 +1,4 @@
-package xml;
+package preference;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

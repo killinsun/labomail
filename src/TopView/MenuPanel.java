@@ -13,9 +13,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
 
+import preference.XmlPreferencePanel;
+
 import net.miginfocom.swing.MigLayout;
 import senderView.MailSenderPanel;
-import xml.XmlPreferencePanel;
 import AddressBook.PaneAddress;
 
 /** 画面上部のメニュー */

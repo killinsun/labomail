@@ -1,4 +1,4 @@
-package xml;
+package preference;
 
 public interface AccessMemberFields {
 	boolean allTextAreaIsNotEmpty();
