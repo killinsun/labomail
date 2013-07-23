@@ -78,14 +78,10 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 		//		smtpServer = "SMTPサーバ";//スタブ
 		//		myMailAddr = "自分のメアド";
 		//		myName = "アカウントの（自分の）名前";
-		//		smtpServer = "172.16.19.213";
-		smtpServer = "192.168.0.6";
-		myMailAddr = "mailtest@yotu.centos.jp";
-		myName = "mailtest";
-//		smtpServer = "smtp.gmail.com";
-//		myMailAddr = "laboaiueo@gmail.com";
-//		myName = "labomail";
-//		myPassword = "labolabo";
+		smtpServer = "smtp.gmail.com";
+		myMailAddr = "laboaiueo@gmail.com";
+		myName = "labomail";
+		myPassword = "labolabo";
 
 
 		/* 初期値設定 */
@@ -378,8 +374,8 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 			setWorkingMode(true);
 			{
 				//メール送信
-				PlainSmtp_Helper sender = new PlainSmtp_Helper(smtpServer, myMailAddr, myName);
-//				GmailSmtp_Helper sender = new GmailSmtp_Helper(smtpServer, myMailAddr, myPassword, myName);
+//				PlainSmtp_Helper sender = new PlainSmtp_Helper(smtpServer, myMailAddr, myName);
+				GmailSmtp_Helper sender = new GmailSmtp_Helper(smtpServer, myMailAddr, myPassword, myName);
 				try {
 					//ArrayList<UndoTextArea>から内容のString[]に変換
 					String[] ccArray = MyUtils.toStringArray(ccList);
