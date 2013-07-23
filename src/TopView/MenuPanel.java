@@ -15,6 +15,7 @@ import javax.swing.border.BevelBorder;
 
 import net.miginfocom.swing.MigLayout;
 import senderView.MailSenderPanel;
+import xml.XmlPreferencePanel;
 import AddressBook.PaneAddress;
 
 /** 画面上部のメニュー */
@@ -32,6 +33,8 @@ public class MenuPanel extends JPanel {
 	// アイコンクリックで表示する各種JPanel
 	PaneAddress paneAddress;
 	MailSenderPanel newMailSender;
+	XmlPreferencePanel prefsPane;
+
 	/** デバッグ用 */
 	JPanel dummyFrame;
 
@@ -118,9 +121,9 @@ public class MenuPanel extends JPanel {
 				// 設定
 				System.out.println("option!");
 
-				if(!TopView.showTab(dummyFrame)) {
-					dummyFrame = new DummyPanel();
-					TopView.addTab("ダミー", dummyFrame);
+				if(!TopView.showTab(prefsPane)) {
+					prefsPane = new XmlPreferencePanel();
+					TopView.addTab("設定画面", prefsPane);
 				}
 			}
 
