@@ -24,6 +24,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -74,8 +76,7 @@ public class MailListPanel extends JPanel {
 
 		mailJList = new JList<>(listModel);
 		mailJList.setCellRenderer(new TextImageRenderer());
-		mailJList.addMouseListener(new ListClickAction());
-		mailJList.addKeyListener(new ListKeyAction());
+		mailJList.addListSelectionListener(new ListSelectAction());
 		
 		listScrollPane.setViewportView(mailJList);
 		
@@ -184,35 +185,18 @@ public class MailListPanel extends JPanel {
 // Jlist Action ------------------------------------------------------------------------------------
 //
 	
-	/** メールリストをクリック時の処理 */
-	class ListClickAction extends MouseAdapter {
+	/** メールリストのアイテム選択時の処理 */
+	class ListSelectAction implements ListSelectionListener {
 
 		@Override
-		public void mousePressed(MouseEvent e) {
+		public void valueChanged(ListSelectionEvent e) {
+			
 			// 選択されたメールを表示
 			updateMailView(mailJList.getSelectedValue());
 		}
+		
 	}
 	
-	/** メールリストをフォーカス中のキーボード処理 */
-	class ListKeyAction extends KeyAdapter {
-		
-		@Override
-		public void keyPressed(KeyEvent e) {
-
-			int key = e.getKeyCode();
-			
-			switch (key) {
-			case KeyEvent.VK_ENTER:
-				// Enterキーで選択されたメールを表示
-				updateMailView(mailJList.getSelectedValue());
-				break;
-
-			default:
-				break;
-			}
-		}
-	}
 	
 //
 // ComboBox Action ------------------------------------------------------------------------------------

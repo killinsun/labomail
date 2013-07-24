@@ -155,8 +155,6 @@ public class MailObject {
 		
 		// JList用に整形
 		
-		System.out.println(mfrom);
-		
 		String from = mfrom;
 		String subj = subject;
 		
