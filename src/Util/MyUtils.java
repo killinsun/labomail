@@ -1,14 +1,17 @@
 package Util;
 
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 
 
 /************** 項目 ****************/
 /*	コンポーネント情報取得系		*/
+/*	ファイル操作系					*/
 /*	文字列操作系					*/
 /************************************/
 
@@ -51,12 +54,34 @@ public class MyUtils {
 	}
 
 	/* ArrayList<JTextArea>のインスタンスから内容のString配列を生成 */
-	public static String[] toStringArray(ArrayList<UndoTextArea> array){
+	public static String[] toStringArray(ArrayList<UndoTextFileld> array){
 		String[] retArray = new String[array.size()];
 		for(int i=0; i<array.size(); i++){
 			retArray[i] = array.get(i).getText();
 		}
 		return retArray;
+	}
+
+
+	/************ ファイル操作系 ************/
+
+	//ファイルダイアログを表示して選択したFileオブジェクトを返す
+	public static File fileOpen() {
+		//ファイルダイアログを生成
+		JFileChooser jChooser = new JFileChooser();
+		//戻り値の初期値を設定
+		File file = null;
+
+		// ファイル選択ダイアログを表示
+		int selected = jChooser.showOpenDialog(null);
+		// 「開く」ボタン押下時
+		if(selected == JFileChooser.APPROVE_OPTION) {
+			// 選択したファイルを取得
+			file = jChooser.getSelectedFile();
+		}
+
+		//nullかFileオブジェクトを返す
+		return file;
 	}
 
 

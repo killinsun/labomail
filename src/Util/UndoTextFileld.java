@@ -3,24 +3,24 @@ package Util;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
 
-public class UndoTextArea extends JTextArea implements UndoableEditListener, KeyListener {
+public class UndoTextFileld extends JTextField implements UndoableEditListener, KeyListener {
 
 	// Undo,Redoを簡単に実装できる凄いやつ
 	UndoManager uManager = new UndoManager();
 
-	public UndoTextArea() {
+	public UndoTextFileld() {
 		Document doc = this.getDocument();
 		doc.addUndoableEditListener(this);
 		this.addKeyListener(this);
 	}
 
-	public UndoTextArea(String text){
+	public UndoTextFileld(String text){
 		super(text);
 		Document doc = this.getDocument();
 		doc.addUndoableEditListener(this);

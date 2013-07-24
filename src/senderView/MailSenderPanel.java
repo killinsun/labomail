@@ -3,10 +3,13 @@ package senderView;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
@@ -22,11 +25,16 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
+import javax.xml.parsers.ParserConfigurationException;
 
 import net.miginfocom.swing.MigLayout;
+
+import org.xml.sax.SAXException;
+
 import Util.MyUtils;
-import Util.UndoTextArea;
+import Util.UndoTextFileld;
 import Util.UndoTextPane;
+import Util.SimplePreferenceLoader;
 import dbHelper.DbHelper;
 
 /************** 項目 ****************/
@@ -44,16 +52,16 @@ import dbHelper.DbHelper;
 /************************************/
 
 
-public class MailSenderPanel extends JPanel implements Runnable, GetResult, MouseListener {
+public class MailSenderPanel extends JPanel implements Runnable, GetResult, MouseListener, KeyListener {
 
 	/************ メンバ変数 ************/
 
 	//「ccList」は宛先欄を含む
-	private ArrayList<UndoTextArea> ccList;
+	private ArrayList<UndoTextFileld> ccList;
 	private JPanel pnlCC;
-	private ArrayList<UndoTextArea> bccList;
+	private ArrayList<UndoTextFileld> bccList;
 	private JPanel pnlBCC;
-	private UndoTextArea txtSubject;
+	private UndoTextFileld txtSubject;
 	private JPanel pnlAttach;
 	private UndoTextPane txtDetail;
 	private JProgressBar progressBar;
@@ -65,9 +73,9 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 	private ArrayList<FileDataSource> attachFileList;
 
 	//設定から取得
+	private String myName;
 	private String smtpServer;
 	private String myMailAddr;
-	private String myName;
 	private String myPassword;
 
 	/************************************/
@@ -75,18 +83,28 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 
 	public MailSenderPanel() {
 		/* 設定から取得、値を設定 */
+		try {
+			String[] prefs = SimplePreferenceLoader.getPreferences();
+			myName = prefs[0];
+			smtpServer = prefs[1];
+			myMailAddr = prefs[5];
+			myPassword = prefs[6];
+		} catch (ParserConfigurationException | SAXException | IOException e1) {
+			JOptionPane.showMessageDialog(null, "アカウント設定情報の取得に失敗しました\n設定をしていない場合は設定してください", "エラー", JOptionPane.ERROR_MESSAGE);
+			e1.printStackTrace();
+		}
 		//		smtpServer = "SMTPサーバ";//スタブ
 		//		myMailAddr = "自分のメアド";
 		//		myName = "アカウントの（自分の）名前";
-		smtpServer = "smtp.gmail.com";
-		myMailAddr = "laboaiueo@gmail.com";
-		myName = "labomail";
-		myPassword = "labolabo";
+		//		smtpServer = "smtp.gmail.com";
+		//		myMailAddr = "laboaiueo@gmail.com";
+		//		myName = "labomail";
+		//		myPassword = "labolabo";
 
 
 		/* 初期値設定 */
-		ccList = new ArrayList<UndoTextArea>();
-		bccList = new ArrayList<UndoTextArea>();
+		ccList = new ArrayList<UndoTextFileld>();
+		bccList = new ArrayList<UndoTextFileld>();
 		attachFileList = new ArrayList<FileDataSource>(){
 			//添付ファイル無しのメール用対策
 			@Override
@@ -125,7 +143,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 			this.add(lblTo, "top, center");
 
 			//宛先テキストエリア
-			UndoTextArea txtTo = new UndoTextArea();
+			UndoTextFileld txtTo = new UndoTextFileld();
 			txtTo.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 			ccList.add(txtTo);
 			pnlCC.add(txtTo);
@@ -134,7 +152,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 			 */
 
 			//CCテキストエリア
-			UndoTextArea txtCC = new UndoTextArea();
+			UndoTextFileld txtCC = new UndoTextFileld();
 			txtCC.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 			ccList.add(txtCC);
 			pnlCC.add(txtCC);
@@ -159,7 +177,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 			label.setFont(new Font("ＭＳ Ｐゴシック", Font.BOLD, 15));
 			this.add(label, "");
 
-			UndoTextArea txtBCC = new UndoTextArea();
+			UndoTextFileld txtBCC = new UndoTextFileld();
 			txtBCC.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 			bccList.add(txtBCC);
 			pnlBCC.add(txtBCC);
@@ -177,7 +195,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 			label_1.setHorizontalAlignment(SwingConstants.LEFT);
 			label_1.setFont(new Font("ＭＳ Ｐゴシック", Font.BOLD, 15));
 			this.add(label_1, "");
-			txtSubject = new UndoTextArea();
+			txtSubject = new UndoTextFileld();
 			txtSubject.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 			this.add(txtSubject, "span 10, grow, wrap");
 		}
@@ -216,6 +234,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 		txtDetail.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		AutoInsert inserter = new AutoInsert(txtDetail);
 		txtDetail.addKeyListener(inserter);
+		txtDetail.addKeyListener(this);
 		txtDetail.addCaretListener(inserter);
 
 		scrollPane.setViewportView(txtDetail);
@@ -282,7 +301,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 		case "attachment":
 			//ファイルダイアログの表示
 			File file = new File("");
-			file = OpenFileDialog.fileOpen();
+			file = MyUtils.fileOpen();
 			if(file != null){
 				//FileDataSourceを取得(添付ファイル用の型)
 				this.attachFileList.add(new FileDataSource(file));
@@ -339,6 +358,22 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 			comp.setCursor(cursor);
 		}
 	}
+
+	/* UndoTextPane上でのタブ遷移を有効化 */
+	@Override public void keyTyped(KeyEvent e) {}
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_TAB) {
+			System.out.println(e.getModifiers());
+			if(e.getModifiers() > 0){
+				this.transferFocusBackward();
+			}else{
+				this.transferFocus();
+			}
+			e.consume();
+		}
+	}
+	@Override public void keyReleased(KeyEvent e) {}
 
 	/**********************************/
 
@@ -440,10 +475,10 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 
 	//全てのテキストコンポーネントを(無効化|有効化)
 	private void setAllEditable(boolean flag){
-		for(UndoTextArea txtCC : ccList){
+		for(UndoTextFileld txtCC : ccList){
 			txtCC.setEditable(flag);
 		}
-		for(UndoTextArea txtBCC : bccList){
+		for(UndoTextFileld txtBCC : bccList){
 			txtBCC.setEditable(flag);
 		}
 		txtSubject.setEditable(flag);
@@ -452,10 +487,10 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 
 	//全てのコンポーネントの内容をクリア
 	private void clearAllText(){
-		for(UndoTextArea txtCC : ccList){
+		for(UndoTextFileld txtCC : ccList){
 			txtCC.setText("");
 		}
-		for(UndoTextArea txtBCC : bccList){
+		for(UndoTextFileld txtBCC : bccList){
 			txtBCC.setText("");
 		}
 		txtSubject.setText("");
@@ -542,7 +577,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 				} catch(IndexOutOfBoundsException e) {
 
 					//未元なCC欄を追加、その欄にアドレスを追加
-					UndoTextArea txtCC = new UndoTextArea(address[i]);
+					UndoTextFileld txtCC = new UndoTextFileld(address[i]);
 					txtCC.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 					addCloseIcon(txtCC, ccID);
 					ccID++;
@@ -572,7 +607,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 				} catch(IndexOutOfBoundsException e) {
 
 					//未元なCC欄を追加、その欄にアドレスを追加
-					UndoTextArea txtBCC = new UndoTextArea(address[i]);
+					UndoTextFileld txtBCC = new UndoTextFileld(address[i]);
 					txtBCC.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 					addCloseIcon(txtBCC, bccID);
 					bccID++;
@@ -591,7 +626,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 
 
 	/* ×アイコンを指定テキストエリアに上乗せ */
-	private void addCloseIcon(UndoTextArea to, int id){
+	private void addCloseIcon(UndoTextFileld to, int id){
 		to.setLayout(new BoxLayout(to, BoxLayout.PAGE_AXIS));
 		JLabel xIcon = getCloseIcon(id);
 		xIcon.addMouseListener(new MouseOverListener());
@@ -630,7 +665,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 
 				//「BCC」欄の数が1を下回ったら再追加する（デフォルトの欄の分）
 				if(pnlBCC.getComponents().length < 1){
-					UndoTextArea txtBCC = new UndoTextArea();
+					UndoTextFileld txtBCC = new UndoTextFileld();
 					txtBCC.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 					bccList.add(txtBCC);
 					pnlBCC.add(txtBCC);
@@ -646,7 +681,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 
 				//「宛先」欄と「CC」欄の総数が2を下回ったら再追加する
 				if(pnlCC.getComponents().length < 2){
-					UndoTextArea txtCC = new UndoTextArea();
+					UndoTextFileld txtCC = new UndoTextFileld();
 					txtCC.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 					ccList.add(txtCC);
 					pnlCC.add(txtCC);
@@ -673,7 +708,6 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 		}
 
 	}
-
 
 	/******************************************************/
 
