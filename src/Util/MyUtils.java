@@ -2,7 +2,6 @@ package Util;
 
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
@@ -53,14 +52,7 @@ public class MyUtils {
 		return ((JLabel)e.getComponent()).getName();
 	}
 
-	/* ArrayList<JTextArea>のインスタンスから内容のString配列を生成 */
-	public static String[] toStringArray(ArrayList<UndoTextFileld> array){
-		String[] retArray = new String[array.size()];
-		for(int i=0; i<array.size(); i++){
-			retArray[i] = array.get(i).getText();
-		}
-		return retArray;
-	}
+
 
 
 	/************ ファイル操作系 ************/
@@ -101,10 +93,10 @@ public class MyUtils {
 	}
 
 	/* 文字列配列の内容を任意のデリミタで結合 */
-	public static String joinStringArray(String[] array, char delimiter){
-		StringBuilder joined = new StringBuilder();
+	public static String joinStringArray(String[] array, char delimiter){	//分割後のnullチェックは
+		StringBuilder joined = new StringBuilder();							//利用側で行なってください
 		for(int i=0; i<array.length-1; i++){
-			joined.append(array[i]+delimiter);
+			if(array[i] != null) joined.append(array[i]+delimiter);
 		}
 		joined.append( array[array.length-1] + delimiter );
 		return joined.toString();

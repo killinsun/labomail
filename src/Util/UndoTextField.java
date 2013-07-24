@@ -9,18 +9,18 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
 
-public class UndoTextFileld extends JTextField implements UndoableEditListener, KeyListener {
+public class UndoTextField extends JTextField implements UndoableEditListener, KeyListener {
 
 	// Undo,Redoを簡単に実装できる凄いやつ
 	UndoManager uManager = new UndoManager();
 
-	public UndoTextFileld() {
+	public UndoTextField() {
 		Document doc = this.getDocument();
 		doc.addUndoableEditListener(this);
 		this.addKeyListener(this);
 	}
 
-	public UndoTextFileld(String text){
+	public UndoTextField(String text){
 		super(text);
 		Document doc = this.getDocument();
 		doc.addUndoableEditListener(this);
