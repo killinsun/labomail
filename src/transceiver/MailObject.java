@@ -15,6 +15,7 @@ enum Status {
 	OTHER,
 }
 
+/** メール1件のデータを保持する */
 public class MailObject {
 
 	private int id;
@@ -97,9 +98,9 @@ public class MailObject {
 	public String getFrom() {
 
 		int fIndex = mfrom.indexOf("<");
-		int eIndex = mfrom.indexOf(">");
+		int eIndex = mfrom.lastIndexOf(">");
 		if(fIndex != -1 && eIndex != -1) {
-			return mfrom.substring(fIndex + 1, eIndex);
+			return mfrom.substring(fIndex, eIndex + 1);
 		}
 
 		return mfrom;
@@ -110,9 +111,9 @@ public class MailObject {
 	public String getTo() {
 		
 		int fIndex = mto.indexOf("<");
-		int eIndex = mto.indexOf(">");
+		int eIndex = mto.lastIndexOf(">");
 		if(fIndex != -1 && eIndex != -1) {
-			return mto.substring(fIndex + 1, eIndex);
+			return mto.substring(fIndex, eIndex + 1);
 		}
 		
 		return mto;
@@ -152,17 +153,18 @@ public class MailObject {
 	@Override
 	public String toString() {
 		
+		// JList用に整形
+		
 		System.out.println(mfrom);
 		
 		String from = mfrom;
 		String subj = subject;
 		
 		int fIndex = from.indexOf("<");
-		System.out.println(fIndex);
 		int eIndex = from.lastIndexOf(">");
-		System.out.println(eIndex);
+		
 		if(fIndex != -1 && eIndex != -1) {
-			from = from.substring(fIndex + 1, eIndex);
+			from = from.substring(fIndex, eIndex + 1);
 		}
 		if(from.length() > 20) {
 			from = from.substring(0, 20).concat("...");

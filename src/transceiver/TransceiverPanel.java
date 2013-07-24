@@ -11,6 +11,8 @@ public class TransceiverPanel extends JPanel {
 	MailDB db;
 	
 	public TransceiverPanel() {
+		
+		// TODO: 表示が色々と見づらいので、レイアウトを要確認。
 
 		this.setLayout(new MigLayout("", "[grow][]", "[grow]"));
 		

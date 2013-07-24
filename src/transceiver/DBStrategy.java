@@ -3,6 +3,7 @@ package transceiver;
 import java.sql.SQLException;
 
 
+/** Strategyパターン。実行するSQL文を切り替える。 */
 public interface DBStrategy {
 
 	String getMailSql() throws SQLException;
@@ -10,6 +11,8 @@ public interface DBStrategy {
 	public String toString();
 }
 
+
+/** 新しい順のStrategy */
 class NewestFirstStrategy implements DBStrategy {
 
 	@Override
@@ -24,6 +27,8 @@ class NewestFirstStrategy implements DBStrategy {
 	}
 }
 
+
+/** 古い順のStrategy */
 class OldestFirstStrategy implements DBStrategy {
 
 	@Override
@@ -38,4 +43,3 @@ class OldestFirstStrategy implements DBStrategy {
 	}
 	
 }
-

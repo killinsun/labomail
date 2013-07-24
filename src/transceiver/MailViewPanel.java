@@ -13,6 +13,7 @@ import javax.swing.border.EtchedBorder;
 import net.miginfocom.swing.MigLayout;
 
 
+/** メールビュー */
 public class MailViewPanel extends JPanel {
 
 	private JTextPane mailTextPane;
@@ -53,6 +54,7 @@ public class MailViewPanel extends JPanel {
 		
 	}
 
+	/** メタデータを設定 */
 	public void setMetaData(MailObject mailObject) {
 		
 		from.setText(mailObject.getFrom());
@@ -61,6 +63,7 @@ public class MailViewPanel extends JPanel {
 		date.setText(mailObject.getDate().toString());
 	}
 	
+	/** メール本文を設定 */
 	public void setText(String text) {
 		
 		// TODO: メールを開いた際、末尾までスクロールしてしまう。

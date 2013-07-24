@@ -27,8 +27,10 @@ import javax.swing.border.BevelBorder;
 
 import net.miginfocom.swing.MigLayout;
 
+/** 画面左側のメールリスト */
 public class MailListPanel extends JPanel {
 	
+	// メール本文をsetTextするためメールビューの参照を保持
 	private MailViewPanel mailView;
 	private DefaultListModel<MailObject> listModel;
 	private ArrayList<MailObject> mailArrayList;
@@ -38,12 +40,15 @@ public class MailListPanel extends JPanel {
 
 	private MailDB db;
 	private MailImap imap;
-	
+
+	/** メールの取得先 */
 	private GetMailState getMailState;
 
+	
 	public MailListPanel(MailViewPanel mailView) {
 		
 		db = new MailDB(true);
+		// TODO: 現在IMAP取得先は固定
 		imap = new MailImap("laboaiueo@gmail.com", "labolabo");
 		
 		this.mailView = mailView;
@@ -58,8 +63,8 @@ public class MailListPanel extends JPanel {
 		listModel = new DefaultListModel<>();
 		mailArrayList = new ArrayList<>();
 		
+		// DBからメール取得
 		getMailState = new DBState();
-
 		try {
 			updateMailList();
 		}
@@ -81,6 +86,8 @@ public class MailListPanel extends JPanel {
 		statusPanel.add(changeModeBtn);
 		add(statusPanel,"grow, wrap");
 		
+		// コンボボックスに「新しい順」「古い順」の項目追加
+		// TODO: 現在並び替えはDBからの取得のみ対応
 		comboBox = new JComboBox<>();
 		comboBox.addItem(new NewestFirstStrategy());
 		comboBox.addItem(new OldestFirstStrategy());
@@ -95,10 +102,13 @@ public class MailListPanel extends JPanel {
 
 	}
 	
+	/** メールリスト更新 */
 	private void updateMailList() throws SQLException, MessagingException, IOException {
 		
+		// 初期化
 		listModel.setSize(0);
 		
+		// 選択されている方法でメールを取得
 		List<MailObject> mails = getMailState.getMailList();
 		
 		for (MailObject mailObject : mails) {
@@ -108,6 +118,7 @@ public class MailListPanel extends JPanel {
 		validate();
 	}
 	
+	/** メールビュー更新 */
 	private void updateMailView(MailObject mailObject) {
 		
 		mailView.setMetaData(mailObject);
@@ -118,12 +129,14 @@ public class MailListPanel extends JPanel {
 // GetMailState -----------------------------------------------------------------------------------
 //
 	
+	/** Stateパターン */
 	interface GetMailState {
 		 void changeState();
 		 List<MailObject> getMailList() throws SQLException, MessagingException, IOException;
 		 Icon getIcon();
 	}
 	
+	/** DBから取得 */
 	class DBState implements GetMailState {
 
 		Icon icon = new ImageIcon("data/not_send2.png");
@@ -145,6 +158,7 @@ public class MailListPanel extends JPanel {
 		
 	}
 	
+	/** IMAPから取得 */
 	class ImapState implements GetMailState {
 		
 		Icon icon = new ImageIcon("data/sent2.png");
@@ -170,15 +184,17 @@ public class MailListPanel extends JPanel {
 // Jlist Action ------------------------------------------------------------------------------------
 //
 	
+	/** メールリストをクリック時の処理 */
 	class ListClickAction extends MouseAdapter {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			
+			// 選択されたメールを表示
 			updateMailView(mailJList.getSelectedValue());
 		}
 	}
 	
+	/** メールリストをフォーカス中のキーボード処理 */
 	class ListKeyAction extends KeyAdapter {
 		
 		@Override
@@ -188,6 +204,7 @@ public class MailListPanel extends JPanel {
 			
 			switch (key) {
 			case KeyEvent.VK_ENTER:
+				// Enterキーで選択されたメールを表示
 				updateMailView(mailJList.getSelectedValue());
 				break;
 
@@ -201,14 +218,18 @@ public class MailListPanel extends JPanel {
 // ComboBox Action ------------------------------------------------------------------------------------
 //
 
+	/** コンボボックス選択時の処理 */
 	class comboBoxChangedAction implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			System.out.println("ComboBox value changed!");
+			
+			// 並び替え方法を変更
 			db.setStrategy(comboBox.getItemAt(comboBox.getSelectedIndex()));
 			try {
+				// メールリストを更新
 				updateMailList();
 			} catch (SQLException | MessagingException | IOException e1) {
 				System.err.println(e1.getMessage());
@@ -222,14 +243,18 @@ public class MailListPanel extends JPanel {
 // Buttons Action --------------------------------------------------------------------------------------
 //
 
+	/** 状態遷移ボタン */
 	class ModeChangeBtnAction implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
+			
+			// メール取得方法を変更
 			getMailState.changeState();
+			// アイコンを変更
 			changeModeBtn.setIcon(getMailState.getIcon());
 			try {
+				// メールリスト更新
 				updateMailList();
 			} catch (SQLException | MessagingException | IOException e1) {
 				System.err.println(e1.getMessage());
@@ -238,11 +263,13 @@ public class MailListPanel extends JPanel {
 		
 	}
 	
+	/** 更新ボタン */
 	class UpdateBtnAction implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
+				// メールリスト更新
 				updateMailList();
 			} catch (SQLException | MessagingException | IOException e1) {
 				System.err.println(e1.getMessage());
