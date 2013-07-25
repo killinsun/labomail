@@ -12,7 +12,8 @@ public class DbHelper{
 	Connection conn; 
 	Statement stmt;
 
-	static final String createAddressTbl = "" +
+//テーブルの作成
+	static final String createAddressTbl = "" + //createAddrrssTblの中身
 			"CREATE TABLE addresstable " +
 			"( ID integer primary key ," +
 			"NAME varchar(20) not null, " +
@@ -24,14 +25,29 @@ public class DbHelper{
 			"MEMO varchar(255), " +
 			"FACEICON varchar(255)" +
 			")";
-	static final String createBoxTbl = "" +
-			"CREATE TABLE boxtable " +
-			"( BOXID integer primary key,"+
-			"BOX varchar(40) not null)";
 	static final String createKubunTbl =""+
 			"CREATE TABLE kubuntable " +
 			"( KUBUNID integer primary key,"+
 			"KUBUN varchar(40) not null)";
+	
+	static final String createMasuterTbl = "" + //createMasuterTblの中身
+			"CREATE TABLE masutertbl　" +
+			"(ID integer primary key autoincrement," +
+			"MBOXID varchar(1) not null," +
+			"BOxID varchar(1) not null," +
+			"MFROM varchar(100) not null," +
+			"MTO varchar(100) not null," +
+			"SUJECT varchar(255)," +
+			"DATA varchar(255) not null," +
+			"DATE varchar('TIMESTAMP')," +
+			"PATH varchar(255) not null" +
+			")";
+	
+	static final String createBoxTbl = "" + //createBoxTblの中身
+			"CREATE TABLE boxtbl" +
+			"(BOXID integer primary key," +
+			"BOX varchar(20)　not null," +
+			")";
 
 	public DbHelper() {
 		try{
@@ -42,7 +58,7 @@ public class DbHelper{
 			if(!f.exists()){
 				ifExistsFlag = true;
 			}
-
+			System.out.println("Database created!");
 
 			//テーブルが存在しないので作りなおす
 			if(ifExistsFlag){
@@ -53,6 +69,8 @@ public class DbHelper{
 		}
 	}
 	private void initTables() throws SQLException{
+		execute(createMasuterTbl);
+		execute(createBoxTbl);
 		execute(createAddressTbl);
 		execute(createBoxTbl);
 		execute(createKubunTbl);
