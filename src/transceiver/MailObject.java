@@ -1,5 +1,11 @@
 package transceiver;
 
+import java.sql.Timestamp;
+
+import javax.mail.search.FromStringTerm;
+
+import AddressBook.FrmEdit;
+
 
 enum Status {
 	RECEIVE,
@@ -9,6 +15,7 @@ enum Status {
 	OTHER,
 }
 
+/** メール1件のデータを保持する */
 public class MailObject {
 
 	private int id;
@@ -17,9 +24,8 @@ public class MailObject {
 	private String mfrom;
 	private String mto;
 	private String subject;
-//	private Date date;
 	private String data;
-	private String date;
+	private Timestamp date;
 	private String path;
 	Status status;
 
@@ -30,15 +36,15 @@ public class MailObject {
 		this.mfrom = "from";
 		this.mto = "to";
 		this.subject = "subject";
-		this.date = "xx/xx/xx 00:00:00";
 		this.data = "text";
+		this.date = new Timestamp(System.currentTimeMillis());
 		this.path = "hoge.txt";
 	}
 	
 	
 	
 	public MailObject(int id, int mboxid, int boxid, String mfrom, String mto,
-			String subject, String data, String date, String path) {
+			String subject, String data, Timestamp date, String path) {
 		this.id = id;
 		this.mboxid = mboxid;
 		this.boxid = boxid;
@@ -89,13 +95,27 @@ public class MailObject {
 
 
 
-	public String getMfrom() {
+	public String getFrom() {
+
+		int fIndex = mfrom.indexOf("<");
+		int eIndex = mfrom.lastIndexOf(">");
+		if(fIndex != -1 && eIndex != -1) {
+			return mfrom.substring(fIndex, eIndex + 1);
+		}
+
 		return mfrom;
 	}
 
 
 
-	public String getMto() {
+	public String getTo() {
+		
+		int fIndex = mto.indexOf("<");
+		int eIndex = mto.lastIndexOf(">");
+		if(fIndex != -1 && eIndex != -1) {
+			return mto.substring(fIndex, eIndex + 1);
+		}
+		
 		return mto;
 	}
 
@@ -113,7 +133,7 @@ public class MailObject {
 
 
 
-	public String getDate() {
+	public Timestamp getDate() {
 		return date;
 	}
 
@@ -130,16 +150,27 @@ public class MailObject {
 	}
 
 
-
-	public String getListViewText() {
-		
-		return mfrom + "\n" + subject + "\n" + date;
-	}
-
-
 	@Override
 	public String toString() {
-		return mfrom + "\n" + subject + "\n" + date;
+		
+		// JList用に整形
+		
+		String from = mfrom;
+		String subj = subject;
+		
+		int fIndex = from.indexOf("<");
+		int eIndex = from.lastIndexOf(">");
+		
+		if(fIndex != -1 && eIndex != -1) {
+			from = from.substring(fIndex, eIndex + 1);
+		}
+		if(from.length() > 20) {
+			from = from.substring(0, 20).concat("...");
+		}
+		if(subj.length() > 20) {
+			subj = subj.substring(0, 15).concat("...");
+		}
+		return from + "\n" + subj + "\n" + date;
 	}
 	
 }

@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import transceiver.MailListViewPanel;
+import transceiver.TransceiverPanel;
 import net.miginfocom.swing.MigLayout;
 
 public class TopView extends JFrame {
@@ -30,7 +30,7 @@ public class TopView extends JFrame {
 		getContentPane().add(menuPanel, "c, wrap");
 		
 		/** TOPの送受信画面 */
-		JPanel mailAndViewPanel = new MailListViewPanel();
+		JPanel mailAndViewPanel = new TransceiverPanel();
 		
 		tabbedPane.addTab("Top", mailAndViewPanel);
 		
