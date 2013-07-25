@@ -23,7 +23,7 @@ public class DbHelper{
 			"CREATE TABLE addresstable " +
 			"(" +
 			"	ID integer primary key," +
-			"	NAMEID varchar(20) not null, " +
+			"	NAME varchar(20) not null, " +
 			"	FURIGANA varchar(40) not null, " +
 			"	KUBUN varchar(20) not null, " +
 			"	PCMAIL varchar(100), " +
@@ -37,25 +37,12 @@ public class DbHelper{
 			"( KUBUNID integer primary key,"+
 			"KUBUN varchar(40) not null)";
 
-	static final String createMasuterTbl = "" + //createMasuterTblの中身
-			"CREATE TABLE masutertbl　" +
-			"(ID integer primary key autoincrement," +
-			"MBOXID varchar(1) not null," +
-			"BOxID varchar(1) not null," +
-			"MFROM varchar(100) not null," +
-			"MTO varchar(100) not null," +
-			"SUJECT varchar(255)," +
-			"DATA varchar(255) not null," +
-			"DATE varchar('TIMESTAMP')," +
-			"PATH varchar(255) not null" +
-			")";
-
 	static final String createMasterTbl = //createMasterTblの中身
 			"CREATE TABLE mastertbl" +
 			"(" +
 			"	ID integer primary key autoincrement," +
 			"	MBOXID varchar(1) not null," +
-			"	BOxID varchar(1) not null," +
+			"	BOXID varchar(1) not null," +
 			"	MFROM varchar(100) not null," +
 			"	MTO varchar(100) not null," +
 			"	SUBJECT varchar(255)," +
@@ -84,10 +71,9 @@ public class DbHelper{
 		}
 	}
 	private void initTables() throws SQLException{
-		execute(createMasuterTbl);
+		execute(createMasterTbl);
 		execute(createBoxTbl);
 		execute(createAddressTbl);
-		execute(createBoxTbl);
 		execute(createKubunTbl);
 		System.out.println("Database Created");
 	}
@@ -107,7 +93,7 @@ public class DbHelper{
 		try {
 			conn = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
 			stmt = conn.createStatement();
-			System.out.println("sql:"+sql);
+			System.out.println("sql run accepted:"+sql);
 			return stmt.executeQuery(sql);
 		} catch (SQLException e ) {
 			e.printStackTrace();
@@ -118,5 +104,6 @@ public class DbHelper{
 	public void close() throws SQLException{
 		stmt.close();
 		conn.close();
+		System.out.println("DB is closed");
 	}
 }

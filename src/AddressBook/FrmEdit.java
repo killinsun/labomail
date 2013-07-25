@@ -164,6 +164,8 @@ public class FrmEdit extends JFrame implements ActionListener {
 							"memo ='" + memo.getText() + "'," +
 							"faceicon ='" + dstPath + "' where id = " + gettedID +";";
 				}
+				dh.close();
+
 				dh.execute(sql);
 				dh.close();
 
@@ -230,11 +232,9 @@ public class FrmEdit extends JFrame implements ActionListener {
 	}
 	protected void setKubun(){
 		kubunModel.removeAllElements();
-		System.out.println("ぬるぽ");
 		DbHelper dh = new DbHelper();
 		ResultSet rs = dh.executeQuery("SELECT kubun FROM kubuntable");
 		try {
-		System.out.println("ぬるぽ2");
 			while(rs.next()){
 				kubunModel.addElement(rs.getString(1));
 			}

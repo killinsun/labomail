@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.activation.FileDataSource;
@@ -449,13 +450,9 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 							myMailAddr, formattedList, txtSubject.getText(), txtDetail.getText(),  txtMailName
 							);
 					helper.execute(sql);
+					helper.close();
 
-				} catch (UnsupportedEncodingException e) {
-					setWorkingMode(false);
-					e.printStackTrace();
-					JOptionPane.showConfirmDialog(null, "メールの送信にエラーが発生しました", "送信に失敗しました", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
-					return;
-				} catch (MessagingException e) {
+				} catch (UnsupportedEncodingException | MessagingException | SQLException e) {
 					setWorkingMode(false);
 					e.printStackTrace();
 					JOptionPane.showConfirmDialog(null, "メールの送信にエラーが発生しました", "送信に失敗しました", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
