@@ -1,20 +1,27 @@
-package senderView;
+package Util;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JTextPane;
+import javax.swing.JTextField;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
 
-public class UndoTextPane extends JTextPane implements UndoableEditListener, KeyListener {
+public class UndoTextField extends JTextField implements UndoableEditListener, KeyListener {
 
 	// Undo,Redoを簡単に実装できる凄いやつ
 	UndoManager uManager = new UndoManager();
 
-	public UndoTextPane() {
+	public UndoTextField() {
+		Document doc = this.getDocument();
+		doc.addUndoableEditListener(this);
+		this.addKeyListener(this);
+	}
+
+	public UndoTextField(String text){
+		super(text);
 		Document doc = this.getDocument();
 		doc.addUndoableEditListener(this);
 		this.addKeyListener(this);

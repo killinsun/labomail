@@ -121,6 +121,7 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 		System.out.println("updateList() called!!");
 		try {
 			ResultSet rs = dh.executeQuery("SELECT id,name FROM addresstable;");
+			//  getDataModelCol = [id][name]
 			while( rs.next() ) {
 				listModel.addElement(rs.getString(2));
 				//Jlistに登録するだけでなく、Mapに格納することで、後に検索できるようにする
