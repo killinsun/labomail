@@ -66,29 +66,26 @@ public class PreferencesListener implements ActionListener{
 		Element root = doc.getDocumentElement();
 
 		{/* 書き込み情報の構築*/
-			Element acName = doc.createElement("アカウント名");
+			Element acMailAddr = doc.createElement("メールアドレス");
+			Element acPassword = doc.createElement("パスワード");
 			Element smtpServer = doc.createElement("SMTPサーバー");
 			Element smtpPort = doc.createElement("SMTPポート");
 			Element imapServer = doc.createElement("IMAPサーバー");
 			Element imapPort = doc.createElement("IMAPポート");
-			Element acMailAddr = doc.createElement("メールアドレス");
-			Element acPassword = doc.createElement("パスワード");
 
-			acName.appendChild(doc.createTextNode(prefs[0]));
-			smtpServer.appendChild(doc.createTextNode(prefs[1]));
-			smtpPort.appendChild(doc.createTextNode(prefs[2]));
-			imapServer.appendChild(doc.createTextNode(prefs[3]));
-			imapPort.appendChild(doc.createTextNode(prefs[4]));
-			acMailAddr.appendChild(doc.createTextNode(prefs[5]));
-			acPassword.appendChild(doc.createTextNode(prefs[6]));
+			smtpServer.appendChild(doc.createTextNode(prefs[0]));
+			smtpPort.appendChild(doc.createTextNode(prefs[1]));
+			imapServer.appendChild(doc.createTextNode(prefs[2]));
+			imapPort.appendChild(doc.createTextNode(prefs[3]));
+			acMailAddr.appendChild(doc.createTextNode(prefs[4]));
+			acPassword.appendChild(doc.createTextNode(prefs[5]));
 
-			root.appendChild(acName);
+			root.appendChild(acMailAddr);
+			root.appendChild(acPassword);
 			root.appendChild(smtpServer);
 			root.appendChild(smtpPort);
 			root.appendChild(imapServer);
 			root.appendChild(imapPort);
-			root.appendChild(acMailAddr);
-			root.appendChild(acPassword);
 		}
 
 		/* 設定情報の書き込み */

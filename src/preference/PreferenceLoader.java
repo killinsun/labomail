@@ -32,7 +32,7 @@ public class PreferenceLoader {
 
 		//内容が存在するか確認
 		if(xmlReader.exists()){
-			prefs = new String[7];
+			prefs = new String[6];
 		}else{
 			return null;
 		}

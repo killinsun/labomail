@@ -378,9 +378,18 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 	@Override
 	public void run() {
 
+		/* 宛先の有無を確認 */
+		boolean exist = false;
+		for(int i=0; i<ccList.size(); i++){
+			if(!ccList.get(i).getText().equals("")){
+				exist = true;
+				break;
+			}
+		}
+
 		/* ユーザビリティを考慮した分岐 */
 
-		if(ccList.get(0).getText().equals("")){
+		if(exist){
 			//「宛先」が空なら中止
 			JOptionPane.showMessageDialog(null, "送信先が空です", "警告", JOptionPane.ERROR_MESSAGE);
 			return;
