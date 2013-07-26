@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><アカウント設定><メールアドレス>imap.gmail.com</メールアドレス><パスワード>993</パスワード><SMTPサーバー>udonge.like@gmail.com</SMTPサーバー><SMTPポート>bduussgpbjmmqbfe</SMTPポート><IMAPサーバー>smtp.gmail.com</IMAPサーバー><IMAPポート>587</IMAPポート></アカウント設定>
-=======
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><アカウント設定><アカウント名>noneck.0311</アカウント名><SMTPサーバー>smtp.gmail.com</SMTPサーバー><SMTPポート>587</SMTPポート><IMAPサーバー>imap.gmail.com</IMAPサーバー><IMAPポート>143</IMAPポート><メールアドレス>noneck.0311@gmail.com</メールアドレス><パスワード>gakldxqupwmghyzi</パスワード></アカウント設定>
->>>>>>> refs/remotes/origin/master
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><アカウント設定><メールアドレス>mailtest@yotu.centos.jp</メールアドレス><パスワード>none</パスワード><SMTPサーバー>172.16.9.67</SMTPサーバー><SMTPポート>0</SMTPポート><IMAPサーバー>172.16.9.67</IMAPサーバー><IMAPポート>0</IMAPポート><メールサービス>none</メールサービス></アカウント設定>

@@ -21,7 +21,7 @@ import javax.mail.internet.MimeMultipart;
  * @modifer Aiya000
  */
 
-public class Smtp_Helper {
+public class GmailSmtp_Helper implements Smtp_Interface {
 
 	/************ メンバ変数 ************/
 
@@ -37,7 +37,7 @@ public class Smtp_Helper {
 	/************************************/
 
 	/* 選択アカウントの基本設定 */
-	public Smtp_Helper(String smtpServer, String accountMailAddress, String accountPassword, String port){
+	public GmailSmtp_Helper(String smtpServer, String accountMailAddress, String accountPassword, String port){
 		this.smtpServer = smtpServer;
 		this.myMailAddress = accountMailAddress;
 		this.myPassword = accountPassword;
@@ -45,6 +45,7 @@ public class Smtp_Helper {
 	}
 
 
+	@Override /* Gmail用SMTP送信モジュール */
 	public void sendMail(String[] to, String[] bcc, String subject, String detail) throws AddressException, MessagingException {
 
 		/* プロパティの取得と設定 */
@@ -88,7 +89,7 @@ public class Smtp_Helper {
 		transport.close();
 	}
 
-	/* 複数添付ファイル付きSMTP送信モジュール */
+	@Override /* 複数添付ファイル付きSMTP送信モジュール */
 	public void sendMail(String[] to, String[] bcc, String subject, String detail, ArrayList<FileDataSource> fileList) throws MessagingException, UnsupportedEncodingException{
 
 		//メール内容と添付ファイル内容を生成
