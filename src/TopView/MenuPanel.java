@@ -16,7 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
 
 import net.miginfocom.swing.MigLayout;
-import preference.XmlPreferencePanel;
+import preference.OriginalPreferencePanel;
 import senderView.MailSenderPanel;
 import AddressBook.PaneAddress;
 import DustBox.Dustbox_main;
@@ -43,7 +43,7 @@ public class MenuPanel extends JPanel {
 	// アイコンクリックで表示する各種JPanel
 	PaneAddress paneAddress;
 	JScrollPane senderView;
-	XmlPreferencePanel optionPanel;
+	OriginalPreferencePanel optionPanel;
 	Dustbox_main paneDustbox;
 	/** デバッグ用 */
 	JPanel dummyPanel;
@@ -108,7 +108,7 @@ public class MenuPanel extends JPanel {
 		senderView = new JScrollPane(new MailSenderPanel());
 		senderView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		senderView.setName(NEW_MAIL_IDENT);
-		optionPanel = new XmlPreferencePanel();
+		optionPanel = new OriginalPreferencePanel();
 		optionPanel.setName(OPTION_IDENT);
 		paneDustbox = new Dustbox_main();
 		paneDustbox.setName(TRUSH_IDENT);

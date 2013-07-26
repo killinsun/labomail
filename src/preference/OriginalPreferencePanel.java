@@ -17,7 +17,7 @@ import net.miginfocom.swing.MigLayout;
 
 import org.xml.sax.SAXException;
 
-public class XmlPreferencePanel extends JPanel implements AccessMemberFields, ActionListener{
+public class OriginalPreferencePanel extends JPanel implements AccessMemberFields, ActionListener{
 
 	/************ メンバ変数 ************/
 
@@ -61,7 +61,7 @@ public class XmlPreferencePanel extends JPanel implements AccessMemberFields, Ac
 
 	/************************************/
 
-	public XmlPreferencePanel() {
+	public OriginalPreferencePanel() {
 
 		//初期値を設定
 		xmlWriter = new PreferencesListener(this);

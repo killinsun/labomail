@@ -1,6 +1,6 @@
 /**
  * @author aiya000
- * @version 0.5
+ * @version 0.8
  *
  */
 package senderView;
