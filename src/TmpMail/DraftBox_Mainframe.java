@@ -11,6 +11,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
+import dbHelper.DbHelper;
+
 import net.miginfocom.swing.MigLayout;
 
 public class DraftBox_Mainframe extends JPanel implements ActionListener {
@@ -29,7 +31,7 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 
 	// 配列にボタン設定
 	final JButton[] button = { 
-			new JButton("送信"), 
+			new JButton("再編集(またはそのまま送信)"), 
 			new JButton("ゴミ箱へ") };
 	// テーブルクラス
 	final JTable table = new JTable(model);
@@ -86,7 +88,7 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 		 */
 		// もし配列0(再編集)のボタンが押されたら
 		if (e.getSource() == button[0]) {
-			// 再編集用処理
+			// 再編集(or送信)用処理
 		}
 		// もし配列1(ゴミ箱へ)のボタンが押されたら
 		if (e.getSource() == button[1]) {
