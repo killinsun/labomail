@@ -118,6 +118,8 @@ public class MenuPanel extends JPanel {
 			panelMap.put(panel.getName(), panel);
 		}
 	}
+
+//
 // MouseListener ----------------------------------------------------------------------------------------------------
 //
 
