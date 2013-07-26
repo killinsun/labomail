@@ -256,20 +256,6 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 
 	}
 
-	public static void main(String[] args){
-//		MailSenderPanel sender = new MailSenderPanel(
-//				new String[]{"a@a.a",  "b@b.b"},
-//				new String[]{"c@c.c", "d@d.d"},
-//				"subject", "detail"
-//				);
-		MailSenderPanel sender = new MailSenderPanel();
-		JFrame frame = new JFrame();
-		frame.add(sender);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setBounds(400, 20, 500, 700);
-		frame.setVisible(true);
-	}
-
 	/* 他画面からの遷移に使用 */
 	public MailSenderPanel(String[] to, String[] bcc, String subject, String detail){
 		//引数なしコンストラクタを呼び出し
@@ -418,8 +404,8 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 			setWorkingMode(true);
 			{
 				//メール送信
-				PlainSmtp_Helper sender = new PlainSmtp_Helper(smtpServer, myMailAddr, myName);
-//				GmailSmtp_Helper sender = new GmailSmtp_Helper(smtpServer, myMailAddr, myPassword, myName);
+//				PlainSmtp_Helper sender = new PlainSmtp_Helper(smtpServer, myMailAddr, myName);
+				GmailSmtp_Helper sender = new GmailSmtp_Helper(smtpServer, myMailAddr, myPassword, myName);
 				try {
 					//ArrayList<UndoTextArea>から内容のString[]に変換
 					String[] ccArray = UtilsForThisPackage.toStringArraySqueezeNull(ccList);

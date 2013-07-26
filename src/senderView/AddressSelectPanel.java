@@ -1,17 +1,13 @@
 package senderView;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
@@ -19,13 +15,13 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 
 import AddressBook.PaneAddress;
 import Util.MyUtils;
-import dbHelper.DbHelper; //killinsun
+import dbHelper.DbHelper;
+//killinsun
 
 public class AddressSelectPanel extends PaneAddress implements MouseListener {
 
@@ -40,7 +36,7 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 	private JFrame superFrame;
 
 	//データベースのコネクション
-	private Connection con;
+	private DbHelper dh; //killinsun
 
 	//宛先追加用ボタン
 	private JButton addButton;
@@ -50,7 +46,6 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 	private DefaultListModel<JCheckBox> listModel;
 	private boolean[] checkList;
 
-	DbHelper dh = new DbHelper(); //killinsun
 
 	/************ インナークラス ************/
 
@@ -65,7 +60,6 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 			setText(checkBox.getText());
 
 			setSelected(checkBox.isSelected());
-
 			return this;
 		}
 
@@ -84,6 +78,9 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 
 		//こちらからdispose()を行なうための参照を受け取る
 		this.superFrame = superFrame;
+
+		//初期値設定
+		dh = new DbHelper();
 
 /*
 		try {
@@ -112,8 +109,8 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 */
 
 		//親クラスのボタンを取り除く
+		super.remove(0);
 		super.remove(1);
-		super.remove(2);
 		//初期設定
 		listModel = new DefaultListModel<JCheckBox>();
 
@@ -121,7 +118,9 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 		String tmpNames = super.list.getModel().toString().replaceAll(" ", "");
 		String[] names = tmpNames.substring(1, tmpNames.length()-1).split(",");
 		for(String listLabel : names){
-			listModel.addElement(new JCheckBox(listLabel));
+			JCheckBox nameBox = new JCheckBox(listLabel);
+			nameBox.setBackground(Color.WHITE);
+			listModel.addElement(nameBox);
 		}
 		nameList = new JList<JCheckBox>(listModel);
 
@@ -182,12 +181,10 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 		String address = "not found";
 
 		try {
-//			Statement st = con.createStatement();
-//			ResultSet rs = st.executeQuery("SELECT pcmail FROM addresstable WHERE name='"+name+"';");
-			ResultSet rs = dh.executeQuery("SELECT pcmail FROM addresstable WHERE name='"+name+"';"); //killinsun
+			ResultSet rs = dh.executeQuery("SELECT pcmail FROM addresstable WHERE name='"+name+"';");
 			rs.next();
 			address = rs.getString("pcmail");
-			dh.close();  //killinsun
+			dh.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -226,18 +223,6 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 	@Override public void mouseReleased(MouseEvent e) {}
 	@Override public void mouseEntered(MouseEvent e) {}
 	@Override public void mouseExited(MouseEvent e) {}
-
-
-	/************ ファイナライザ ************/
-
-	@Override
-	protected void finalize() throws Throwable {
-		try{
-			if(con != null) con.close();
-		}finally{
-			super.finalize();
-		}
-	}
 
 	/****************************************/
 
