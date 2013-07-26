@@ -1,12 +1,9 @@
 package transceiver;
 
-import java.awt.Point;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
-import javax.swing.JViewport;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 
@@ -66,11 +63,10 @@ public class MailViewPanel extends JPanel {
 	/** メール本文を設定 */
 	public void setText(String text) {
 		
-		// TODO: メールを開いた際、末尾までスクロールしてしまう。
 		mailTextPane.setText(text);
-		JViewport view = scrollPane.getViewport();
-		view.setView(mailTextPane);
-		view.setViewPosition(new Point(0, 0));
+		// スクロール位置をトップに
+		mailTextPane.setCaretPosition(0);
+		
 	}
 	
 }
