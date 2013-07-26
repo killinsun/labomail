@@ -17,20 +17,23 @@ import javax.mail.Store;
 /** IMAP操作クラス */
 public class MailImap {
 
-	String user;
-	String passwd;
-	String host;
-	int port;
+	private String user;
+	private String passwd;
+	private String host;
+	private int port;
 	
-	Session session;
-	Store store;
-	
+	private Session session;
+	private Store store;
+	private boolean connect = false;
 	
 	public MailImap(String user, String passwd) {
 		this.user = user;
 		this.passwd = passwd;
 		host = "imap.gmail.com";
 		port = 993;
+	}
+	
+	public void connect() {
 		
 		session = Session.getInstance(System.getProperties(), null);
 		try {
@@ -40,6 +43,11 @@ public class MailImap {
 		} catch (MessagingException e) {
 			System.err.println(e.getMessage());
 		} 
+		
+	}
+	
+	public boolean isConnect() {
+		return connect;
 	}
 
 	/** メールを取得する。ファッキンスロウ（くそ遅い）なのでThread化させたい */

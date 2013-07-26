@@ -12,7 +12,7 @@ import net.miginfocom.swing.MigLayout;
 public class TopView extends JFrame {
 
 	/** 画面下部の表示域。ここに各種JPanelを追加していく。 */
-	private static JTabbedPane tabbedPane = new JTabbedPane();
+	private static JTabbedPane tabbedPane = new CloseBtnJTabbedPane();
 	
 	public TopView() {
 
@@ -31,6 +31,7 @@ public class TopView extends JFrame {
 		
 		/** TOPの送受信画面 */
 		JPanel mailAndViewPanel = new TransceiverPanel();
+		mailAndViewPanel.setName("TOP");
 		
 		tabbedPane.addTab("Top", mailAndViewPanel);
 		

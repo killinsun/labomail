@@ -45,6 +45,8 @@ public class MailListPanel extends JPanel {
 
 	/** メールの取得先 */
 	private GetMailState getMailState;
+	
+	private ListSelectAction listSelectAction = new ListSelectAction();
 
 	
 	public MailListPanel(MailViewPanel mailView) {
@@ -76,7 +78,7 @@ public class MailListPanel extends JPanel {
 
 		mailJList = new JList<>(listModel);
 		mailJList.setCellRenderer(new TextImageRenderer());
-		mailJList.addListSelectionListener(new ListSelectAction());
+		mailJList.addListSelectionListener(listSelectAction);
 		
 		listScrollPane.setViewportView(mailJList);
 		
@@ -164,6 +166,12 @@ public class MailListPanel extends JPanel {
 		
 		Icon icon = new ImageIcon("data/sent2.png");
 
+		public ImapState() {
+			if(!imap.isConnect()) {
+				imap.connect();
+			}
+		}
+		
 		@Override
 		public void changeState() {
 			getMailState = new DBState();
@@ -207,6 +215,9 @@ public class MailListPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+			// 一時的にリスナーを無効に
+			mailJList.removeListSelectionListener(listSelectAction);
 
 			System.out.println("ComboBox value changed!");
 			
@@ -217,6 +228,8 @@ public class MailListPanel extends JPanel {
 				updateMailList();
 			} catch (SQLException | MessagingException | IOException e1) {
 				System.err.println(e1.getMessage());
+			} finally {
+				mailJList.addListSelectionListener(listSelectAction);
 			}
 			validate();
 		}
@@ -233,6 +246,9 @@ public class MailListPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
+			// 一時的にリスナーを無効に
+			mailJList.removeListSelectionListener(listSelectAction);
+			
 			// メール取得方法を変更
 			getMailState.changeState();
 			// アイコンを変更
@@ -242,6 +258,8 @@ public class MailListPanel extends JPanel {
 				updateMailList();
 			} catch (SQLException | MessagingException | IOException e1) {
 				System.err.println(e1.getMessage());
+			} finally {
+				mailJList.addListSelectionListener(listSelectAction);
 			}
 		}
 		
@@ -252,11 +270,16 @@ public class MailListPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+			mailJList.removeListSelectionListener(listSelectAction);
+			
 			try {
 				// メールリスト更新
 				updateMailList();
 			} catch (SQLException | MessagingException | IOException e1) {
 				System.err.println(e1.getMessage());
+			} finally {
+				mailJList.addListSelectionListener(listSelectAction);
 			}
 		}
 		
