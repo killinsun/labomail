@@ -75,10 +75,10 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 	private ArrayList<FileDataSource> attachFileList;
 
 	//設定から取得
-	private String myName;
-	private String smtpServer;
 	private String myMailAddr;
 	private String myPassword;
+	private String smtpServer;
+	private String smtpPort;
 
 	/************************************/
 
@@ -92,21 +92,20 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 				//タブを閉じる
 				return;
 			}
-			myName = prefs[0];
-			smtpServer = prefs[1];
-			myMailAddr = prefs[5];
-			myPassword = prefs[6];
+			myMailAddr = prefs[0];
+			myPassword = prefs[1];
+			smtpServer = prefs[2];
+			smtpPort = prefs[3];
+
 		} catch (ParserConfigurationException | SAXException | IOException e1) {
 			JOptionPane.showMessageDialog(null, "アカウント設定情報の取得に失敗しました\n設定をしていない場合は設定してください", "エラー", JOptionPane.ERROR_MESSAGE);
 			e1.printStackTrace();
 		}
 		//		smtpServer = "SMTPサーバ";//スタブ
 		//		myMailAddr = "自分のメアド";
-		//		myName = "アカウントの（自分の）名前";
-		//		smtpServer = "smtp.gmail.com";
-		//		myMailAddr = "laboaiueo@gmail.com";
-		//		myName = "labomail";
-		//		myPassword = "labolabo";
+//				smtpServer = "smtp.gmail.com";
+//				myMailAddr = "laboaiueo@gmail.com";
+//				myPassword = "labolabo";
 
 		/* 初期値設定 */
 		ccList = new ArrayList<UndoTextField>();
@@ -389,7 +388,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 
 		/* ユーザビリティを考慮した分岐 */
 
-		if(exist){
+		if(!exist){
 			//「宛先」が空なら中止
 			JOptionPane.showMessageDialog(null, "送信先が空です", "警告", JOptionPane.ERROR_MESSAGE);
 			return;
@@ -413,8 +412,8 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 			setWorkingMode(true);
 			{
 				//メール送信
-//				PlainSmtp_Helper sender = new PlainSmtp_Helper(smtpServer, myMailAddr, myName);
-				GmailSmtp_Helper sender = new GmailSmtp_Helper(smtpServer, myMailAddr, myPassword, myName);
+//				PlainSmtp_Helper sender = new PlainSmtp_Helper(smtpServer, myMailAddr);
+				Smtp_Helper sender = new Smtp_Helper(smtpServer, myMailAddr, myPassword, smtpPort);
 				try {
 					//ArrayList<UndoTextArea>から内容のString[]に変換
 					String[] ccArray = UtilsForThisPackage.toStringArraySqueezeNull(ccList);
@@ -435,6 +434,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 					String cc = MyUtils.joinStringArray(ccArray, ',');
 					String bcc = MyUtils.joinStringArray(bccArray, ',');
 					String formattedList = cc + "[bcc]" + bcc;
+					System.out.println(formattedList);
 					String txtMailName = txtSubject.getText().equals("") ? "NoName" : txtSubject.getText();
 
 					String sql =

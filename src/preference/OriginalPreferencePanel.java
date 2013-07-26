@@ -21,14 +21,13 @@ public class OriginalPreferencePanel extends JPanel implements AccessMemberField
 
 	/************ メンバ変数 ************/
 
-	private PreferencesListener xmlWriter;
-	private JTextField txtAcName;
+	private PreferencesWriter xmlWriter;
+	private JTextField txtAcMailAddr;
+	private JPasswordField txtAcPassword;
 	private JTextField txtSmtpPort;
 	private JTextField txtImapServer;
 	private JTextField txtImapPort;
 	private JTextField txtSmtpServer;
-	private JTextField txtAcMailAddr;
-	private JPasswordField txtAcPassword;
 	private JButton btnApply;
 
 	/************************************/
@@ -36,26 +35,24 @@ public class OriginalPreferencePanel extends JPanel implements AccessMemberField
 	@Override
 	public boolean allTextAreaIsNotEmpty(){
 		boolean notEmpty = true;
-		if(txtAcName.getText().equals("")) notEmpty = false;
+		if(txtAcMailAddr.getText().equals("")) notEmpty = false;
+		if(txtAcPassword.getText().equals("")) notEmpty = false;
 		if(txtSmtpServer.getText().equals("")) notEmpty = false;
 		if(txtSmtpPort.getText().equals("")) notEmpty = false;
 		if(txtImapServer.getText().equals("")) notEmpty = false;
 		if(txtImapPort.getText().equals("")) notEmpty = false;
-		if(txtAcMailAddr.getText().equals("")) notEmpty = false;
-		if(txtAcPassword.getText().equals("")) notEmpty = false;
 		return notEmpty;
 	}
 
 	@Override
 	public String[] getTexts() {
 		return new String[]{
-				txtAcName.getText(),
+				txtAcMailAddr.getText(),
+				txtAcPassword.getText(),
 				txtSmtpServer.getText(),
 				txtSmtpPort.getText(),
 				txtImapServer.getText(),
-				txtImapPort.getText(),
-				txtAcMailAddr.getText(),
-				txtAcPassword.getText()
+				txtImapPort.getText()
 		};
 	}
 
@@ -64,17 +61,23 @@ public class OriginalPreferencePanel extends JPanel implements AccessMemberField
 	public OriginalPreferencePanel() {
 
 		//初期値を設定
-		xmlWriter = new PreferencesListener(this);
+		xmlWriter = new PreferencesWriter(this);
 
 		this.setLayout(new MigLayout("", "[][grow]", "[][][][][][][][][][]"));
 
-		JLabel label = new JLabel("アカウント名");
-		label.setHorizontalAlignment(SwingConstants.CENTER);
-		this.add(label, "center");
+		JLabel label_1 = new JLabel("メールアドレス");
+		this.add(label_1, "center");
 
-		txtAcName = new JTextField();
-		this.add(txtAcName, "grow, wrap");
-		txtAcName.setColumns(10);
+		txtAcMailAddr = new JTextField();
+		this.add(txtAcMailAddr, "grow, wrap");
+		txtAcMailAddr.setColumns(10);
+
+		JLabel label_2 = new JLabel("パスワード");
+		this.add(label_2, "center");
+
+		txtAcPassword = new JPasswordField();
+		this.add(txtAcPassword, "grow, wrap");
+		txtAcPassword.setColumns(10);
 
 		JLabel lblSmtp = new JLabel("SMTPサーバー");
 		lblSmtp.setHorizontalAlignment(SwingConstants.CENTER);
@@ -105,20 +108,6 @@ public class OriginalPreferencePanel extends JPanel implements AccessMemberField
 		this.add(txtImapPort, "grow, wrap");
 		txtImapPort.setColumns(10);
 
-		JLabel label_1 = new JLabel("メールアドレス");
-		this.add(label_1, "center");
-
-		txtAcMailAddr = new JTextField();
-		this.add(txtAcMailAddr, "grow, wrap");
-		txtAcMailAddr.setColumns(10);
-
-		JLabel label_2 = new JLabel("パスワード");
-		this.add(label_2, "center");
-
-		txtAcPassword = new JPasswordField(); 
-		this.add(txtAcPassword, "grow, wrap");
-		txtAcPassword.setColumns(10);
-
 		this.add(new JLabel(""), "height 10, wrap");
 
 		btnApply = new JButton("決定");
@@ -132,13 +121,12 @@ public class OriginalPreferencePanel extends JPanel implements AccessMemberField
 		try{ prefs = PreferenceLoader.getPreferences(); }
 		catch(ParserConfigurationException | SAXException | IOException e){ e.printStackTrace(); }
 		if(prefs != null){
-			txtAcName.setText(prefs[0]);
-			txtSmtpServer.setText(prefs[1]);
-			txtSmtpPort.setText(prefs[2]);
-			txtImapServer.setText(prefs[3]);
-			txtImapPort.setText(prefs[4]);
-			txtAcMailAddr.setText(prefs[5]);
-			txtAcPassword.setText(prefs[6]);
+			txtAcMailAddr.setText(prefs[0]);
+			txtAcPassword.setText(prefs[1]);
+			txtSmtpServer.setText(prefs[2]);
+			txtSmtpPort.setText(prefs[3]);
+			txtImapServer.setText(prefs[4]);
+			txtImapPort.setText(prefs[5]);
 		}
 	}
 

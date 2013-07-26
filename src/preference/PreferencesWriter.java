@@ -20,7 +20,7 @@ import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class PreferencesListener implements ActionListener{
+public class PreferencesWriter implements ActionListener{
 
 	/************************************/
 
@@ -28,7 +28,7 @@ public class PreferencesListener implements ActionListener{
 	private AccessMemberFields calledFrame;
 
 	/* 呼び出し元フレームの受け取り */
-	public PreferencesListener(AccessMemberFields calledFrame){
+	public PreferencesWriter(AccessMemberFields calledFrame){
 		this.calledFrame = calledFrame;
 	}
 
