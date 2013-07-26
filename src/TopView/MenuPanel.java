@@ -106,6 +106,7 @@ public class MenuPanel extends JPanel {
 		paneAddress = new PaneAddress();
 		paneAddress.setName(ADDRESSBOOK_IDENT);
 		senderView = new JScrollPane(new MailSenderPanel());
+		senderView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		senderView.setName(NEW_MAIL_IDENT);
 		optionPanel = new XmlPreferencePanel();
 		optionPanel.setName(OPTION_IDENT);
