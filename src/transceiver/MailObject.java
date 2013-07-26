@@ -1,6 +1,8 @@
 package transceiver;
 
+import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import javax.mail.search.FromStringTerm;
 
