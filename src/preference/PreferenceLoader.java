@@ -1,4 +1,4 @@
-package Util;
+package preference;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,10 +12,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class SimplePreferenceLoader {
+public class PreferenceLoader {
 
 	//インスタンス生成の禁止
-	private SimplePreferenceLoader(){}
+	private PreferenceLoader(){}
 
 	/**
 	 * @throws ParserConfigurationException
@@ -25,10 +25,18 @@ public class SimplePreferenceLoader {
 	/* 設定内容をXMLから取得 */
 	public static String[] getPreferences() throws ParserConfigurationException, SAXException, IOException{
 		//固定長の配列を確保
-		String[] prefs = new String[7];
+		String[] prefs;
 
 		/* XMLを読み込むためのDOMインスタンス */
 		File xmlReader = new File("prefs.xml");
+
+		//内容が存在するか確認
+		if(xmlReader.exists()){
+			prefs = new String[7];
+		}else{
+			return null;
+		}
+
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(xmlReader);

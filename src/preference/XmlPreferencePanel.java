@@ -2,15 +2,20 @@ package preference;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.xml.parsers.ParserConfigurationException;
 
 import net.miginfocom.swing.MigLayout;
+
+import org.xml.sax.SAXException;
 
 public class XmlPreferencePanel extends JPanel implements AccessMemberFields, ActionListener{
 
@@ -23,7 +28,7 @@ public class XmlPreferencePanel extends JPanel implements AccessMemberFields, Ac
 	private JTextField txtImapPort;
 	private JTextField txtSmtpServer;
 	private JTextField txtAcMailAddr;
-	private JTextField txtAcPassword;
+	private JPasswordField txtAcPassword;
 	private JButton btnApply;
 
 	/************************************/
@@ -110,7 +115,7 @@ public class XmlPreferencePanel extends JPanel implements AccessMemberFields, Ac
 		JLabel label_2 = new JLabel("パスワード");
 		this.add(label_2, "center");
 
-		txtAcPassword = new JTextField();
+		txtAcPassword = new JPasswordField(); 
 		this.add(txtAcPassword, "grow, wrap");
 		txtAcPassword.setColumns(10);
 
@@ -120,6 +125,21 @@ public class XmlPreferencePanel extends JPanel implements AccessMemberFields, Ac
 		btnApply.addActionListener(xmlWriter);
 		btnApply.addActionListener(this);
 		this.add(btnApply, "span 2, grow");
+
+
+		/* テキストエリアへの設定読み込み */
+		String[] prefs = null;
+		try{ prefs = PreferenceLoader.getPreferences(); }
+		catch(ParserConfigurationException | SAXException | IOException e){ e.printStackTrace(); }
+		if(prefs != null){
+			txtAcName.setText(prefs[0]);
+			txtSmtpServer.setText(prefs[1]);
+			txtSmtpPort.setText(prefs[2]);
+			txtImapServer.setText(prefs[3]);
+			txtImapPort.setText(prefs[4]);
+			txtAcMailAddr.setText(prefs[5]);
+			txtAcPassword.setText(prefs[6]);
+		}
 	}
 
 	@Override

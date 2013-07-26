@@ -33,8 +33,8 @@ import net.miginfocom.swing.MigLayout;
 
 import org.xml.sax.SAXException;
 
+import preference.PreferenceLoader;
 import Util.MyUtils;
-import Util.SimplePreferenceLoader;
 import Util.UndoTextField;
 import Util.UndoTextPane;
 import dbHelper.DbHelper;
@@ -86,7 +86,12 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 	public MailSenderPanel() {
 		/* 設定から取得、値を設定 */
 		try {
-			String[] prefs = SimplePreferenceLoader.getPreferences();
+			String[] prefs = PreferenceLoader.getPreferences();
+			if(prefs == null){
+				JOptionPane.showMessageDialog(null, "アカウント情報が登録されていません\n設定画面にて登録してください", "エラー", JOptionPane.ERROR_MESSAGE);
+				//タブを閉じる
+				return;
+			}
 			myName = prefs[0];
 			smtpServer = prefs[1];
 			myMailAddr = prefs[5];
@@ -102,10 +107,6 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 		//		myMailAddr = "laboaiueo@gmail.com";
 		//		myName = "labomail";
 		//		myPassword = "labolabo";
-
-				smtpServer = "192.168.0.5";//スタブ
-				myMailAddr = "mailtest@yotu.centos.jp";
-				myName = "mailtest";
 
 		/* 初期値設定 */
 		ccList = new ArrayList<UndoTextField>();
