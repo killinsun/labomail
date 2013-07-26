@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
+import senderView.MailSenderPanel;
 import net.miginfocom.swing.MigLayout;
 import AddressBook.PaneAddress;
 
@@ -29,6 +30,7 @@ public class MenuPanel extends JPanel {
 	
 	// アイコンクリックで表示する各種JPanel
 	PaneAddress paneAddress;
+	MailSenderPanel sender;
 	/** デバッグ用 */
 	JPanel dummyFrame;
 
@@ -78,6 +80,11 @@ public class MenuPanel extends JPanel {
 			if(comp == newMail) {
 				// 新規作成
 				System.out.println("newMail!");
+				
+				if(!TopView.showTab(sender)) {
+					sender = new MailSenderPanel();
+					TopView.addTab("新規作成", sender);
+				}
 			}
 			else if (comp == receiveBox) {
 				// 受信BOX
