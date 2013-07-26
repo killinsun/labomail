@@ -1,9 +1,13 @@
 package transceiver;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import javax.mail.search.FromStringTerm;
 
+import dbHelper.DbHelper;
 import AddressBook.FrmEdit;
 
 
@@ -41,8 +45,6 @@ public class MailObject {
 		this.path = "hoge.txt";
 	}
 	
-	
-	
 	public MailObject(int id, int mboxid, int boxid, String mfrom, String mto,
 			String subject, String data, Timestamp date, String path) {
 		this.id = id;
@@ -74,9 +76,7 @@ public class MailObject {
 			break;
 		}
 	}
-
-
-
+	
 	public int getId() {
 		return id;
 	}
@@ -97,6 +97,7 @@ public class MailObject {
 
 	public String getFrom() {
 
+		// Gmail用に整形
 		int fIndex = mfrom.indexOf("<");
 		int eIndex = mfrom.lastIndexOf(">");
 		if(fIndex != -1 && eIndex != -1) {

@@ -166,6 +166,12 @@ public class MailListPanel extends JPanel {
 		
 		Icon icon = new ImageIcon("data/sent2.png");
 
+		public ImapState() {
+			if(!imap.isConnect()) {
+				imap.connect();
+			}
+		}
+		
 		@Override
 		public void changeState() {
 			getMailState = new DBState();
@@ -209,6 +215,9 @@ public class MailListPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+			// 一時的にリスナーを無効に
+			mailJList.removeListSelectionListener(listSelectAction);
 
 			System.out.println("ComboBox value changed!");
 			
@@ -219,6 +228,8 @@ public class MailListPanel extends JPanel {
 				updateMailList();
 			} catch (SQLException | MessagingException | IOException e1) {
 				System.err.println(e1.getMessage());
+			} finally {
+				mailJList.addListSelectionListener(listSelectAction);
 			}
 			validate();
 		}
@@ -259,11 +270,16 @@ public class MailListPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+			mailJList.removeListSelectionListener(listSelectAction);
+			
 			try {
 				// メールリスト更新
 				updateMailList();
 			} catch (SQLException | MessagingException | IOException e1) {
 				System.err.println(e1.getMessage());
+			} finally {
+				mailJList.addListSelectionListener(listSelectAction);
 			}
 		}
 		
