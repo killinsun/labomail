@@ -21,9 +21,10 @@ public class Dustbox_tablemodel extends DefaultTableModel {
 	public Class getColumnClass(int col){
 		return getValueAt(0, col).getClass();
 	}
-	public void add(String f,String s,String c){
+	public void add(String f,String t,String s,String c){
 		Object[] data = {
 				new Boolean(false),
+				t,
 				f,
 				s,
 				c};
