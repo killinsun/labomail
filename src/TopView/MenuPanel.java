@@ -9,8 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
 
 import net.miginfocom.swing.MigLayout;
@@ -24,7 +26,7 @@ public class MenuPanel extends JPanel {
 
 	// マップ
 	HashMap<String, IconSet> iconMap;
-	HashMap<String, JPanel> panelMap;
+	HashMap<String, JComponent> panelMap;
 
 	// 一意に対応付けさせるための文字列
 	private final String NEW_MAIL_IDENT = "新規作成";
@@ -40,7 +42,7 @@ public class MenuPanel extends JPanel {
 
 	// アイコンクリックで表示する各種JPanel
 	PaneAddress paneAddress;
-	MailSenderPanel senderView;
+	JScrollPane senderView;
 	XmlPreferencePanel optionPanel;
 	Dustbox_main paneDustbox;
 	/** デバッグ用 */
@@ -103,7 +105,7 @@ public class MenuPanel extends JPanel {
 		// パネル設定
 		paneAddress = new PaneAddress();
 		paneAddress.setName(ADDRESSBOOK_IDENT);
-		senderView = new MailSenderPanel();
+		senderView = new JScrollPane(new MailSenderPanel());
 		senderView.setName(NEW_MAIL_IDENT);
 		optionPanel = new XmlPreferencePanel();
 		optionPanel.setName(OPTION_IDENT);
@@ -113,8 +115,8 @@ public class MenuPanel extends JPanel {
 		dummyPanel.setName(OPTION_IDENT);
 
 		panelMap = new HashMap<>();
-		List<? extends JPanel> panels = Arrays.asList(paneAddress, senderView, paneDustbox, optionPanel);
-		for (JPanel panel : panels) {
+		List<? extends JComponent> panels = Arrays.asList(paneAddress, senderView, paneDustbox, optionPanel);
+		for (JComponent panel : panels) {
 			panelMap.put(panel.getName(), panel);
 		}
 	}
@@ -144,11 +146,11 @@ public class MenuPanel extends JPanel {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 
-			// 対応するパネルを表示
+			/* 対応するパネルを表示 */
 
 			Component comp = e.getComponent();
 			String name = comp.getName();
-			JPanel panel = panelMap.get(name);
+			JComponent panel = panelMap.get(name);
 
 			System.out.println(name + " was called!");
 			if(panel == null) {

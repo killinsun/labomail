@@ -418,8 +418,8 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 			setWorkingMode(true);
 			{
 				//メール送信
-				PlainSmtp_Helper sender = new PlainSmtp_Helper(smtpServer, myMailAddr, myName);
-//				GmailSmtp_Helper sender = new GmailSmtp_Helper(smtpServer, myMailAddr, myPassword, myName);
+//				PlainSmtp_Helper sender = new PlainSmtp_Helper(smtpServer, myMailAddr, myName);
+				GmailSmtp_Helper sender = new GmailSmtp_Helper(smtpServer, myMailAddr, myPassword, myName);
 				try {
 					//ArrayList<UndoTextArea>から内容のString[]に変換
 					String[] ccArray = UtilsForThisPackage.toStringArraySqueezeNull(ccList);
