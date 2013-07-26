@@ -109,7 +109,7 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 */
 
 		//親クラスのボタンを取り除く
-		super.remove(1);
+		super.remove(0);
 		super.remove(1);
 		//初期設定
 		listModel = new DefaultListModel<JCheckBox>();
