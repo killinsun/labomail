@@ -11,6 +11,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
+import transceiver.MailObject;
+
 import net.miginfocom.swing.MigLayout;
 
 public class Dustbox_main extends JPanel implements ActionListener{
@@ -112,7 +114,7 @@ public class Dustbox_main extends JPanel implements ActionListener{
 			delTempRow.clear();
 			delTempData.clear();
 		}else if(e.getSource() == button[2]){
-			model.add("hoge", "hoge","hogrhogrhogr", "fuuuuuuuuuuuuuuuuuu");
+			model.add(MailObject.createMailObjects("SELECT * FROM blacky_test")[0]);
 		}
 	}
 }
