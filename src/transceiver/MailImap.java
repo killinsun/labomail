@@ -51,9 +51,9 @@ public class MailImap {
 	}
 
 	/** メールを取得する。ファッキンスロウ（くそ遅い）なのでThread化させたい */
-	public List<MailObject> getMail() throws MessagingException, IOException {
+	public List<MailObject> getMail() throws MessagingException, IOException, IllegalStateException {
 		
-		/** Gmailの受信BOX? */
+		/** Gmailの受信BOX */
 		String target_folder = "INBOX";
 		
 		ArrayList<MailObject> mails = new ArrayList<>();

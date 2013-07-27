@@ -21,12 +21,17 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.xml.parsers.ParserConfigurationException;
 
+import org.xml.sax.SAXException;
+
+import preference.PreferenceLoader;
 import net.miginfocom.swing.MigLayout;
 
 /** 画面左側のメールリスト */
@@ -38,6 +43,7 @@ public class MailListPanel extends JPanel {
 	private ArrayList<MailObject> mailArrayList;
 	private JList<MailObject> mailJList;
 	JComboBox<DBStrategy> comboBox;
+	JLabel stateLabel;
 	JButton changeModeBtn;
 
 	private MailDB db;
@@ -52,8 +58,15 @@ public class MailListPanel extends JPanel {
 	public MailListPanel(MailViewPanel mailView) {
 		
 		db = new MailDB(true);
-		// TODO: 現在IMAP取得先は固定
-		imap = new MailImap("laboaiueo@gmail.com", "labolabo");
+		
+		String[] pref = null;
+		try {
+			// 設定ファイルからGmailのユーザ情報読み込み
+			pref = PreferenceLoader.getPreferences();
+		} catch (ParserConfigurationException | SAXException | IOException e1) {
+			JOptionPane.showMessageDialog(null, "設定ファイルの読み込みに失敗しました。", "エラー", JOptionPane.ERROR_MESSAGE);
+		}
+		imap = new MailImap(pref[0], pref[1]);
 		
 		this.mailView = mailView;
 		
@@ -83,7 +96,8 @@ public class MailListPanel extends JPanel {
 		listScrollPane.setViewportView(mailJList);
 		
 		JPanel statusPanel = new JPanel(new MigLayout("", "[grow][]", "[]"));
-		statusPanel.add(new JLabel("送受信リスト"), "c");
+		stateLabel = new JLabel(getMailState.getStateText());
+		statusPanel.add(stateLabel, "c");
 		changeModeBtn = new JButton(new ImageIcon("data/not_send2.png"));
 		changeModeBtn.addActionListener(new ModeChangeBtnAction());
 		statusPanel.add(changeModeBtn);
@@ -137,6 +151,7 @@ public class MailListPanel extends JPanel {
 		 void changeState();
 		 List<MailObject> getMailList() throws SQLException, MessagingException, IOException;
 		 Icon getIcon();
+		 String getStateText();
 	}
 	
 	/** DBから取得 */
@@ -157,6 +172,11 @@ public class MailListPanel extends JPanel {
 		@Override
 		public Icon getIcon() {
 			return icon;
+		}
+
+		@Override
+		public String getStateText() {
+			return "送受信リスト";
 		}
 		
 	}
@@ -185,6 +205,11 @@ public class MailListPanel extends JPanel {
 		@Override
 		public Icon getIcon() {
 			return icon;
+		}
+
+		@Override
+		public String getStateText() {
+			return "Gmail";
 		}
 		
 	}
@@ -253,6 +278,9 @@ public class MailListPanel extends JPanel {
 			getMailState.changeState();
 			// アイコンを変更
 			changeModeBtn.setIcon(getMailState.getIcon());
+			// テキスト変更
+			stateLabel.setText(getMailState.getStateText());
+			
 			try {
 				// メールリスト更新
 				updateMailList();
