@@ -1,0 +1,11 @@
+ID,MBOXID,BOXID,MFROM,MTO,SUBJECT,DATA,DATE,PATH
+1,1,1,aaaaa@a.com,noneck.0311@gmail.com,明日の予定,こんばんは！明日どこにいく？,2013-07-11 00:38:00,0001.txt
+2,1,2,noneck.0311@gmail.com,aaaaa@a.com,Re:明日の予定,うーん、忙しいから明日はダメって言ったはずじゃ,2013-07-11 00:45:00,0002txt
+3,1,1,aaaaa@a.com,noneck.0311@gmail.com,Re:Re:明日の予定,じゃあ、遊園地にしようかっ決まりね。,2013-07-11 00:46:00,0003.txt
+4,1,2,noneck.0311@gmail.com,aaaaa@a.com,Re:Re:Re:明日の予定,いやそれ困るって。いかないよ。,2013-07-11 00:52:00,null
+5,1,1,aaaaa@a.com,noneck.0311@gmail.com,Re:Re:Re:Re:明日の予定,どうして？私との予定はダメなの？,2013-07-11 00:53:00,null
+6,1,3,noneck.0311@gmail.com,aaaaa@a.com,no title,そんなこと言われたって,2013-07-11 01:00:00,null
+7,1,4,noneck.0311@gmail.com,aaaaa@a.com,Re:Re:Re:Re:Re:明日の予定,そんなこと言われたって、だめなものはだめさ。,2013-07-11 01:03:00,null
+8,1,1,aaaaa@a.com,noneck.0311@gmail.com,ねえ、どうしたの？,ねえどうしたの？明日のこと決めなきゃいけないんでしょ？ねえ？,2013-07-11 01:04:00,null
+9,1,1,aaaaa@a.com,noneck.0311@gmail.com,メールちょうだい,ねえ？,2013-07-11 01:05:00,null
+10,1,4,aaaaa@a.com,noneck.0311@gmail.com,今すぐそっちにいくから,まっててね。,2013-07-11 01:08:00,null
