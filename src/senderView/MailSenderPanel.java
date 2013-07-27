@@ -428,7 +428,11 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 					}
 				} catch (ParserConfigurationException | SAXException | IOException e1) {
 					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "メールサービスの識別に失敗しました\n設定では適切なサービスを選択してください", "エラー",  JOptionPane.ERROR_MESSAGE);
+					setWorkingMode(false);
+					return;
 				}
+
 				try {
 					//ArrayList<UndoTextArea>から内容のString[]に変換
 					String[] ccArray = UtilsForThisPackage.toStringArraySqueezeNull(ccList);
