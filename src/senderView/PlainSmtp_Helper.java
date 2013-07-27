@@ -21,14 +21,18 @@ public class PlainSmtp_Helper implements Smtp_Interface {
 	/************ メンバ変数 ************/
 
 	private String smtpServer;
+	private String smtpPort;
 	private String myMailAddress;
+	private String myPassword;
 
 	/************************************/
 
 	/* 選択アカウントの基本設定 */
-	public PlainSmtp_Helper(String smtpServer, String accountMailAddress){
+	public PlainSmtp_Helper(String smtpServer, String serverPort, String accountMailAddress, String accountPassword){
 		this.smtpServer = smtpServer;
+		this.smtpPort = serverPort;
 		this.myMailAddress = accountMailAddress;
+		this.myPassword = accountPassword;
 	}
 
 	@Override /* SMTP送信モジュール */
@@ -38,6 +42,8 @@ public class PlainSmtp_Helper implements Smtp_Interface {
 		Properties prop = new Properties();
 		prop.put("mail.smtp.host", smtpServer);
 		prop.put("mail.host", smtpServer);
+		prop.put("mail.smtp.port", smtpPort);
+		prop.put("mail.smtp.auth", "true");
 
 		Session session = Session.getDefaultInstance(prop, null);
 		MimeMessage msg = new MimeMessage(session);
@@ -63,8 +69,12 @@ public class PlainSmtp_Helper implements Smtp_Interface {
 		msg.setSubject(subject, "ISO-2022-JP");
 		msg.setText(detail, "ISO-2022-JP");
 
-		//送信
-		Transport.send(msg);
+		/* メールの送信 */
+		Transport transport = session.getTransport("smtp");
+
+		transport.connect(smtpServer, myMailAddress, myPassword);
+		transport.sendMessage(msg, msg.getAllRecipients());
+		transport.close();
 	}
 
 	@Override /* 複数添付ファイル付きSMTP送信モジュール */
@@ -129,8 +139,12 @@ public class PlainSmtp_Helper implements Smtp_Interface {
 		//件名をエンコード指定して設定
 		msg.setSubject(subject, "ISO-2022-JP");
 
-		//送信
-		Transport.send(msg);
+		/* メールの送信 */
+		Transport transport = session.getTransport("smtp");
+
+		transport.connect(smtpServer, myMailAddress, myPassword);
+		transport.sendMessage(msg, msg.getAllRecipients());
+		transport.close();
 
 	}
 

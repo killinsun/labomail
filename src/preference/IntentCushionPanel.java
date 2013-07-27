@@ -2,19 +2,49 @@ package preference;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class IntentCushionPanel extends JPanel implements IntentSupporter, ActionListener {
+
+	/************ メンバ変数 ************/
 
 	private JPanel intentPanel;
 	private CardLayout intent;
 
 	private JButton btnPrev;
 	private int current = -1;
+
+	/************************************/
+
+	class InfoListener extends MouseAdapter{
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			FrmSoftwareCredit sInfo = new FrmSoftwareCredit();
+			sInfo.setSize(400, 500);
+			sInfo.setLocationRelativeTo(null);
+			sInfo.setVisible(true);
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+			Component comp = (Component)e.getSource();
+			comp.setCursor(cursor);
+		}
+	}
+
+	/************************************/
+
 
 	public IntentCushionPanel(){
 
@@ -33,16 +63,27 @@ public class IntentCushionPanel extends JPanel implements IntentSupporter, Actio
 
 
 		/* インテントを指示するボタンを配置 */
-
 		btnPrev.setVisible(false);
 		btnPrev.addActionListener(this);
 
+		JPanel topPanel = new JPanel();
+		topPanel.setLayout(new BorderLayout());
+		topPanel.add(btnPrev, BorderLayout.WEST);
+
+		//上部に配置
+		this.add(topPanel, BorderLayout.NORTH);
+
+
+		/* このソフトウェアのインフォメーションを表示するアイコンを配置 */
+		JLabel info = new JLabel(new ImageIcon("data/info.png"));
+		info.addMouseListener(new InfoListener());
+
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new BorderLayout());
-		bottomPanel.add(btnPrev, BorderLayout.WEST);
+		bottomPanel.add(info, BorderLayout.EAST);
 
-		this.add(bottomPanel, BorderLayout.NORTH);
-
+		//下部に配置
+		this.add(bottomPanel, BorderLayout.SOUTH);
 	}
 
 	@Override

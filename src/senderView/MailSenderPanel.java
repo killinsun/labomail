@@ -84,6 +84,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 
 
 	public MailSenderPanel() {
+
 		/* 設定から取得、値を設定 */
 		try {
 			String[] prefs = PreferenceLoader.getPreferences();
@@ -101,11 +102,6 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 			JOptionPane.showMessageDialog(null, "アカウント設定情報の取得に失敗しました\n設定をしていない場合は設定してください", "エラー", JOptionPane.ERROR_MESSAGE);
 			e1.printStackTrace();
 		}
-		//		smtpServer = "SMTPサーバ";//スタブ
-		//		myMailAddr = "自分のメアド";
-//				smtpServer = "smtp.gmail.com";
-//				myMailAddr = "laboaiueo@gmail.com";
-//				myPassword = "labolabo";
 
 		/* 初期値設定 */
 		ccList = new ArrayList<UndoTextField>();
@@ -374,6 +370,33 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 
 	/************ メール送信操作 ************/
 
+
+	/* 引数としてMBOX識別番号を受け取る */
+	private void pushDB(int mboxID) throws SQLException{
+		//ArrayList<UndoTextArea>から内容のString[]に変換
+		String[] ccArray = UtilsForThisPackage.toStringArraySqueezeNull(ccList);
+		String[] bccArray = UtilsForThisPackage.toStringArraySqueezeNull(bccList);
+
+		//データベースに挿入
+		DbHelper helper = new DbHelper();
+		String cc = MyUtils.joinStringArray(ccArray, ',');
+		String bcc = MyUtils.joinStringArray(bccArray, ',');
+		String formattedList = cc + "[BCC]" + bcc;
+		System.out.println(formattedList);
+		String txtMailName = txtSubject.getText().equals("") ? "NoName" : txtSubject.getText();
+
+		String sql =
+				String.format(
+						"INSERT INTO" +
+								" mastertbl(MBOXID, BOXID, MFROM, MTO, SUBJECT, DATA, DATE, PATH)" +
+								" VALUES('%d', '1', '%s', '%s'," +
+								" '%s', '%s', DATETIME('now','localtime'), 'data/send/%s.lbm');",
+								mboxID, myMailAddr, formattedList, txtSubject.getText(), txtDetail.getText(),  txtMailName
+						);
+		helper.execute(sql);
+		helper.close();
+	}
+
 	@Override
 	public void run() {
 
@@ -406,82 +429,74 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 			}
 		}
 
+
+		/* 送信操作 */
+
 		//送信していいか確認
 		if(JOptionPane.showConfirmDialog(null, "送信しますか？", "確認", JOptionPane.YES_NO_OPTION) == 0){
 			//プログレスバーを始動、テキストエリアを編集不可化
 			setWorkingMode(true);
-			{
-				//メール送信
-				Smtp_Interface sender = null;
 
-				//設定情報の「メールサービス」を識別
-				try {
-					switch (PreferenceLoader.getPreferences()[6]) {
-					case "Gmail":
-						sender = new GmailSmtp_Helper(smtpServer, myMailAddr, myPassword, smtpPort);
-						break;
-					case "none":
-						sender = new PlainSmtp_Helper(smtpServer, myMailAddr);
-						break;
-					default:
-						throw new RuntimeException("Unknown MailService in MailSenderPanel");
-					}
-				} catch (ParserConfigurationException | SAXException | IOException e1) {
-					e1.printStackTrace();
-					JOptionPane.showMessageDialog(null, "メールサービスの識別に失敗しました\n設定では適切なサービスを選択してください", "エラー",  JOptionPane.ERROR_MESSAGE);
-					setWorkingMode(false);
-					return;
+			//メール送信
+			Smtp_Interface sender = null;
+
+			//設定情報の「メールサービス」を識別
+			try {
+				switch (PreferenceLoader.getPreferences()[6]) {
+				case "Gmail":
+					sender = new GmailSmtp_Helper(myMailAddr, myPassword);
+					break;
+				case "none":
+					sender = new PlainSmtp_Helper(smtpServer, smtpPort, myMailAddr, myPassword);
+					break;
+				default:
+					throw new RuntimeException("Unknown MailService in MailSenderPanel");
 				}
-
-				try {
-					//ArrayList<UndoTextArea>から内容のString[]に変換
-					String[] ccArray = UtilsForThisPackage.toStringArraySqueezeNull(ccList);
-					String[] bccArray = UtilsForThisPackage.toStringArraySqueezeNull(bccList);
-
-					//メール送信
-					if(attachFileList.size() > 0){
-						/* 添付ファイルがある場合 */
-						ArrayList<FileDataSource> files = UtilsForThisPackage.squeezeNull(attachFileList);
-						sender.sendMail(ccArray, bccArray, txtSubject.getText(), txtDetail.getText(), files);
-					} else {
-						/* 添付ファイルがない場合 */
-						sender.sendMail(ccArray, bccArray, txtSubject.getText(), txtDetail.getText());
-					}
-
-					/* メール内容をDBに格納 */
-					DbHelper helper = new DbHelper();
-					String cc = MyUtils.joinStringArray(ccArray, ',');
-					String bcc = MyUtils.joinStringArray(bccArray, ',');
-					String formattedList = cc + "[BCC]" + bcc;
-					System.out.println(formattedList);
-					String txtMailName = txtSubject.getText().equals("") ? "NoName" : txtSubject.getText();
-
-					String sql =
-							String.format(
-							"INSERT INTO" +
-							" mastertbl(MBOXID, BOXID, MFROM, MTO, SUBJECT, DATA, DATE, PATH)" +
-							" VALUES('2', '1', '%s', '%s'," +
-							" '%s', '%s', DATETIME('now','localtime'), 'data/send/%s.lbm');",
-							myMailAddr, formattedList, txtSubject.getText(), txtDetail.getText(),  txtMailName
-							);
-					helper.execute(sql);
-					helper.close();
-
-				} catch (UnsupportedEncodingException | MessagingException | SQLException e) {
-					setWorkingMode(false);
-					e.printStackTrace();
-					JOptionPane.showConfirmDialog(null, "メールの送信にエラーが発生しました", "送信に失敗しました", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
-					return;
-				}
+			} catch (ParserConfigurationException | SAXException | IOException e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, "メールサービスの識別に失敗しました\n設定では適切なサービスを選択してください", "エラー",  JOptionPane.ERROR_MESSAGE);
+				setWorkingMode(false);
+				return;
 			}
+
+			try {
+				//ArrayList<UndoTextArea>から内容のString[]に変換
+				String[] ccArray = UtilsForThisPackage.toStringArraySqueezeNull(ccList);
+				String[] bccArray = UtilsForThisPackage.toStringArraySqueezeNull(bccList);
+
+				//メール送信
+				if(attachFileList.size() > 0){
+					/* 添付ファイルがある場合 */
+					ArrayList<FileDataSource> files = UtilsForThisPackage.squeezeNull(attachFileList);
+					sender.sendMail(ccArray, bccArray, txtSubject.getText(), txtDetail.getText(), files);
+				} else {
+					/* 添付ファイルがない場合 */
+					sender.sendMail(ccArray, bccArray, txtSubject.getText(), txtDetail.getText());
+				}
+
+				/* メール内容をDBに格納 */
+				pushDB(2); //「送信」を表す「2」
+
+			} catch (UnsupportedEncodingException | MessagingException | SQLException e) {
+				/* 例外発生時 */
+				setWorkingMode(false);
+				clearAllText();
+				e.printStackTrace();
+
+				//現在のメール内容をデータベースに格納
+				try{ pushDB(3); } catch(SQLException e1){ e1.printStackTrace(); }
+				JOptionPane.showMessageDialog(null, "メールの送信にエラーが発生しました\nメール情報を未送信画面に保存しました", "送信に失敗しました", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			//終了処理
+			setWorkingMode(false);
+
+			//全て正しく送信できた場合
+			clearAllText();
+			JOptionPane.showMessageDialog(null, "送信しました", "送信完了", JOptionPane.INFORMATION_MESSAGE);
 		}
 
-		//終了処理
-		setWorkingMode(false);
-
-		//全て正しく送信できた場合
-		clearAllText();
-		JOptionPane.showMessageDialog(null, "送信しました", "送信完了", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 
@@ -611,7 +626,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 			break;
 
 
-		/* BCCモード */
+			/* BCCモード */
 		case "BCC":
 			for(int i=0; i<address.length; i++, toCount++){
 				if(toCount > 99){

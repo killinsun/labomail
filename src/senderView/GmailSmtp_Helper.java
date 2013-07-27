@@ -33,7 +33,7 @@ public class GmailSmtp_Helper implements Smtp_Interface {
 	/************************************/
 
 	/* 選択アカウントの基本設定 */
-	public GmailSmtp_Helper(String smtpServer, String accountMailAddress, String accountPassword, String port){
+	public GmailSmtp_Helper(String accountMailAddress, String accountPassword){
 		this.myMailAddress = accountMailAddress;
 		this.myPassword = accountPassword;
 	}
