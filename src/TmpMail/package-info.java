@@ -1,9 +1,0 @@
-/**
- * 
- */
-/**
- * @author takeuchiryouta
- *
- */
-package TmpMail;
-
