@@ -14,11 +14,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import transceiver.TransceiverPanel;
+
 /** 閉じるボタン付きJTabbedPane */
 public class CloseBtnJTabbedPane extends JTabbedPane {
 
 	private Icon icon = new ImageIcon("data/batten_.gif");
 	private Dimension buttonSize = new Dimension(16, 16);
+	
+	private String title;
 
 	@Override
 	public void addTab(String title, final Component component) {
@@ -34,11 +38,12 @@ public class CloseBtnJTabbedPane extends JTabbedPane {
 			}
 		});
 		tab.add(label, BorderLayout.WEST);
-		if( !(component.getName().equals("TOP")) ) {
+		if( !(component.getClass().equals(TransceiverPanel.class)) ) {
 			tab.add(button, BorderLayout.EAST);
 		}
 		tab.setBorder(BorderFactory.createEmptyBorder(2, 1, 1, 1));
-		super.addTab(null, component);
+		super.addTab(title, component);
 		setTabComponentAt(getTabCount() - 1, tab);
 	}
+	
 }

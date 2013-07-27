@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
@@ -26,7 +27,7 @@ public class MenuPanel extends JPanel {
 
 	// マップ
 	HashMap<String, IconSet> iconMap;
-	HashMap<String, JComponent> panelMap;
+	HashMap<String, Class<? extends JComponent>> panelMap;
 
 	// 一意に対応付けさせるための文字列
 	private final String NEW_MAIL_IDENT = "新規作成";
@@ -40,13 +41,8 @@ public class MenuPanel extends JPanel {
 	// アイコンたち
 	JLabel newMail, receiveBox, sentBox, notSendBox, trush, addressBook, option;
 
-	// アイコンクリックで表示する各種JPanel
-	PaneAddress paneAddress;
-	JScrollPane senderView;
-	SelectHostPreferencePanel optionPanel;
-	Dustbox_main paneDustbox;
-	/** デバッグ用 */
-	JPanel dummyPanel;
+	// あとでインスタンス生成するため、各JComponentのクラスを保持
+	Class<? extends JComponent> paneAddress, senderView, optionPanel, paneDustBox, dummyPanel;
 
 	public MenuPanel() {
 
@@ -103,23 +99,19 @@ public class MenuPanel extends JPanel {
 		}
 
 		// パネル設定
-		paneAddress = new PaneAddress();
-		paneAddress.setName(ADDRESSBOOK_IDENT);
-		senderView = new JScrollPane(new MailSenderPanel());
-		senderView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		senderView.setName(NEW_MAIL_IDENT);
-		optionPanel = new SelectHostPreferencePanel();
-		optionPanel.setName(OPTION_IDENT);
-		paneDustbox = new Dustbox_main();
-		paneDustbox.setName(TRUSH_IDENT);
-		dummyPanel = new DummyPanel();
-		dummyPanel.setName(OPTION_IDENT);
-
+		paneAddress = PaneAddress.class;
+		senderView = MailSenderPanel.class;
+		// TODO: JscrollPane消しちゃったから新規作成画面の方でなんとかしてください＞＜ (to:あいやくん)
+//		senderView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		optionPanel = SelectHostPreferencePanel.class;
+		paneDustBox = Dustbox_main.class;
+		dummyPanel = DummyPanel.class;
+		
 		panelMap = new HashMap<>();
-		List<? extends JComponent> panels = Arrays.asList(paneAddress, senderView, paneDustbox, optionPanel);
-		for (JComponent panel : panels) {
-			panelMap.put(panel.getName(), panel);
-		}
+		panelMap.put(NEW_MAIL_IDENT, senderView);
+		panelMap.put(TRUSH_IDENT, paneDustBox);
+		panelMap.put(ADDRESSBOOK_IDENT, paneAddress);
+		panelMap.put(OPTION_IDENT, optionPanel);
 	}
 
 //
@@ -153,16 +145,25 @@ public class MenuPanel extends JPanel {
 
 			Component comp = e.getComponent();
 			String name = comp.getName();
-			JComponent panel = panelMap.get(name);
+			Class<? extends JComponent> panel = panelMap.get(name);
 
 			System.out.println(name + " was called!");
 			if(panel == null) {
 				return;
 			}
-			if(!TopView.showTab(comp)) {
-				TopView.addTab(name, panel);
+			if(!TopView.showTab(name)) {
+				try {
+					// インスタンス生成と追加
+					JComponent newComponent = panel.newInstance();
+					TopView.addTab(name, newComponent);
+				} catch (InstantiationException | IllegalAccessException e1) {
+					JOptionPane.showMessageDialog(null, "タブが開けません", "エラー", JOptionPane.ERROR_MESSAGE);
+				}
 			}
+			
 		}
+		
+		
 	}
 
 }
