@@ -23,11 +23,18 @@ public class SelectHostPreferencePanel extends JPanel implements ActionListener 
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JFrame f = new JFrame();
-		f.setLocationRelativeTo(null);
-		f.setSize(400, 300);
-		f.add(new OriginalPreferencePanel());
-		f.setVisible(true);
+		JFrame prefView = new JFrame();
+		prefView.setSize(400, 300);
+		prefView.setLocationRelativeTo(null);
+
+		/* 呼び出したボタンによって呼び出す画面を分岐させる */
+		switch (e.getActionCommand()) {
+		case "Gmail": prefView.add(new GmailPreferencePanel()); break;
+		case "その他": prefView.add(new OriginalPreferencePanel()); break;
+		default: throw new RuntimeException("Unknown ActionCommand\n\tin PreferenceSelection");
+		}
+
+		prefView.setVisible(true);
 	}
 
 }

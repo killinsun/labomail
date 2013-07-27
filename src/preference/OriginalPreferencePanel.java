@@ -2,6 +2,7 @@ package preference;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.swing.JButton;
@@ -12,27 +13,26 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import net.miginfocom.swing.MigLayout;
 
 import org.xml.sax.SAXException;
 
-public class OriginalPreferencePanel extends JPanel implements AccessMemberFields, ActionListener{
+public class OriginalPreferencePanel extends JPanel implements ActionListener{
 
 	/************ メンバ変数 ************/
 
-	private PreferencesWriter xmlWriter;
 	private JTextField txtAcMailAddr;
 	private JPasswordField txtAcPassword;
+	private JTextField txtSmtpServer;
 	private JTextField txtSmtpPort;
 	private JTextField txtImapServer;
 	private JTextField txtImapPort;
-	private JTextField txtSmtpServer;
 	private JButton btnApply;
 
 	/************************************/
 
-	@Override
 	public boolean allTextAreaIsNotEmpty(){
 		boolean notEmpty = true;
 		if(txtAcMailAddr.getText().equals("")) notEmpty = false;
@@ -44,7 +44,6 @@ public class OriginalPreferencePanel extends JPanel implements AccessMemberField
 		return notEmpty;
 	}
 
-	@Override
 	public String[] getTexts() {
 		return new String[]{
 				txtAcMailAddr.getText(),
@@ -60,8 +59,7 @@ public class OriginalPreferencePanel extends JPanel implements AccessMemberField
 
 	public OriginalPreferencePanel() {
 
-		//初期値を設定
-		xmlWriter = new PreferencesWriter(this);
+		/*** コンポーネントを生成 ***/
 
 		this.setLayout(new MigLayout("", "[][grow]", "[][][][][][][][][][]"));
 
@@ -111,7 +109,6 @@ public class OriginalPreferencePanel extends JPanel implements AccessMemberField
 		this.add(new JLabel(""), "height 10, wrap");
 
 		btnApply = new JButton("決定");
-		btnApply.addActionListener(xmlWriter);
 		btnApply.addActionListener(this);
 		this.add(btnApply, "span 2, grow");
 
@@ -132,8 +129,16 @@ public class OriginalPreferencePanel extends JPanel implements AccessMemberField
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//XMLの書き込み完了を通知
-		JOptionPane.showMessageDialog(null, "設定を書き込みました", "完了", JOptionPane.INFORMATION_MESSAGE);
+		try {
+			//XMLに設定内容を書き込む
+			PreferencesWriter.writeXmlPreferences(getTexts(), "none");
+
+			//XMLの書き込み完了を通知
+			JOptionPane.showMessageDialog(null, "設定を書き込みました", "完了", JOptionPane.INFORMATION_MESSAGE);
+
+		} catch (FileNotFoundException | ParserConfigurationException | TransformerException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 }

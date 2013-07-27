@@ -1,12 +1,9 @@
 package preference;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
-import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,45 +17,34 @@ import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class PreferencesWriter implements ActionListener{
+public class PreferencesWriter {
 
-	/************************************/
-
-	//呼び出し元フレーム
-	private AccessMemberFields calledFrame;
-
-	/* 呼び出し元フレームの受け取り */
-	public PreferencesWriter(AccessMemberFields calledFrame){
-		this.calledFrame = calledFrame;
-	}
-
-
-	/************ リスナー ************/
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if(calledFrame.allTextAreaIsNotEmpty()){
-			try {
-				//入力された設定をxmlに書き込む
-				writeXmlPreferences(calledFrame.getTexts());
-			} catch (FileNotFoundException | ParserConfigurationException | TransformerException e1) {
-				// TODO 自動生成された catch ブロック
-				e1.printStackTrace();
-			}
-		}else{
-			//エラーメッセージを表示する
-			JOptionPane.showMessageDialog(null, "空の項目があります", "エラー", JOptionPane.ERROR_MESSAGE);
-		}
-	}
+	//インスタンス生成の禁止
+	private PreferencesWriter(){}
 
 	/************ xmlファイルへの書き込み ************/
+
+	/**
+	 * このメソッドは引数を
+	 * ・メールアドレス
+	 * ・パスワード
+	 * ・SMTPサーバー
+	 * ・SMTPポート
+	 * ・IMAPサーバー
+	 * ・IMAPポート
+	 * の順に書き込みます
+	 *
+	 * また第二引数はメールサービス（Gmail等）の判別用として
+	 * ・メールサービス
+	 * に書き込まれます
+	 */
 
 	/**
 	 * @throws ParserConfigurationException
 	 * @throws FileNotFoundException
 	 * @throws TransformerException
 	 */
-	public void writeXmlPreferences(String[] prefs) throws ParserConfigurationException, FileNotFoundException, TransformerException {
+	public static void writeXmlPreferences(String[] prefs, String ident) throws ParserConfigurationException, FileNotFoundException, TransformerException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		DOMImplementation dom = builder.getDOMImplementation();
@@ -72,13 +58,15 @@ public class PreferencesWriter implements ActionListener{
 			Element smtpPort = doc.createElement("SMTPポート");
 			Element imapServer = doc.createElement("IMAPサーバー");
 			Element imapPort = doc.createElement("IMAPポート");
+			Element mailServiceIdent = doc.createElement("メールサービス");
 
-			smtpServer.appendChild(doc.createTextNode(prefs[0]));
-			smtpPort.appendChild(doc.createTextNode(prefs[1]));
-			imapServer.appendChild(doc.createTextNode(prefs[2]));
-			imapPort.appendChild(doc.createTextNode(prefs[3]));
-			acMailAddr.appendChild(doc.createTextNode(prefs[4]));
-			acPassword.appendChild(doc.createTextNode(prefs[5]));
+			acMailAddr.appendChild(doc.createTextNode(prefs[0]));
+			acPassword.appendChild(doc.createTextNode(prefs[1]));
+			smtpServer.appendChild(doc.createTextNode(prefs[2]));
+			smtpPort.appendChild(doc.createTextNode(prefs[3]));
+			imapServer.appendChild(doc.createTextNode(prefs[4]));
+			imapPort.appendChild(doc.createTextNode(prefs[5]));
+			mailServiceIdent.appendChild(doc.createTextNode(ident));
 
 			root.appendChild(acMailAddr);
 			root.appendChild(acPassword);
@@ -86,6 +74,7 @@ public class PreferencesWriter implements ActionListener{
 			root.appendChild(smtpPort);
 			root.appendChild(imapServer);
 			root.appendChild(imapPort);
+			root.appendChild(mailServiceIdent);
 		}
 
 		/* 設定情報の書き込み */

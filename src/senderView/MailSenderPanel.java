@@ -412,8 +412,27 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 			setWorkingMode(true);
 			{
 				//メール送信
-//				PlainSmtp_Helper sender = new PlainSmtp_Helper(smtpServer, myMailAddr);
-				Smtp_Helper sender = new Smtp_Helper(smtpServer, myMailAddr, myPassword, smtpPort);
+				Smtp_Interface sender = null;
+
+				//設定情報の「メールサービス」を識別
+				try {
+					switch (PreferenceLoader.getPreferences()[6]) {
+					case "Gmail":
+						sender = new GmailSmtp_Helper(smtpServer, myMailAddr, myPassword, smtpPort);
+						break;
+					case "none":
+						sender = new PlainSmtp_Helper(smtpServer, myMailAddr);
+						break;
+					default:
+						throw new RuntimeException("Unknown MailService in MailSenderPanel");
+					}
+				} catch (ParserConfigurationException | SAXException | IOException e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "メールサービスの識別に失敗しました\n設定では適切なサービスを選択してください", "エラー",  JOptionPane.ERROR_MESSAGE);
+					setWorkingMode(false);
+					return;
+				}
+
 				try {
 					//ArrayList<UndoTextArea>から内容のString[]に変換
 					String[] ccArray = UtilsForThisPackage.toStringArraySqueezeNull(ccList);
@@ -433,7 +452,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 					DbHelper helper = new DbHelper();
 					String cc = MyUtils.joinStringArray(ccArray, ',');
 					String bcc = MyUtils.joinStringArray(bccArray, ',');
-					String formattedList = cc + "[bcc]" + bcc;
+					String formattedList = cc + "[BCC]" + bcc;
 					System.out.println(formattedList);
 					String txtMailName = txtSubject.getText().equals("") ? "NoName" : txtSubject.getText();
 
