@@ -16,13 +16,16 @@ import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
 
 import net.miginfocom.swing.MigLayout;
-import preference.SelectServicePanel;
+import preference.IntentCushionPanel;
 import senderView.MailSenderPanel;
 import AddressBook.PaneAddress;
 import DustBox.Dustbox_main;
 
 /** 画面上部のメニュー */
 public class MenuPanel extends JPanel {
+
+	//インナークラスからの参照用
+	MenuPanel superPanel;
 
 	// マップ
 	HashMap<String, IconSet> iconMap;
@@ -43,12 +46,15 @@ public class MenuPanel extends JPanel {
 	// アイコンクリックで表示する各種JPanel
 	PaneAddress paneAddress;
 	JScrollPane senderView;
-	SelectServicePanel optionPanel;
+	IntentCushionPanel optionPanel;
 	Dustbox_main paneDustbox;
 	/** デバッグ用 */
 	JPanel dummyPanel;
 
 	public MenuPanel() {
+
+		//参照格納用
+		this.superPanel = this;
 
 		// レイアウト設定
 		this.setLayout(new MigLayout("", "[]40[]40[]40[]40[]40[]", "[grow]"));
@@ -108,7 +114,7 @@ public class MenuPanel extends JPanel {
 		senderView = new JScrollPane(new MailSenderPanel());
 		senderView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		senderView.setName(NEW_MAIL_IDENT);
-		optionPanel = new SelectServicePanel();
+		optionPanel = new IntentCushionPanel();
 		optionPanel.setName(OPTION_IDENT);
 		paneDustbox = new Dustbox_main();
 		paneDustbox.setName(TRUSH_IDENT);
