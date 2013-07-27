@@ -124,7 +124,7 @@ public class GmailSmtp_Helper implements Smtp_Interface {
 		Properties props = System.getProperties();
 //		props.put("mail.smtp.host", smtpServer);
 //		props.put("mail.host", smtpServer);
-		props.put("mail.smtp.port", "587");
+		props.put("mail.smtp.port", port);
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.starttls.enable", "true");
 
@@ -158,7 +158,7 @@ public class GmailSmtp_Helper implements Smtp_Interface {
 		//送信
 //		Transport.send(msg);
 		Transport transport = session.getTransport("smtp");
-		transport.connect("smtp.gmail.com", myMailAddress, myPassword);
+		transport.connect(smtpServer, myMailAddress, myPassword);
 		transport.sendMessage(msg, msg.getAllRecipients());
 		transport.close();
 
