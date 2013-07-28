@@ -14,20 +14,22 @@ public class FrmSoftwareCredit extends JFrame {
 	public FrmSoftwareCredit(){
 
 		/* 初期設定 */
+		this.setTitle("Credit");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLayout(new BorderLayout());
 		getContentPane().setBackground(Color.LIGHT_GRAY);
 
 		//アイコンを設置
-		JLabel softIcon = new JLabel(new ImageIcon("data/softIcon.jpg"));
+		JLabel softIcon = new JLabel(new ImageIcon("data/creditIcon.jpg"));
 		this.add(softIcon, BorderLayout.NORTH);
 
 		//明示文を設置
 		String creadit =
 				"\nLabo Mailer for Gmail\n\n" +
 				"Version: 1.0\n" +
-				"release: 2013-07-31\n\n" +
-				"Created by Labo Members";
+				"Release: 2013-07-31\n\n" +
+				"Created by FJB Labo Members\n" +
+				"And FJB Graphic Menbers";
 
 		JTextArea txtCredit = new JTextArea(creadit);
 		txtCredit.setFont(new Font("ＭＳ Ｐゴシック", Font.BOLD, 15));
