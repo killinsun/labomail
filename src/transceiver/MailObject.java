@@ -88,10 +88,10 @@ public class MailObject {
 			e.printStackTrace();
 		}
 		
-		ArrayList<MailObject> mObjAry = new ArrayList<>();
+		ArrayList<MailObject> mailObjAry = new ArrayList<>();
 		try {
 			while(rs.next()){
-					mObjAry.add(new MailObject(
+					mailObjAry.add(new MailObject(
 							rs.getInt("id"), 
 							rs.getInt("mboxid"), 
 							rs.getInt("boxid"), 
@@ -104,8 +104,11 @@ public class MailObject {
 				}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally{
+			try{ rs.close(); }
+			catch (SQLException e) { e.printStackTrace(); }
 		}
-		return (MailObject[])mObjAry.toArray();
+		return (MailObject[])mailObjAry.toArray();
 	}
 
 

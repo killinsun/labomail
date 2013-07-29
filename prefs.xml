@@ -1,1 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><アカウント設定><メールアドレス>mailtest@自鯖</メールアドレス><パスワード>none</パスワード><SMTPサーバー>192.168.0.6</SMTPサーバー><SMTPポート>25</SMTPポート><IMAPサーバー>192.168.0.6</IMAPサーバー><IMAPポート>143</IMAPポート><メールサービス>none</メールサービス></アカウント設定>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><アカウント設定><メールアドレス>erufingame@gmail.com</メールアドレス><パスワード>raimu00447744</パスワード><SMTPサーバー>smtp.gmail.com</SMTPサーバー><SMTPポート>587</SMTPポート><IMAPサーバー>imap.gmail.com</IMAPサーバー><IMAPポート>993</IMAPポート><メールサービス>Gmail</メールサービス></アカウント設定>
