@@ -66,7 +66,7 @@ public class MailListPanel extends JPanel {
 		} catch (ParserConfigurationException | SAXException | IOException e1) {
 			JOptionPane.showMessageDialog(null, "設定ファイルの読み込みに失敗しました。", "エラー", JOptionPane.ERROR_MESSAGE);
 		}
-		imap = new MailImap(pref[0], pref[1]);
+		imap = new MailImap(pref[0], pref[1], pref[4], Integer.parseInt(pref[5]));
 		
 		this.mailView = mailView;
 		
@@ -82,12 +82,7 @@ public class MailListPanel extends JPanel {
 		
 		// DBからメール取得
 		getMailState = new DBState();
-		try {
-			updateMailList();
-		}
-		catch (SQLException | MessagingException | IOException e) {
-			System.err.println(e.getMessage());
-		}
+		updateMailList();
 
 		mailJList = new JList<>(listModel);
 		mailJList.setCellRenderer(new TextImageRenderer());
@@ -120,13 +115,23 @@ public class MailListPanel extends JPanel {
 	}
 	
 	/** メールリスト更新 */
-	private void updateMailList() throws SQLException, MessagingException, IOException {
+	private void updateMailList() {
 		
 		// 初期化
 		listModel.setSize(0);
 		
 		// 選択されている方法でメールを取得
-		List<MailObject> mails = getMailState.getMailList();
+		List<MailObject> mails = new ArrayList<>();
+		try {
+			mails = getMailState.getMailList();
+		} catch (SQLException | MessagingException | IOException e) {
+			JOptionPane.showMessageDialog(
+					null, "メールの取得に失敗しました。", "エラー", JOptionPane.ERROR_MESSAGE);
+		} catch (IllegalStateException e) {
+			JOptionPane.showMessageDialog(
+					null, "IMAPサーバーに接続できません。設定を確認してください。",
+					"エラー", JOptionPane.ERROR_MESSAGE);
+		}
 		
 		for (MailObject mailObject : mails) {
 			listModel.addElement(mailObject);
@@ -149,7 +154,7 @@ public class MailListPanel extends JPanel {
 	/** Stateパターン */
 	interface GetMailState {
 		 void changeState();
-		 List<MailObject> getMailList() throws SQLException, MessagingException, IOException;
+		 List<MailObject> getMailList() throws SQLException, MessagingException, IOException, IllegalStateException;
 		 Icon getIcon();
 		 String getStateText();
 	}
@@ -198,7 +203,7 @@ public class MailListPanel extends JPanel {
 		}
 
 		@Override
-		public List<MailObject> getMailList() throws MessagingException, IOException {
+		public List<MailObject> getMailList() throws MessagingException, IOException, IllegalStateException {
 			return imap.getMail();
 		}
 
@@ -248,14 +253,10 @@ public class MailListPanel extends JPanel {
 			
 			// 並び替え方法を変更
 			db.setStrategy(comboBox.getItemAt(comboBox.getSelectedIndex()));
-			try {
-				// メールリストを更新
-				updateMailList();
-			} catch (SQLException | MessagingException | IOException e1) {
-				System.err.println(e1.getMessage());
-			} finally {
-				mailJList.addListSelectionListener(listSelectAction);
-			}
+			// メールリストを更新
+			updateMailList();
+
+			mailJList.addListSelectionListener(listSelectAction);
 			validate();
 		}
 		
@@ -281,14 +282,9 @@ public class MailListPanel extends JPanel {
 			// テキスト変更
 			stateLabel.setText(getMailState.getStateText());
 			
-			try {
-				// メールリスト更新
-				updateMailList();
-			} catch (SQLException | MessagingException | IOException e1) {
-				System.err.println(e1.getMessage());
-			} finally {
-				mailJList.addListSelectionListener(listSelectAction);
-			}
+			// メールリスト更新
+			updateMailList();
+			mailJList.addListSelectionListener(listSelectAction);
 		}
 		
 	}
@@ -301,15 +297,10 @@ public class MailListPanel extends JPanel {
 			
 			mailJList.removeListSelectionListener(listSelectAction);
 			
-			try {
-				// メールリスト更新
-				updateMailList();
-			} catch (SQLException | MessagingException | IOException e1) {
-				System.err.println(e1.getMessage());
-			} finally {
-				mailJList.addListSelectionListener(listSelectAction);
-			}
-		}
-		
+			// メールリスト更新
+			updateMailList();
+			mailJList.addListSelectionListener(listSelectAction);
+		}	
 	}
+	
 }

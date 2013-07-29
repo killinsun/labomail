@@ -17,20 +17,24 @@ import javax.mail.Store;
 /** IMAP操作クラス */
 public class MailImap {
 
-	private String user;
-	private String passwd;
-	private String host;
-	private int port;
+	protected String user;
+	protected String passwd;
+	protected String host;
+	protected int port;
 	
-	private Session session;
-	private Store store;
-	private boolean connect = false;
+	protected Session session;
+	protected Store store;
+	protected boolean connect = false;
 	
-	public MailImap(String user, String passwd) {
+	public MailImap(String user, String passwd, String host, int port) {
+		this.setUser(user, passwd, host, port);
+	}
+	
+	public void setUser(String user, String passwd, String host, int port) {
 		this.user = user;
 		this.passwd = passwd;
-		host = "imap.gmail.com";
-		port = 993;
+		this.host = host;
+		this.port = port;
 	}
 	
 	public void connect() {
@@ -39,9 +43,10 @@ public class MailImap {
 		try {
 			store = session.getStore("imaps");
 			store.connect(host, port, user, passwd);
-
+			connect = true;
 		} catch (MessagingException e) {
 			System.err.println(e.getMessage());
+			connect = false;
 		} 
 		
 	}
@@ -99,7 +104,7 @@ public class MailImap {
 	}
 	
 	/** メールの本文を取得。MIME形式の場合、Stringに変換。 */
-	private String getText(Object content) throws MessagingException, IOException {
+	protected String getText(Object content) throws MessagingException, IOException {
 		
 		String text = null;
 	    StringBuffer sb = new StringBuffer();
