@@ -9,7 +9,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+
+import com.sun.mail.handlers.text_html;
+
+import DustBox.Dustbox_main;
+import DustBox.Dustbox_tablemodel;
 
 import dbHelper.DbHelper;
 
@@ -22,19 +28,24 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 	private ArrayList<Object[]> delTempData = new ArrayList<>();
 
 	// カラムタイトル設定
-	final String[] clmTitle = { "", "from", "件名", "内容" };
+	final String[] clmTitle = { 
+			"", 
+			"from", 
+			"件名", 
+			"内容" };
 	// DraftBox_Tableをインスタンス化
-	public DraftBox_Table model = new DraftBox_Table(clmTitle);
+	public DraftBox_Table tmpmodel = new DraftBox_Table(clmTitle);
 	// パネルを配列にセット
 	final JPanel[] pane = { new JPanel(),// 配列0
 			new JPanel() };// 配列1
 
 	// 配列にボタン設定
 	final JButton[] button = { 
-			new JButton("再編集(またはそのまま送信)"), 
-			new JButton("ゴミ箱へ") };
+			new JButton("再編集(またはそのまま送信)"),
+			new JButton("ゴミ箱へ"), 
+			new JButton("テーブル追加") };
 	// テーブルクラス
-	final JTable table = new JTable(model);
+	final JTable table = new JTable(tmpmodel);
 
 	public DraftBox_Mainframe() {
 
@@ -91,8 +102,29 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 			// 再編集(or送信)用処理
 		}
 		// もし配列1(ゴミ箱へ)のボタンが押されたら
-		if (e.getSource() == button[1]) {
-			//ゴミ箱へ送る処理
+		else if (e.getSource() == button[1]) {
+
+			// ゴミ箱へ送る処理
+//			Dustbox_main dbox = new Dustbox_main();// DustBox
+//
+//			ArrayList<Integer> rowcount = new ArrayList<>();
+//			for (int i = 0; i < tmpmodel.getRowCount(); i++) {
+//				if ((boolean) tmpmodel.getValueAt(i, 0)) {
+//					rowcount.add(i);
+//				}
+//			}
+//			int delcount = 0;
+//			for (int i = 0; i < rowcount.size(); i++) {
+//				int selectRow = rowcount.get(i) - delcount;
+//				// ここにゴミ箱移動できる何かを入れれば良さそう・・・
+//				delcount++;
+//			}
+			Dustbox_main dbox = new Dustbox_main();
+			dbox.model.add("a","a","a");
+			
+		} else if (e.getSource() == button[2]) {
+			//てきとうにデータ追加
+			tmpmodel.add("aaa", "bbb", "ccccccccccc");
 		}
 	}
 }
