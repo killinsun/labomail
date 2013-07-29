@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /TopView
 /senderView
 /AddressBook
@@ -5,4 +6,15 @@
 /TmpMail
 /Util
 /dbHelper
+=======
+/.DS_Store
+/AddressBook
+/DustBox
+/TmpMail
+/TopView
+/Util
+/dbHelper
+/preference
+/senderView
+>>>>>>> refs/remotes/origin/blacky(TopView)
 /transceiver

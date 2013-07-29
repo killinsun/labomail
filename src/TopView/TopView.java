@@ -42,9 +42,9 @@ public class TopView extends JFrame {
 
 
 	/** 渡されたコンポーネントを追加し、表示します。 */
-	public static void addTab(String tabName,Component compName){
-		tabbedPane.addTab(tabName,compName);
-		showTab(compName);
+	public static void addTab(String tabName,Component comp){
+		tabbedPane.addTab(tabName,comp);
+		showTab(comp);
 	}
 	
 	/** 渡されたタブが存在すれば、タブを切り替え表示し、trueを返します。
@@ -62,6 +62,21 @@ public class TopView extends JFrame {
 			}
 		}
 		return false;
+	}
+	
+	public static boolean showTab(String showCompName) {
+		
+		int count = tabbedPane.getTabCount();
+		for (int i = 0; i < count; i++) {
+			String title = tabbedPane.getTitleAt(i);
+			if(showCompName.equals(title)) {
+				// 存在していれば表示を切り替え
+				tabbedPane.setSelectedIndex(i);;
+				return true;
+			}
+		}
+		return false;
+		
 	}
 
 	public static void main(String[] args) {
