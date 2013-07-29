@@ -11,6 +11,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
+import transceiver.MailObject;
+
 import net.miginfocom.swing.MigLayout;
 
 public class Dustbox_main extends JPanel implements ActionListener{
@@ -22,8 +24,10 @@ public class Dustbox_main extends JPanel implements ActionListener{
 	final String[] clmTitle = {
 			"",
 			"from",
+			"to",
 			"件名",
-	"内容"};
+			"内容"
+	};
 	public 
 	Dustbox_tablemodel model = new Dustbox_tablemodel(clmTitle);
 
@@ -60,9 +64,13 @@ public class Dustbox_main extends JPanel implements ActionListener{
 		tblcolumn.setPreferredWidth(5);
 		tblcolumn.setResizable(false);
 		tblcolumn = columnModel.getColumn(1);
-		tblcolumn.setPreferredWidth(200);
+		tblcolumn.setPreferredWidth(100);
 		tblcolumn = columnModel.getColumn(2);
+		tblcolumn.setPreferredWidth(100);
+		tblcolumn = columnModel.getColumn(3);
 		tblcolumn.setPreferredWidth(200);
+		tblcolumn = columnModel.getColumn(4);
+		tblcolumn.setPreferredWidth(500);
 
 
 		JScrollPane scrpane = new JScrollPane(table);
@@ -96,8 +104,8 @@ public class Dustbox_main extends JPanel implements ActionListener{
 				};
 				delTempRow.add(selectRow);
 				delTempData.add(data);
-			model.removeRow(selectRow);
-			delcount++;
+				model.removeRow(selectRow);
+				delcount++;
 			}
 		}else if(e.getSource() == button[1]){
 			for(int i=0;i<delTempRow.size();i++){
@@ -106,7 +114,7 @@ public class Dustbox_main extends JPanel implements ActionListener{
 			delTempRow.clear();
 			delTempData.clear();
 		}else if(e.getSource() == button[2]){
-			model.add("hoge", "hoge", "fuuuuuuuuuuuuuuuuuu");
+			model.add(MailObject.createMailObjects("SELECT * FROM blacky_test")[0]);
 		}
 	}
 }
