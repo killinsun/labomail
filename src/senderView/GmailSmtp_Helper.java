@@ -21,7 +21,7 @@ import javax.mail.internet.MimeMultipart;
  * @modifer Aiya000
  */
 
-public class GmailSmtp_Helper {
+public class GmailSmtp_Helper implements Smtp_Interface {
 
 	/************ メンバ変数 ************/
 
@@ -31,25 +31,26 @@ public class GmailSmtp_Helper {
 	private String myMailAddress;
 	//自分のアドレスのパスワードを設定してください（認証に使用されます）
 	private String myPassword;
-	//自分の名前を設定してください（送信元の名前として相手側に表示されます）
-	private String myName;
+	//任意のポートを設定
+	private String port;
 
 	/************************************/
 
 	/* 選択アカウントの基本設定 */
-	public GmailSmtp_Helper(String smtpServer, String accountMailAddress, String accountPassword, String accountName){
+	public GmailSmtp_Helper(String smtpServer, String accountMailAddress, String accountPassword, String port){
 		this.smtpServer = smtpServer;
 		this.myMailAddress = accountMailAddress;
 		this.myPassword = accountPassword;
-		this.myName = accountName;
+		this.port = port;
 	}
 
 
+	@Override /* Gmail用SMTP送信モジュール */
 	public void sendMail(String[] to, String[] bcc, String subject, String detail) throws AddressException, MessagingException {
 
 		/* プロパティの取得と設定 */
 		Properties props = System.getProperties();
-		props.put("mail.smtp.port", "587");
+		props.put("mail.smtp.port", port);
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.starttls.enable", "true");
 
@@ -88,7 +89,7 @@ public class GmailSmtp_Helper {
 		transport.close();
 	}
 
-	/* 複数添付ファイル付きSMTP送信モジュール */
+	@Override /* 複数添付ファイル付きSMTP送信モジュール */
 	public void sendMail(String[] to, String[] bcc, String subject, String detail, ArrayList<FileDataSource> fileList) throws MessagingException, UnsupportedEncodingException{
 
 		//メール内容と添付ファイル内容を生成
@@ -148,7 +149,7 @@ public class GmailSmtp_Helper {
 		}
 
 		//送信先、送信者名
-		InternetAddress from = new InternetAddress(myMailAddress, myName);
+		InternetAddress from = new InternetAddress(myMailAddress, myMailAddress);
 		msg.setFrom(from);
 
 		//件名をエンコード指定して設定

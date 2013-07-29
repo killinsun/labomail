@@ -6,13 +6,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import transceiver.MailListViewPanel;
+import transceiver.TransceiverPanel;
 import net.miginfocom.swing.MigLayout;
 
 public class TopView extends JFrame {
 
 	/** 画面下部の表示域。ここに各種JPanelを追加していく。 */
-	private static JTabbedPane tabbedPane = new JTabbedPane();
+	private static JTabbedPane tabbedPane = new CloseBtnJTabbedPane();
 	
 	public TopView() {
 
@@ -30,7 +30,8 @@ public class TopView extends JFrame {
 		getContentPane().add(menuPanel, "c, wrap");
 		
 		/** TOPの送受信画面 */
-		JPanel mailAndViewPanel = new MailListViewPanel();
+		JPanel mailAndViewPanel = new TransceiverPanel();
+		mailAndViewPanel.setName("TOP");
 		
 		tabbedPane.addTab("Top", mailAndViewPanel);
 		
@@ -38,11 +39,7 @@ public class TopView extends JFrame {
 		
 	}
 	
-//	TopViewで生成されたタブのコンポーネントに対してアクセスできるようにメソッド作ったけど
-//	もっと賢いやり方あるかな？
-//	使い方
-//	別のクラスから　TopView.addTab(タブの名前,追加したいパネル);
-//	そのまんまや。
+
 
 	/** 渡されたコンポーネントを追加し、表示します。 */
 	public static void addTab(String tabName,Component compName){

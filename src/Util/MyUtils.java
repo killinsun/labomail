@@ -1,15 +1,27 @@
 package Util;
 
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.io.File;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JTextArea;
+
+
+/************** 項目 ****************/
+/*	コンポーネント情報取得系		*/
+/*	ファイル操作系					*/
+/*	文字列操作系					*/
+/************************************/
+
 
 public class MyUtils {
+
 	//インスタンスの生成阻止
 	private MyUtils(){}
+
+
+	/************ コンポーネント情報取得系 ************/
 
 	/* イベントのソースからテキスト属性(ラベル名)を割り出す */
 	public static String getText(MouseEvent e){
@@ -35,6 +47,38 @@ public class MyUtils {
 		return text;
 	}
 
+	/* Component#.setNameであらかじめ設定した名前を取得 */
+	public static String getName(MouseEvent e){
+		return ((JLabel)e.getComponent()).getName();
+	}
+
+
+
+
+	/************ ファイル操作系 ************/
+
+	//ファイルダイアログを表示して選択したFileオブジェクトを返す
+	public static File fileOpen() {
+		//ファイルダイアログを生成
+		JFileChooser jChooser = new JFileChooser();
+		//戻り値の初期値を設定
+		File file = null;
+
+		// ファイル選択ダイアログを表示
+		int selected = jChooser.showOpenDialog(null);
+		// 「開く」ボタン押下時
+		if(selected == JFileChooser.APPROVE_OPTION) {
+			// 選択したファイルを取得
+			file = jChooser.getSelectedFile();
+		}
+
+		//nullかFileオブジェクトを返す
+		return file;
+	}
+
+
+	/************ 文字列操作系 ************/
+
 	/* 複数の検索文字列を検索対象から検索し、一番初めに見つかった位置を返す */
 	public static int indexOf(String target, String... search){
 		int found = -1;
@@ -48,9 +92,14 @@ public class MyUtils {
 		return found;
 	}
 
-	/* Component#.setNameであらかじめ設定した名前を取得 */
-	public static String getName(MouseEvent e){
-		return ((JLabel)e.getComponent()).getName();
+	/* 文字列配列の内容を任意のデリミタで結合 */
+	public static String joinStringArray(String[] array, char delimiter){	//分割後のnullチェックは
+		StringBuilder joined = new StringBuilder();							//利用側で行なってください
+		for(int i=0; i<array.length-1; i++){
+			if(array[i] != null) joined.append(array[i]+delimiter);
+		}
+		joined.append( array[array.length-1] + delimiter );
+		return joined.toString();
 	}
 
 	/* ファイルサイズの書式最適化 */
@@ -67,12 +116,4 @@ public class MyUtils {
 		return formatFileSize;
 	}
 
-	/* ArrayList<JTextArea>のインスタンスから内容のString配列を生成 */
-	public static String[] toStringArray(ArrayList<JTextArea> array){
-		String[] retArray = new String[array.size()];
-		for(int i=0; i<array.size(); i++){
-			retArray[i] = array.get(i).getText();
-		}
-		return retArray;
-	}
 }

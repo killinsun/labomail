@@ -10,6 +10,6 @@ public class DummyPanel extends JPanel {
 
 		JLabel label = new JLabel("dummy");
 		add(label);
-		
+
 	}
 }

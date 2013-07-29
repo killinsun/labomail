@@ -10,7 +10,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,12 +23,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import dbHelper.DbHelper;
+
 import net.miginfocom.swing.MigLayout;
 import Util.Util;
 
 
 public class FrmEdit extends JFrame implements ActionListener {
-	private String chooseFaceIcon;
+	private String nameAndSuffix;
 	private String srcPath;
 	private String dstPath ="data/faceIcon/default.jpg";
 	private int gettedID;
@@ -49,28 +53,37 @@ public class FrmEdit extends JFrame implements ActionListener {
 	JTextField tel = new JTextField();
 	JTextArea memo = new JTextArea();
 
-	String[] stabData = {"家族","学校"};
-	JComboBox kubun = new JComboBox(stabData);
+	JComboBox<String> kubun = new JComboBox<String>();
+	DefaultComboBoxModel<String> kubunModel = new DefaultComboBoxModel<String>();
 
 	JButton commit = new JButton("登録");
 	JButton cancel = new JButton("キャンセル");
+	JButton kubunAddButton = new JButton("+");
+
 	PaneAddress paneAddress;
+	FrmAddKubun frmAddKubun;
+	DbHelper dh;
+	public FrmEdit(){
+
+	}
 
 	public FrmEdit(PaneAddress pane,String[] gettedData,int gettedID){
 		this.gettedID = gettedID;
+		dh = new DbHelper();
 
 		//
 		paneAddress = pane;
 		//
 
-		this.setLayout(new MigLayout("", "[][][]", "[][][]"));	
+		this.setLayout(new MigLayout("", "[][][][grow]", "[][][]"));	
 		/*
 		 * gettedData adding;
 		 */
 
 		name.setText(gettedData[0]);
 		furigana.setText(gettedData[1]);
-		//Insert commboboxmodel data add.
+		setKubun();
+
 		pcMail.setText(gettedData[3]);
 		phoneMail.setText(gettedData[4]);
 		tel.setText(gettedData[5]);
@@ -84,34 +97,36 @@ public class FrmEdit extends JFrame implements ActionListener {
 
 		this.add(nameLabel,"grow");
 		name.setPreferredSize(new Dimension(200, 20));
-		this.add(name,"wrap");
+		this.add(name,"wrap,span");
 		this.add(furiganaLabel,"grow");
 		furigana.setPreferredSize(new Dimension(200, 20));
-		this.add(furigana,"wrap");
+		this.add(furigana,"wrap,span");
 		this.add(kubunLabel,"");
 
 		kubun.setPreferredSize(new Dimension(80, 30));
-		this.add(kubun,"wrap");
+		this.add(kubun,"");
+		this.add(kubunAddButton,"left,wrap");
+		kubunAddButton.addActionListener(this);
 
 		this.add(pcMailLabel,"");
-		pcMail.setPreferredSize(new Dimension(230, 20));
-		this.add(pcMail,"span,wrap");
+		pcMail.setPreferredSize(new Dimension(250, 20));
+		this.add(pcMail,"span 3,wrap");
 
 		this.add(phoneMailLabel,"");
-		phoneMail.setPreferredSize(new Dimension(230, 20));
-		this.add(phoneMail,"span,wrap");
+		phoneMail.setPreferredSize(new Dimension(250, 20));
+		this.add(phoneMail,"span 3,wrap");
 
 		this.add(telLabel,"");
-		tel.setPreferredSize(new Dimension(230, 20));
-		this.add(tel,"span,wrap");
+		tel.setPreferredSize(new Dimension(250, 20));
+		this.add(tel,"span 3,wrap");
 
 		this.add(memoLabel,"");
-		memo.setPreferredSize(new Dimension(230,180));
-		this.add(memo,"span,wrap");
+		memo.setPreferredSize(new Dimension(250,180));
+		this.add(memo,"span 3,wrap");
 
 		commit.addActionListener(this);
 		cancel.addActionListener(this);
-		this.add(commit,"span 2,right");
+		this.add(commit,"span 3,right");
 		this.add(cancel,"");
 
 	}
@@ -120,22 +135,13 @@ public class FrmEdit extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		switch(command){
-
-		/*
-		 * なんかこのままだとコードが汚い
-		 */
 		case "登録":
 
 			try {
-				Class.forName("org.sqlite.JDBC");
-				Connection conn = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
-				Statement stmt = conn.createStatement();
-
-				ResultSet rs = stmt.executeQuery("select count(*) from addresstable where id = " + gettedID +";");
-				System.out.println("select count(*) from addresstable where id = " + gettedID +";");
+				String sql = "select count(*) from addresstable where id = " + gettedID +";";
+				ResultSet rs = dh.executeQuery(sql);
 				rs.next();
 				System.out.println( rs.getInt( 1 ) );
-				String sql;
 				if(rs.getInt(1) == 0){
 					sql ="insert into addresstable values(" +
 							"null,'" +
@@ -158,12 +164,13 @@ public class FrmEdit extends JFrame implements ActionListener {
 							"memo ='" + memo.getText() + "'," +
 							"faceicon ='" + dstPath + "' where id = " + gettedID +";";
 				}
-				System.out.println(sql);
-				stmt.execute(sql);
-				conn.close();
+				dh.close();
+
+				dh.execute(sql);
+				dh.close();
 
 
-			} catch (ClassNotFoundException | SQLException error) {
+			} catch (SQLException error) {
 				error.printStackTrace();
 			}
 			paneAddress.updateList();
@@ -172,27 +179,38 @@ public class FrmEdit extends JFrame implements ActionListener {
 		case "キャンセル":
 			dispose();
 			break;
+			//区分の追加
+		case "+":
+			frmAddKubun = new FrmAddKubun(this);
+			frmAddKubun.setSize(250,100);
+			frmAddKubun.setTitle("区分の追加");
+			frmAddKubun.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			frmAddKubun.setLocationRelativeTo(null);
+			frmAddKubun.setVisible(true);
+			break;
+			//FaceIcon
 		case "":
 			JFileChooser filechooser = new JFileChooser();
 			filechooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
 			int selected = filechooser.showOpenDialog(this);
 			if (selected == JFileChooser.APPROVE_OPTION){
+				//GetFileSection
 				File file = filechooser.getSelectedFile();
-				chooseFaceIcon = file.getName();
-
+				nameAndSuffix= file.getName(); //名前と拡張子
 				Util util = new Util();
+				String suffix = util.getSuffix(nameAndSuffix); //拡張子
 
-
-				String suffix = util.getSuffix(chooseFaceIcon);
 				if(!suffix.equals("jpg")){
 					JFrame errorFrame = new JFrame();
 					errorFrame.setTitle("拡張子エラー");
 					JOptionPane.showMessageDialog(errorFrame, "拡張子はJPEGのものを選択してください。");
 					break;
 				}
+
+				//Resize section
 				srcPath = file.getAbsolutePath();
-				dstPath = "data/faceIcon/" + chooseFaceIcon;
+				dstPath = "data/faceIcon/" + nameAndSuffix;
 				try {
 					util.resize(srcPath,dstPath);
 				} catch (IOException e1) {
@@ -211,6 +229,22 @@ public class FrmEdit extends JFrame implements ActionListener {
 		icon = new ImageIcon(dstPath);
 		return icon;
 
+	}
+	protected void setKubun(){
+		kubunModel.removeAllElements();
+		DbHelper dh = new DbHelper();
+		ResultSet rs = dh.executeQuery("SELECT kubun FROM kubuntable");
+		try {
+			while(rs.next()){
+				kubunModel.addElement(rs.getString(1));
+			}
+			dh.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		kubun.setModel(kubunModel);
+		kubun.validate();
+		kubun.repaint();
 	}
 
 

@@ -16,24 +16,22 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-public class PlainSmtp_Helper {
+public class PlainSmtp_Helper implements Smtp_Interface {
 
 	/************ メンバ変数 ************/
 
 	private String smtpServer;
 	private String myMailAddress;
-	private String myName;
 
 	/************************************/
 
 	/* 選択アカウントの基本設定 */
-	public PlainSmtp_Helper(String smtpServer, String accountMailAddress, String accountName){
+	public PlainSmtp_Helper(String smtpServer, String accountMailAddress){
 		this.smtpServer = smtpServer;
 		this.myMailAddress = accountMailAddress;
-		this.myName = accountName;
 	}
 
-	/* SMTP送信モジュール */
+	@Override /* SMTP送信モジュール */
 	public void sendMail(String[] to, String[] bcc, String subject, String detail) throws MessagingException, UnsupportedEncodingException{
 
 		//smtpサーバ情報を設定
@@ -58,7 +56,7 @@ public class PlainSmtp_Helper {
 		}
 
 		//送信先、送信者名
-		InternetAddress from = new InternetAddress(myMailAddress, myName);
+		InternetAddress from = new InternetAddress(myMailAddress, myMailAddress);
 		msg.setFrom(from);
 
 		//件名と内容をエンコード指定して設定
@@ -69,7 +67,7 @@ public class PlainSmtp_Helper {
 		Transport.send(msg);
 	}
 
-	/* 複数添付ファイル付きSMTP送信モジュール */
+	@Override /* 複数添付ファイル付きSMTP送信モジュール */
 	public void sendMail(String[] to, String[] bcc, String subject, String detail, ArrayList<FileDataSource> fileList) throws MessagingException, UnsupportedEncodingException{
 
 		//メール内容と添付ファイル内容を生成
@@ -125,7 +123,7 @@ public class PlainSmtp_Helper {
 		}
 
 		//送信先、送信者名
-		InternetAddress from = new InternetAddress(myMailAddress, myName);
+		InternetAddress from = new InternetAddress(myMailAddress, myMailAddress);
 		msg.setFrom(from);
 
 		//件名をエンコード指定して設定
