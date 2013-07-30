@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import javax.mail.search.FromStringTerm;
 
 import dbHelper.DbHelper;
+
+import dbHelper.DbHelper;
 import AddressBook.FrmEdit;
 
 
@@ -76,7 +78,36 @@ public class MailObject {
 			break;
 		}
 	}
-	
+		
+	public static MailObject[] createMailObjects(String sql){
+		DbHelper dbhelper = new DbHelper();
+		ResultSet rs = dbhelper.executeQuery(sql);
+		try {
+			dbhelper.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		ArrayList<MailObject> mObjAry = new ArrayList<>();
+		try {
+			while(rs.next()){
+					mObjAry.add(new MailObject(
+							rs.getInt("id"), 
+							rs.getInt("mboxid"), 
+							rs.getInt("boxid"), 
+							rs.getString("mfrom"), 
+							rs.getString("mto"), 
+							rs.getString("subject"),
+							rs.getString("data"),
+							Timestamp.valueOf(rs.getString("date")),
+							rs.getString("path")));
+				}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return (MailObject[])mObjAry.toArray();
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -119,8 +150,17 @@ public class MailObject {
 		
 		return mto;
 	}
+	
+	public String[] getToCC(){
+		String[] ToCcBcc = this.getTo().split("[BCC]");
+		return ToCcBcc[0].split(",");
+	}
 
 
+	public String[] getBcc(){
+		String[] ToCcBcc = this.getTo().split("[BCC]");
+		return ToCcBcc[1].split(",");
+	}
 
 	public String getSubject() {
 		return subject;
