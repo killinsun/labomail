@@ -17,7 +17,7 @@ public class TransceiverPanel extends JPanel {
 		MailViewPanel mailView = new MailViewPanel();
 		MailListPanel mailList = new MailListPanel(mailView);
 		
-		this.add(mailList, "width 260::, grow, dock west");
+		this.add(mailList, "width 280::, grow, dock west");
 		this.add(mailView, "grow");
 
 	}

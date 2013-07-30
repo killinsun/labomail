@@ -54,9 +54,18 @@ public class MailImap {
 	public boolean isConnect() {
 		return connect;
 	}
+	
+	public int getMailCount() throws MessagingException {
+		
+		/** Gmailの受信BOX */
+		String target_folder = "INBOX";
+
+		Folder folder = store.getFolder(target_folder);
+		return folder.getMessageCount();
+	}
 
 	/** メールを取得する。ファッキンスロウ（くそ遅い）なのでThread化させたい */
-	public List<MailObject> getMail() throws MessagingException, IOException, IllegalStateException {
+	public List<MailObject> getMail(int start, int end) throws MessagingException, IOException, IllegalStateException {
 		
 		/** Gmailの受信BOX */
 		String target_folder = "INBOX";
@@ -73,9 +82,11 @@ public class MailImap {
 			}
 			fol.open(Folder.READ_ONLY);
 			int count = 1;
-			// TODO: 現在は最新の5件のみ取得している。
-			int msgCount = fol.getMessageCount();
-			Message[] messages = fol.getMessages(msgCount - 4, msgCount);
+
+			if(start <= 1) {
+				start = 1;
+			}
+			Message[] messages = fol.getMessages(start, end);
 			
 			for(Message m : messages){
 				Address[] mfrom = m.getFrom();

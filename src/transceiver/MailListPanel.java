@@ -2,15 +2,10 @@ package transceiver;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.mail.MessagingException;
@@ -29,10 +24,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.miginfocom.swing.MigLayout;
+
 import org.xml.sax.SAXException;
 
 import preference.PreferenceLoader;
-import net.miginfocom.swing.MigLayout;
 
 /** 画面左側のメールリスト */
 public class MailListPanel extends JPanel {
@@ -45,6 +41,7 @@ public class MailListPanel extends JPanel {
 	JComboBox<DBStrategy> comboBox;
 	JLabel stateLabel;
 	JButton changeModeBtn;
+	JButton addButton;
 
 	private MailDB db;
 	private MailImap imap;
@@ -53,20 +50,11 @@ public class MailListPanel extends JPanel {
 	private GetMailState getMailState;
 	
 	private ListSelectAction listSelectAction = new ListSelectAction();
-
+	
 	
 	public MailListPanel(MailViewPanel mailView) {
 		
 		db = new MailDB(true);
-		
-		String[] pref = null;
-		try {
-			// 設定ファイルからGmailのユーザ情報読み込み
-			pref = PreferenceLoader.getPreferences();
-		} catch (ParserConfigurationException | SAXException | IOException e1) {
-			JOptionPane.showMessageDialog(null, "設定ファイルの読み込みに失敗しました。", "エラー", JOptionPane.ERROR_MESSAGE);
-		}
-		imap = new MailImap(pref[0], pref[1], pref[4], Integer.parseInt(pref[5]));
 		
 		this.mailView = mailView;
 		
@@ -107,6 +95,11 @@ public class MailListPanel extends JPanel {
 		add(comboBox, "grow, wrap");
 
 		add(listScrollPane, "grow, wrap");
+		
+		addButton = new JButton("さらに読み込む");
+		addButton.addActionListener(new AddBtnAction());
+		addButton.setEnabled(false);
+		add(addButton, "l, split, grow");
 		
 		JButton updateBtn = new JButton("更新");
 		updateBtn.addActionListener(new UpdateBtnAction());
@@ -157,6 +150,7 @@ public class MailListPanel extends JPanel {
 		 List<MailObject> getMailList() throws SQLException, MessagingException, IOException, IllegalStateException;
 		 Icon getIcon();
 		 String getStateText();
+		 void init();
 	}
 	
 	/** DBから取得 */
@@ -167,6 +161,8 @@ public class MailListPanel extends JPanel {
 		@Override
 		public void changeState() {
 			getMailState = new ImapState();
+			addButton.setEnabled(true);
+			comboBox.setEnabled(false);
 		}
 
 		@Override
@@ -183,6 +179,11 @@ public class MailListPanel extends JPanel {
 		public String getStateText() {
 			return "送受信リスト";
 		}
+
+		@Override
+		public void init() {
+			getMailState = new DBState();
+		}
 		
 	}
 	
@@ -190,21 +191,62 @@ public class MailListPanel extends JPanel {
 	class ImapState implements GetMailState {
 		
 		Icon icon = new ImageIcon("data/sent2.png");
+		int index;
+		
+		List<MailObject> imapMails = new ArrayList<>();
 
 		public ImapState() {
-			if(!imap.isConnect()) {
+			
+			// TODO: Gmail接続中に表示するダイアログ
+			MyDialog dialog = new MyDialog(null, false, "接続中...", "");
+			dialog.setVisible(true);
+			
+			String[] pref = null;
+			try {
+				// 設定ファイルからGmailのユーザ情報読み込み
+				pref = PreferenceLoader.getPreferences();
+			
+				imap = new MailImap(pref[0], pref[1], pref[4], Integer.parseInt(pref[5]));
+
 				imap.connect();
+				index = imap.getMailCount();
+				
+			} catch (MessagingException e) {
+				JOptionPane.showConfirmDialog(
+						null, "IMAPサーバへの接続に失敗しました。",
+						"エラー", JOptionPane.ERROR_MESSAGE);
+			} catch (ParserConfigurationException | SAXException | IOException e1) {
+				JOptionPane.showMessageDialog(
+						null, "設定ファイルの読み込みに失敗しました。", 
+						"エラー", JOptionPane.ERROR_MESSAGE);
+			} finally {
+				dialog.setVisible(false);
 			}
 		}
 		
 		@Override
 		public void changeState() {
 			getMailState = new DBState();
+			addButton.setEnabled(false);
+			comboBox.setEnabled(true);
 		}
 
 		@Override
 		public List<MailObject> getMailList() throws MessagingException, IOException, IllegalStateException {
-			return imap.getMail();
+			
+			// TODO: メール受信中に表示するダイアログ
+			MyDialog dialog = new MyDialog(null, false, "受信中...", "");
+			dialog.setVisible(true);
+
+			
+			List<MailObject> mails = imap.getMail(index - 9, index);
+			index -= 10;
+			Collections.reverse(mails);
+			imapMails.addAll(mails);
+			
+			dialog.setVisible(false);
+			
+			return imapMails;
 		}
 
 		@Override
@@ -216,8 +258,14 @@ public class MailListPanel extends JPanel {
 		public String getStateText() {
 			return "Gmail";
 		}
+
+		@Override
+		public void init() {
+			getMailState = new ImapState();
+		}
 		
 	}
+	
 	
 //
 // Jlist Action ------------------------------------------------------------------------------------
@@ -289,6 +337,22 @@ public class MailListPanel extends JPanel {
 		
 	}
 	
+	/** 「さらに読み込む」ボタン */
+	class AddBtnAction implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO: IMAPから追加で読み込む
+			
+			mailJList.removeListSelectionListener(listSelectAction);
+
+			updateMailList();
+			
+			mailJList.addListSelectionListener(listSelectAction);
+		}
+		
+	}
+	
 	/** 更新ボタン */
 	class UpdateBtnAction implements ActionListener {
 
@@ -298,6 +362,7 @@ public class MailListPanel extends JPanel {
 			mailJList.removeListSelectionListener(listSelectAction);
 			
 			// メールリスト更新
+			getMailState.init();
 			updateMailList();
 			mailJList.addListSelectionListener(listSelectAction);
 		}	

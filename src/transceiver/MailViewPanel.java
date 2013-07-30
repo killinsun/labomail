@@ -1,6 +1,17 @@
 package transceiver;
 
+import java.awt.Desktop;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -21,7 +32,7 @@ public class MailViewPanel extends JPanel {
 	
 	public MailViewPanel() {
 
-		setLayout(new MigLayout("", "[grow]", "[][grow]"));
+		setLayout(new MigLayout("", "[grow]", "[][grow][]"));
 		setBorder(new BevelBorder(BevelBorder.LOWERED));
 		
 		metaDataPanel = new JPanel(new MigLayout("wrap 2", "[100][]", "[]"));
@@ -47,7 +58,11 @@ public class MailViewPanel extends JPanel {
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setViewportView(mailTextPane);
-		add(scrollPane, "grow");
+		add(scrollPane, "grow, wrap");
+		
+		JButton browserButton = new JButton("ブラウザでメールを見る");
+		browserButton.addActionListener(new BrowserBtnAction());
+		add(browserButton, "");
 		
 	}
 
@@ -66,6 +81,39 @@ public class MailViewPanel extends JPanel {
 		mailTextPane.setText(text);
 		// スクロール位置をトップに
 		mailTextPane.setCaretPosition(0);
+		
+	}
+	
+	/** 「ブラウザでメールを見る」ボタン */
+	class BrowserBtnAction implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			try {
+				// テキストの内容をファイルに保存
+				File file = new File("data/tmp/tmp.html");
+				file.createNewFile();
+				
+				PrintWriter pw = new PrintWriter(file);
+				pw.print(mailTextPane.getText());
+				pw.close();
+				
+				// ブラウザを起動してファイルを開く
+				Desktop desktop = Desktop.getDesktop();
+				desktop.open(file);
+				
+			} catch (IOException | SecurityException e1) {
+				System.err.println(e1.getMessage());
+				JOptionPane.showMessageDialog(
+						null, "ファイルが開けませんでした。",
+						"エラー", JOptionPane.ERROR_MESSAGE);
+			} catch (UnsupportedOperationException e2) {
+				JOptionPane.showMessageDialog(
+						null, "ブラウザがサポートされていません。",
+						"エラー", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 		
 	}
 	
