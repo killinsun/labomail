@@ -142,7 +142,7 @@ public class Inserter extends JFrame implements ActionListener {
 	private JList<String> firstSyntax;
 	private JList<String> secondSyntax;
 	private JList<String> thirdSyntax;
-	private DefaultComboBoxModel defaultcom = null
+	private DefaultComboBoxModel defaultcom = null;
 	private String[] tuki = {"1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"}; 
 	private String[][] stab = {
 			{ "aaaだから、", "bbbなので、", "cccだけど、" },
