@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.ResultSet;
@@ -16,7 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
-import javax.swing.JPopupMenu;
+import javax.swing.JMenuItem;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 
@@ -25,7 +24,7 @@ import Util.MyUtils;
 import dbHelper.DbHelper;
 //killinsun
 
-public class AddressSelectPanel extends PaneAddress implements MouseListener {
+public class CopyOfAddressSelectPanel extends PaneAddress implements MouseListener {
 
 
 	/************ メンバ変数 ************/
@@ -69,7 +68,7 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 
 	/****************************************/
 
-	public AddressSelectPanel(GetResult receiveClass, int callNumber, JFrame superFrame){
+	public CopyOfAddressSelectPanel(GetResult receiveClass, int callNumber, JFrame superFrame){
 
 		//スーパーコンストラクタを呼び出し
 		super();
@@ -198,37 +197,25 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 			checkList[index] = true;
 		}
 
+		/* 再描画 */
+		nameList.repaint();
+
 		DbHelper helper = new DbHelper();
 
-		String name = MyUtils.getText(listModel.getElementAt(index));
 		ResultSet rs = helper.executeQuery(
 				"select PCMAIL, PHONEMAIL from addresstable" +
-				" where NAME='"+name+"';");
-
-		JCheckBox address1 = null;
-		JCheckBox address2 = null;
+				"where NAME='"+listModel.getElementAt(index)+"';");
 
 		try{
 			rs.next();
-			if(!rs.getString("PCMAIL").equals("")) address1 = new JCheckBox(rs.getString("PCMAIL"));
-			if(!rs.getString("PHONEMAIL").equals("")) address2 = new JCheckBox(rs.getString("PHONEMAIL"));
+			JMenuItem address1 = new JMenuItem(rs.getString("PCMAIL"));
+			JMenuItem address2 = new JMenuItem(rs.getString("PHONEMAIL"));
 		} catch (SQLException e2) {
 			e2.printStackTrace();
 		} finally {
-			try{ helper.close(); rs.close(); }
+			try{ helper.close(); }
 			catch(SQLException e1){ e1.printStackTrace(); }
 		}
-
-		if(address1!=null) address1.addActionListener(new GetName());
-		if(address2!=null) address2.addActionListener(new GetName());
-
-		JPopupMenu pop = new JPopupMenu();
-		if(address1!=null) pop.add(address1);
-		if(address2!=null) pop.add(address2);
-		pop.show(this, e.getX(), e.getY());
-
-		/* 再描画 */
-		nameList.repaint();
 
 
 	}
@@ -236,13 +223,6 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 	@Override public void mouseReleased(MouseEvent e) {}
 	@Override public void mouseEntered(MouseEvent e) {}
 	@Override public void mouseExited(MouseEvent e) {}
-
-	class GetName implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			System.out.println(e.getActionCommand());
-		}
-	}
 
 	/****************************************/
 
