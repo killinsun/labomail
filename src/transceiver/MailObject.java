@@ -88,24 +88,27 @@ public class MailObject {
 			e.printStackTrace();
 		}
 		
-		ArrayList<MailObject> mObjAry = new ArrayList<>();
+		ArrayList<MailObject> mailObjAry = new ArrayList<>();
 		try {
 			while(rs.next()){
-					mObjAry.add(new MailObject(
-							rs.getInt("id"), 
-							rs.getInt("mboxid"), 
-							rs.getInt("boxid"), 
-							rs.getString("mfrom"), 
-							rs.getString("mto"), 
-							rs.getString("subject"),
-							rs.getString("data"),
-							Timestamp.valueOf(rs.getString("date")),
-							rs.getString("path")));
+					mailObjAry.add(new MailObject(
+							rs.getInt("ID"), 
+							rs.getInt("MBOXID"), 
+							rs.getInt("BOXID"), 
+							rs.getString("MFROM"), 
+							rs.getString("MTO"), 
+							rs.getString("SUBJECT"),
+							rs.getString("DATA"),
+							Timestamp.valueOf(rs.getString("DATE")),
+							rs.getString("PATH")));
 				}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally{
+			try{ rs.close(); }
+			catch (SQLException e) { e.printStackTrace(); }
 		}
-		return (MailObject[])mObjAry.toArray();
+		return mailObjAry.toArray(new MailObject[]{});
 	}
 
 
