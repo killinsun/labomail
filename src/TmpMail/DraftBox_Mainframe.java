@@ -119,8 +119,8 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 //				// ここにゴミ箱移動できる何かを入れれば良さそう・・・
 //				delcount++;
 //			}
-			Dustbox_main dbox = new Dustbox_main();
-			dbox.model.add("a","a","a");
+			DraftBox_Table dbox = new DraftBox_Table(clmTitle);
+			dbox.add("a","a","a");
 			
 		} else if (e.getSource() == button[2]) {
 			//てきとうにデータ追加
