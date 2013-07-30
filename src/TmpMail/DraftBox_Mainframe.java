@@ -120,7 +120,7 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 //				delcount++;
 //			}
 			Dustbox_main dbox = new Dustbox_main();
-			dbox.model.add("a","a","a");
+//			dbox.model.add("a","a","a");
 			
 		} else if (e.getSource() == button[2]) {
 			//てきとうにデータ追加
