@@ -79,6 +79,7 @@ public class DbHelper{
 	}
 
 	public void execute(String sql){
+		System.out.println("DB is opened");
 		try {
 			conn = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
 			stmt = conn.createStatement();
@@ -90,6 +91,7 @@ public class DbHelper{
 
 	}
 	public ResultSet executeQuery(String sql){
+		System.out.println("DB is opened");
 		try {
 			conn = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
 			stmt = conn.createStatement();
@@ -100,6 +102,7 @@ public class DbHelper{
 			return null;
 		}
 	}
+	
 
 	public void close() throws SQLException{
 		stmt.close();

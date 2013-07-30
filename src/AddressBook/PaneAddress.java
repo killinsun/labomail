@@ -124,6 +124,7 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 				//Jlistに登録するだけでなく、Mapに格納することで、後に検索できるようにする
 				dataMap.put(rs.getString(2),rs.getInt(1));
 			}
+			rs.close();
 			dh.close();
 		} catch (SQLException e) {
 			e.printStackTrace();

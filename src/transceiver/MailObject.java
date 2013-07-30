@@ -5,12 +5,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-import javax.mail.search.FromStringTerm;
-
 import dbHelper.DbHelper;
-
-import dbHelper.DbHelper;
-import AddressBook.FrmEdit;
 
 
 enum Status {
@@ -46,7 +41,7 @@ public class MailObject {
 		this.date = new Timestamp(System.currentTimeMillis());
 		this.path = "hoge.txt";
 	}
-	
+
 	public MailObject(int id, int mboxid, int boxid, String mfrom, String mto,
 			String subject, String data, Timestamp date, String path) {
 		this.id = id;
@@ -58,7 +53,7 @@ public class MailObject {
 		this.data = data;
 		this.date = date;
 		this.path = path;
-		
+
 		switch (boxid) {
 		case 1:
 			this.status = Status.RECEIVE;
@@ -78,35 +73,29 @@ public class MailObject {
 			break;
 		}
 	}
-	
+
 	public static MailObject[] createMailObjects(String sql){
+		ArrayList<MailObject> mailObjAry = new ArrayList<>();
 		DbHelper dbhelper = new DbHelper();
 		ResultSet rs = dbhelper.executeQuery(sql);
 		try {
-			dbhelper.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		ArrayList<MailObject> mailObjAry = new ArrayList<>();
-		try {
 			while(rs.next()){
-					mailObjAry.add(new MailObject(
-							rs.getInt("ID"), 
-							rs.getInt("MBOXID"), 
-							rs.getInt("BOXID"), 
-							rs.getString("MFROM"), 
-							rs.getString("MTO"), 
-							rs.getString("SUBJECT"),
-							rs.getString("DATA"),
-							Timestamp.valueOf(rs.getString("DATE")),
-							rs.getString("PATH")));
-				}
+				mailObjAry.add(new MailObject(
+						rs.getInt("id"), 
+						rs.getInt("mboxid"), 
+						rs.getInt("boxid"), 
+						rs.getString("mfrom"), 
+						rs.getString("mto"), 
+						rs.getString("subject"),
+						rs.getString("data"),
+						Timestamp.valueOf(rs.getString("date")),
+						rs.getString("path")));
+				System.out.println(rs.getInt("id") );
+			}
+			dbhelper.close();
+			rs.close(); 
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}finally{
-			try{ rs.close(); }
-			catch (SQLException e) { e.printStackTrace(); }
 		}
 		return mailObjAry.toArray(new MailObject[]{});
 	}
@@ -145,16 +134,16 @@ public class MailObject {
 
 
 	public String getTo() {
-		
+
 		int fIndex = mto.indexOf("<");
 		int eIndex = mto.lastIndexOf(">");
 		if(fIndex != -1 && eIndex != -1) {
 			return mto.substring(fIndex, eIndex + 1);
 		}
-		
+
 		return mto;
 	}
-	
+
 	public String[] getToCC(){
 		String[] ToCcBcc = this.getTo().split("[BCC]");
 		return ToCcBcc[0].split(",");
@@ -197,15 +186,15 @@ public class MailObject {
 
 	@Override
 	public String toString() {
-		
+
 		// JList用に整形
-		
+
 		String from = mfrom;
 		String subj = subject;
-		
+
 		int fIndex = from.indexOf("<");
 		int eIndex = from.lastIndexOf(">");
-		
+
 		if(fIndex != -1 && eIndex != -1) {
 			from = from.substring(fIndex, eIndex + 1);
 		}
@@ -217,5 +206,5 @@ public class MailObject {
 		}
 		return from + "\n" + subj + "\n" + date;
 	}
-	
+
 }

@@ -11,10 +11,6 @@ public class Dustbox_tablemodel extends DefaultTableModel {
 
 	public Dustbox_tablemodel(String[] clmTitle) {
 		super(null,clmTitle);
-		MailObject[] defmail =MailObject.createMailObjects("SELECT * FROM mastertbl WHERE mboxid='3'");
-		for(int i=0;i<defmail.length;i++){
-			this.add(defmail[i]);
-		}
 	}
 	public boolean isCellEditable(int row,int col){
 		if(col==0){
@@ -31,8 +27,12 @@ public class Dustbox_tablemodel extends DefaultTableModel {
 		Object[] data = {
 				new Boolean(false),
 				mailobj.getFrom(),
-				mailobj.getToCC(),
+				mailobj.getToCC()[0],
+				mailobj.getSubject(),
 				mailobj.getData()};
 		this.addRow(data);
+	}
+	public int getmailID(int row){
+		return mailID.get(row);
 	}
 }

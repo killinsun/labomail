@@ -2,6 +2,8 @@ package DustBox;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -11,20 +13,21 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
+import transceiver.MailObject;
+
 import net.miginfocom.swing.MigLayout;
+import dbHelper.DbHelper;
 
 public class Dustbox_main extends JPanel implements ActionListener{
 	private static final long serialVersionUID = 1L;
 
-	private ArrayList<Integer> delTempRow = new ArrayList<>();
-	private ArrayList<Object[]> delTempData = new ArrayList<>();
 
 	final String[] clmTitle = {
 			"",
 			"from",
 			"to",
 			"件名",
-			"内容"};
+	"内容"};
 	public 
 	Dustbox_tablemodel model = new Dustbox_tablemodel(clmTitle);
 
@@ -34,8 +37,7 @@ public class Dustbox_main extends JPanel implements ActionListener{
 
 	final JButton[] button ={
 			new JButton("削除"),
-			new JButton("元に戻す"),
-			new JButton("設定")};
+			new JButton("元に戻す")};
 	final JTable table = new JTable(model);
 
 	public Dustbox_main(){
@@ -80,38 +82,66 @@ public class Dustbox_main extends JPanel implements ActionListener{
 		pane[1].add(scrpane,"grow");
 		this.add(pane[1],"grow");
 
+		try{
+			DbHelper db = new DbHelper();
+			db.execute("insert into mastertbl values(null,1,1,'a','aa','aaa','aaaa',datetime('now','localtime'),'');");
+			db.execute("insert into mastertbl values(null,2,2,'b','','','',datetime('now','localtime'),'');");
+			db.execute("insert into mastertbl values(null,3,2,'c','','','',datetime('now','localtime'),'');");
+			db.execute("insert into mastertbl values(null,4,1,'d','','','',datetime('now','localtime'),'');");
+			db.execute("insert into mastertbl values(null,4,2,'e','','','',datetime('now','localtime'),'');");
+			db.execute("insert into mastertbl values(null,4,3,'f','','','',datetime('now','localtime'),'');");
+			db.execute("insert into mastertbl values(null,4,3,'g','','','',datetime('now','localtime'),'');");
+			db.execute("insert into mastertbl values(null,4,2,'h','','','',datetime('now','localtime'),'');");
+			db.execute("insert into mastertbl values(null,4,2,'i','','','',datetime('now','localtime'),'');");
+			db.execute("insert into mastertbl values(null,4,1,'j','','','',datetime('now','localtime'),'');");
+			db.close();
+
+		}catch(SQLException e1){
+			e1.printStackTrace();
+		}
+		MailObject[] defmail = MailObject.createMailObjects("SELECT * FROM mastertbl where mboxid=4");
+		for(int i=0;i<defmail.length;i++){
+			model.add(defmail[i]);
+		}
 
 	}
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == button[0]){
+		try {
 			ArrayList<Integer> rowcount = new ArrayList<>();
 			for(int i = 0;i < model.getRowCount();i++){
 				if((boolean)model.getValueAt(i, 0)){
 					rowcount.add(i);
 				}
 			}
-			int delcount = 0;
-			for(int i=0;i<rowcount.size();i++){
-				int selectRow = rowcount.get(i)-delcount;
-				Object[] data = {
-						false,
-						model.getValueAt(selectRow,1),
-						model.getValueAt(selectRow,2),
-						model.getValueAt(selectRow,3)
-				};
-				delTempRow.add(selectRow);
-				delTempData.add(data);
-				model.removeRow(selectRow);
-				delcount++;
+			if(e.getSource() == button[0]){
+				DbHelper db = new DbHelper();
+				for(int i=rowcount.size()-1;i>=0;i--){
+					int selectRow = rowcount.get(i);
+					db.execute("delete from mastertbl where id='"+model.getmailID(selectRow)+"'" );
+					model.removeRow(selectRow);
+				}
+				db.close();
+			}else if(e.getSource() == button[1]){
+				int id;
+				ResultSet rs;
+				DbHelper dbGetId;
+				DbHelper dbUpdate;
+				for(int i=rowcount.size()-1;i>=0;i--){
+					dbGetId = new DbHelper();
+					rs = dbGetId.executeQuery("select * from mastertbl where id='"+model.getmailID(rowcount.get(i))+"'");
+					id=rs.getInt(3);
+					System.out.println("boxid="+rs.getInt(2));
+					dbGetId.close();
+					dbUpdate = new DbHelper();
+					dbUpdate.execute("update mastertbl" +
+							" set MBOXID="+id+",BOXID=1 where id='"+model.getmailID(rowcount.get(i))+"'" );
+					dbUpdate.close();
+					model.removeRow(rowcount.get(i));
+					rs.close();
+				}
 			}
-		}else if(e.getSource() == button[1]){
-			for(int i=0;i<delTempRow.size();i++){
-				model.insertRow(delTempRow.get(i),delTempData.get(i));
-			}
-			delTempRow.clear();
-			delTempData.clear();
-		}else if(e.getSource() == button[2]){
-
+		} catch (SQLException e1) {
+			e1.printStackTrace();
 		}
 	}
 }
