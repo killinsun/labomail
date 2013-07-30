@@ -20,7 +20,7 @@ public class FrmSoftwareCredit extends JFrame {
 		getContentPane().setBackground(Color.LIGHT_GRAY);
 
 		//アイコンを設置
-		JLabel softIcon = new JLabel(new ImageIcon("data/creditIcon.jpg"));
+		JLabel softIcon = new JLabel(new ImageIcon("data/creditIcon.png"));
 		this.add(softIcon, BorderLayout.NORTH);
 
 		//明示文を設置
