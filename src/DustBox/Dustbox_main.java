@@ -82,23 +82,7 @@ public class Dustbox_main extends JPanel implements ActionListener{
 		pane[1].add(scrpane,"grow");
 		this.add(pane[1],"grow");
 
-		try{
-			DbHelper db = new DbHelper();
-			db.execute("insert into mastertbl values(null,1,1,'a','aa','aaa','aaaa',datetime('now','localtime'),'');");
-			db.execute("insert into mastertbl values(null,2,2,'b','','','',datetime('now','localtime'),'');");
-			db.execute("insert into mastertbl values(null,3,2,'c','','','',datetime('now','localtime'),'');");
-			db.execute("insert into mastertbl values(null,4,1,'d','','','',datetime('now','localtime'),'');");
-			db.execute("insert into mastertbl values(null,4,2,'e','','','',datetime('now','localtime'),'');");
-			db.execute("insert into mastertbl values(null,4,3,'f','','','',datetime('now','localtime'),'');");
-			db.execute("insert into mastertbl values(null,4,3,'g','','','',datetime('now','localtime'),'');");
-			db.execute("insert into mastertbl values(null,4,2,'h','','','',datetime('now','localtime'),'');");
-			db.execute("insert into mastertbl values(null,4,2,'i','','','',datetime('now','localtime'),'');");
-			db.execute("insert into mastertbl values(null,4,1,'j','','','',datetime('now','localtime'),'');");
-			db.close();
 
-		}catch(SQLException e1){
-			e1.printStackTrace();
-		}
 		MailObject[] defmail = MailObject.createMailObjects("SELECT * FROM mastertbl where mboxid=4");
 		for(int i=0;i<defmail.length;i++){
 			model.add(defmail[i]);
