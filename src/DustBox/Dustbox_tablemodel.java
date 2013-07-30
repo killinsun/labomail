@@ -11,7 +11,7 @@ public class Dustbox_tablemodel extends DefaultTableModel {
 
 	public Dustbox_tablemodel(String[] clmTitle) {
 		super(null,clmTitle);
-		MailObject[] defmail =MailObject.createMailObjects("SELECT * FROM blacky_test WHERE mboxid='3'");
+		MailObject[] defmail =MailObject.createMailObjects("SELECT * FROM mastertbl WHERE mboxid='3'");
 		for(int i=0;i<defmail.length;i++){
 			this.add(defmail[i]);
 		}

@@ -108,7 +108,7 @@ public class MailObject {
 			try{ rs.close(); }
 			catch (SQLException e) { e.printStackTrace(); }
 		}
-		return (MailObject[])mailObjAry.toArray();
+		return mailObjAry.toArray(new MailObject[]{});
 	}
 
 
