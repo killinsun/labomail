@@ -1,8 +1,10 @@
+/.DS_Store
 /AddressBook
 /DustBox
 /TmpMail
 /TopView
 /Util
-/transceiver
 /dbHelper
+/preference
 /senderView
+/transceiver
