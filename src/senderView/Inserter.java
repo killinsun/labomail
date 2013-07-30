@@ -31,7 +31,7 @@ public class Inserter extends JFrame implements ActionListener {
 
 		/* 1列目 */
 		JScrollPane scrollPane = new JScrollPane();
-		getContentPane().add(scrollPane, "cell 0 0,grow");
+		getContentPane().add(scrollPane, "cell 0 0, grow");
 
 		DefaultListModel<String> model = new DefaultListModel<String>();
 		for(int i=0; i<stab[0].length; i++){
@@ -44,7 +44,7 @@ public class Inserter extends JFrame implements ActionListener {
 
 		/* 2列目 */
 		JScrollPane scrollPane_1 = new JScrollPane();
-		getContentPane().add(scrollPane_1, "cell 1 0,grow");
+		getContentPane().add(scrollPane_1, "cell 1 0, grow");
 
 		model = new DefaultListModel<String>();
 		for(int i=0; i<stab[0].length; i++){

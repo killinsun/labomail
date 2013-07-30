@@ -51,6 +51,8 @@ import dbHelper.DbHelper;
 /*	・なぜかバイナリファイルが		*/
 /*		添付できない				*/
 /* 	（おそらくエンコード問題？）	*/
+/*	Gmailモジュール添付メソッドでの	*/
+/*	不明な送り先エラー				*/
 /************************************/
 
 
@@ -67,6 +69,9 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 	private JPanel pnlAttach;
 	private UndoTextPane txtDetail;
 	private JProgressBar progressBar;
+
+	//定型文用リスナーインスタンス
+	private AutoInsert inserter;
 
 	//インナークラスからのアクセス用(thisの退避)
 	private JPanel pnlSender;
@@ -117,6 +122,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 				}
 			}
 		};
+		//インナークラス用に参照を退避
 		pnlSender = this;
 
 
@@ -230,10 +236,10 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 
 		/*「内容」テキストエリアを設定 */
 		JScrollPane scrollPane = new JScrollPane();
-
 		txtDetail = new UndoTextPane();
+		//定型文用リスナー
+		inserter = new AutoInsert(txtDetail);
 		txtDetail.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-		AutoInsert inserter = new AutoInsert(txtDetail);
 		txtDetail.addKeyListener(inserter);
 		txtDetail.addKeyListener(this);
 		txtDetail.addCaretListener(inserter);
@@ -320,7 +326,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 
 		case "template":
 			//定型文挿入画面を表示
-			new AutoInsert(txtDetail).startForResult(null, 0);
+			inserter.startForResult(null, 0);
 			break;
 
 		case "send":
@@ -754,5 +760,13 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 	}
 
 	/******************************************************/
+
+	public static void main(String[] args){
+		JFrame f = new JFrame();
+		f.add(new MailSenderPanel());
+		f.setSize(800, 600);
+		f.setLocationRelativeTo(null);
+		f.setVisible(true);
+	}
 
 }
