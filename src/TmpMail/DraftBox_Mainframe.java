@@ -31,11 +31,8 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 
 	// DATABASE
 	private DbHelper dh = new DbHelper();
-	private HashMap<Integer, Integer> idMap = new HashMap<>();
+	private HashMap<Object, Object> map = new HashMap<>();
 	private int hashID = 0;
-
-	//あいやさんマジカル変数
-	private ArrayList<Integer> idList = new ArrayList<Integer>();
 
 	// カラムタイトル設定
 	final String[] clmTitle = { "", "from", "件名", "内容" };
@@ -55,7 +52,6 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 	final JTable table = new JTable(tmpmodel);
 
 	/************************************/
-
 
 	public DraftBox_Mainframe() {
 
@@ -102,7 +98,6 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 		this.add(pane[1], "grow");
 		// データ更新
 
-
 		try {
 			String sql = "SELECT * FROM mastertbl WHERE MBOXID=3 ;";
 			ResultSet rs = dh.executeQuery(sql);
@@ -112,8 +107,7 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 				String SUBJECT = rs.getString("SUBJECT");
 				String DATA = rs.getString("DATA");
 				tmpmodel.add(MFROM, SUBJECT, DATA);
-				idMap.put(hashID++, rs.getInt("ID"));
-				idList.add(rs.getInt("ID"));
+				map.put(hashID++, rs.getInt("ID"));
 			}
 			dh.close();
 			rs.close();
@@ -129,35 +123,38 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 		/** 再編集が押されたら **/
 		if (e.getSource() == button[0]) {
 			try {
-
-				//１つ選択のみサポート
-				int selected = -1;
+				// Dustbox_main dbox = new Dustbox_main();// DustBox
+				ArrayList<Integer> rowcount = new ArrayList<>();// 行数格納
 				for (int i = 0; i < tmpmodel.getRowCount(); i++) {// getrowcountで行数を得る
 					if ((boolean) tmpmodel.getValueAt(i, 0)) {// tmpmodelが行[i],列[0]を取得し、trueならrowcountにiを格納
-						selected = i;
-						break;
+						rowcount.add(i);
 					}
 				}
+				int sendcount = 0;
 
-				System.out.println(idList.get(selected));
+				for (int i = 0; i < rowcount.size(); i++) {// rowcountの配列の長さが、iより上ならループ
+					int selectRow = rowcount.get(i) - sendcount;// selectRowにrowcountの列番号を格納
+					String sql = "SELECT * FROM mastertbl WHERE MBOXID=3 AND ID = "
+							+ map.get((Object) selectRow).toString() + ";";
+					ResultSet rs = dh.executeQuery(sql);
+					// プット
+					//String to = rs.getString("MTO");
 
-				String sql = "SELECT mto, subject, data FROM mastertbl WHERE ID="+idList.get(selected)+" AND MBOXID=3;";
-				DbHelper helper = new DbHelper();
-				ResultSet rs = helper.executeQuery(sql);
-				rs.next();
+					// 読み込み
+					JFrame f = new JFrame();
+					f.setSize(700, 500);
+					f.setLocationRelativeTo(null);
+					f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					String []to = {rs.getString("MTO")};
+					String []bcc = {""};
+					String subject = rs.getString("SUBJECT");
+					String detail = rs.getString("DATA");
 
-				String[] to = {rs.getString("mto")};
-				String subject = rs.getString("subject");
-				String detail = rs.getString("data");
 
-				//読み込み
-				JFrame f = new JFrame();
-				f.setSize(700, 500);
-				f.setLocationRelativeTo(null);
-				f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					f.add(new MailSenderPanel(to, bcc, subject, detail));
+					f.setVisible(true);
 
-				f.add(new MailSenderPanel(to, new String[]{}, subject, detail));
-				f.setVisible(true);
+				}
 
 			} catch (Exception e2) {
 				e2.printStackTrace();
@@ -183,24 +180,22 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 					String sql = "SELECT * FROM mastertbl WHERE MBOXID=3 ;";
 					ResultSet rs = dh.executeQuery(sql);
 					System.out.println("--------チェックをつけたデータのID----------");
-					System.out.println(idMap.get((Object) selectRow));
+					System.out.println(map.get((Object) selectRow));
 					// プット
-					System.out.println("ボタン");
 
 					while (rs.next()) {
 						int selectID = rs.getInt("ID");
-						idMap.put(hashID++, selectID);
+						map.put(hashID++, selectID);
 					}
 					rs.close();
 
 					// データをゴミ箱用に更新
 					String sqlupdate = "UPDATE mastertbl SET MBOXID = 4 ,BOXID = 3 WHERE ID = "
-							+ idMap.get((Object) selectRow).toString() +";";
+							+ map.get((Object) selectRow).toString() + ";";
 					dh.execute(sqlupdate);
 
 					System.out.println("---データ更新---");
 				}
-
 
 				dh.close();
 
