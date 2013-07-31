@@ -399,6 +399,7 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 								" '%s', '%s', DATETIME('now','localtime'), 'data/send/%s.lbm');",
 								mboxID, myMailAddr, formattedList, txtSubject.getText(), txtDetail.getText(),  txtMailName
 						);
+		System.out.println(sql);
 		helper.execute(sql);
 		helper.close();
 	}
@@ -485,13 +486,15 @@ public class MailSenderPanel extends JPanel implements Runnable, GetResult, Mous
 
 			} catch (UnsupportedEncodingException | MessagingException | SQLException e) {
 				/* 例外発生時 */
+				//現在のメール内容をデータベースに格納
+				try{ pushDB(3); } catch(SQLException e1){ e1.printStackTrace(); }
+
 				setWorkingMode(false);
 				clearAllText();
 				e.printStackTrace();
 
-				//現在のメール内容をデータベースに格納
-				try{ pushDB(3); } catch(SQLException e1){ e1.printStackTrace(); }
 				JOptionPane.showMessageDialog(null, "メールの送信にエラーが発生しました\nメール情報を未送信画面に保存しました", "送信に失敗しました", JOptionPane.ERROR_MESSAGE);
+
 				return;
 			}
 
