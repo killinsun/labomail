@@ -11,7 +11,7 @@ import javax.swing.SwingWorker;
 /** Swing用のスレッドクラス。Swingはもともとシングルスレッドで動作する。 */
 public class WaitDialog extends SwingWorker<Object, Object> {
 
-	private MyDialog dialog;
+	private JDialog dialog;
 	private boolean flag;
 	
 	public WaitDialog(Frame owner, boolean modal, String message, String title) {
@@ -19,7 +19,7 @@ public class WaitDialog extends SwingWorker<Object, Object> {
 		this.flag = true;
 	}
 	
-	public WaitDialog(MyDialog d) {
+	public WaitDialog(JDialog d) {
 		this.dialog = d;
 		this.flag = false;
 	}
@@ -27,13 +27,17 @@ public class WaitDialog extends SwingWorker<Object, Object> {
 	/** 非同期処理 */
 	@Override
 	protected Object doInBackground() throws Exception {
-		
-		dialog.setVisible(true);
+
+		while(!dialog.isVisible()) {
+			Thread.sleep(100);
+		}
 		
 		while (flag) {
 			// フラグが変わるまで無限ループ
 			Thread.sleep(100);
 		}
+		
+		System.out.println("hoge");
 		
 		return null;
 	}
@@ -45,7 +49,7 @@ public class WaitDialog extends SwingWorker<Object, Object> {
 	/** 非同期処理が終了したあとに実行 */
 	@Override
 	protected void done() {
-		dialog.setVisible(false);
+		dialog.dispose();
 	}
 	
 }
