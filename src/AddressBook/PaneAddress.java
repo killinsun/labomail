@@ -4,11 +4,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
@@ -149,8 +146,8 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 			gettedData[7] = gettedPath;
 			frmEdit = new FrmEdit(this,gettedData,gettedID);
 			frmEdit.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			frmEdit.setLocationRelativeTo(null);
 			frmEdit.setSize(450,480);
+			frmEdit.setLocationRelativeTo(null);
 			frmEdit.setTitle("編集");
 			frmEdit.setVisible(true);
 			System.out.println("Open Edit frame");
@@ -162,8 +159,8 @@ public class PaneAddress extends JPanel implements ActionListener,ListSelectionL
 			gettedData[7] = "data/faceIcon/default.jpg";
 			frmAdd= new FrmEdit(this,gettedData,gettedID);
 			frmAdd.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			frmAdd.setLocationRelativeTo(null);
 			frmAdd.setSize(450,480);
+			frmAdd.setLocationRelativeTo(null);
 			frmAdd.setTitle("追加");
 			frmAdd.setVisible(true);
 			break;

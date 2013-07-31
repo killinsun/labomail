@@ -17,7 +17,7 @@ import javax.swing.border.BevelBorder;
 
 import net.miginfocom.swing.MigLayout;
 import preference.IntentCushionPanel;
-import senderView.MailSenderPanel;
+import senderView.SenderScrollPane;
 import AddressBook.PaneAddress;
 import DustBox.Dustbox_main;
 import TmpMail.DraftBox_Mainframe;
@@ -100,7 +100,7 @@ public class MenuPanel extends JPanel {
 
 		// パネル設定
 		paneAddress = PaneAddress.class;
-		senderView = MailSenderPanel.class;
+		senderView = SenderScrollPane.class;
 		// TODO: JscrollPane消しちゃったから新規作成画面の方でなんとかしてください＞＜ (to:あいやくん)
 //		senderView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		tmpBox = DraftBox_Mainframe.class;
