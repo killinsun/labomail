@@ -13,7 +13,7 @@ import dbHelper.DbHelper;
 
 public class DBTest {
 	DbHelper dh = new DbHelper();
-	String sql = "SELECT *FROM mastertbl WHERE MBOXID=3 ;";
+	String sql = "SELECT *FROM mastertbl WHERE MBOXID=3 AND ID = 5;";
 	ResultSet rs = dh.executeQuery(sql);
 
 	public DBTest() {
@@ -22,11 +22,13 @@ public class DBTest {
 			while (rs.next()) {
 				System.out.println("-------------" + "\n"+ 
 								   "BOXID="+rs.getString("MBOXID") + "\n" + 
-						           "MFROM="+ rs.getString("MFROM") + "\n" + 
+						           "ID="+ rs.getString("ID") + "\n" + 
 						           "MTO="+rs.getString("MTO")+ "\n"+
 						           "SUBJECT="+ rs.getString("SUBJECT") + "\n" + 
 						           "DATA="+ rs.getString("DATA")
 						           );
+				String a = rs.getString("MTO");
+				System.out.println("ストリングで:"+a);
 			}
 			rs.close();
 			dh.close();

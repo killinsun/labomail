@@ -86,7 +86,6 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 		this.add(pane[1], "grow");
 		// データ更新
 
-
 		try {
 			String sql = "SELECT * FROM mastertbl WHERE MBOXID=3 ;";
 			ResultSet rs = dh.executeQuery(sql);
@@ -105,12 +104,11 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 		}
 	}
 
-
 	public void actionPerformed(ActionEvent e) {
 		/** 再編集が押されたら **/
 		if (e.getSource() == button[0]) {
 			try {
-//				Dustbox_main dbox = new Dustbox_main();// DustBox
+				// Dustbox_main dbox = new Dustbox_main();// DustBox
 				ArrayList<Integer> rowcount = new ArrayList<>();// 行数格納
 				for (int i = 0; i < tmpmodel.getRowCount(); i++) {// getrowcountで行数を得る
 					if ((boolean) tmpmodel.getValueAt(i, 0)) {// tmpmodelが行[i],列[0]を取得し、trueならrowcountにiを格納
@@ -121,42 +119,31 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 
 				for (int i = 0; i < rowcount.size(); i++) {// rowcountの配列の長さが、iより上ならループ
 					int selectRow = rowcount.get(i) - sendcount;// selectRowにrowcountの列番号を格納
-					//					System.out.println("--------チェックをつけたデータのID----------");
-					//	System.out.println(map.get((Object) selectRow));
+					String sql = "SELECT * FROM mastertbl WHERE MBOXID=3 AND ID = "
+							+ map.get((Object) selectRow).toString() + ";";
+					ResultSet rs = dh.executeQuery(sql);
 					// プット
+					//String to = rs.getString("MTO");
+				
+					// 読み込み
+					JFrame f = new JFrame();
+					f.setSize(700, 500);
+					f.setLocationRelativeTo(null);
+					f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					String []to = {rs.getString("MTO")};
+					String []bcc = {""};
+					String subject = rs.getString("SUBJECT");
+					String detail = rs.getString("DATA");
+					
+					
+					f.add(new MailSenderPanel(to, bcc, subject, detail));
+					f.setVisible(true);
+					
 				}
 
-				String sql = "SELECT * FROM mastertbl WHERE ID="+(int)map.get(rowcount.get(0))+" AND MBOXID=3;";
-//				ResultSet rs = dh.executeQuery(sql);
-//
-//				while (rs.next()) {
-//					int selectID = rs.getInt("ID");
-//					map.put(hashID++, selectID);
-//					System.out.println(selectID);
-//				}
-
-
-				//読み込み
-				JFrame f = new JFrame();
-				f.setSize(700, 500);
-				f.setLocationRelativeTo(null);
-				f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	
-//				rs = dh.executeQuery(sql);
-				transceiver.MailObject[] mo=transceiver.MailObject.createMailObjects(sql);
-
-				String[] to = mo[0].getToCC();
-				String[] bcc = mo[0].getBcc();
-				String subject;
-				String detail;
-				subject = mo[0].getSubject();
-				detail = mo[0].getData();
-
 				
-				f.add(new MailSenderPanel(to, bcc, subject, detail));
-				f.setVisible(true);
 
-//				rs.close();
+				// rs.close();
 			} catch (Exception e2) {
 				e2.printStackTrace();
 			}
@@ -183,7 +170,6 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 					System.out.println("--------チェックをつけたデータのID----------");
 					System.out.println(map.get((Object) selectRow));
 					// プット
-					System.out.println("ボタン");
 
 					while (rs.next()) {
 						int selectID = rs.getInt("ID");
@@ -193,12 +179,11 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 
 					// データをゴミ箱用に更新
 					String sqlupdate = "UPDATE mastertbl SET MBOXID = 4 ,BOXID = 3 WHERE ID = "
-							+ map.get((Object) selectRow).toString() +";";
+							+ map.get((Object) selectRow).toString() + ";";
 					dh.execute(sqlupdate);
 
 					System.out.println("---データ更新---");
 				}
-
 
 				dh.close();
 
