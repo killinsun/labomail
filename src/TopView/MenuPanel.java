@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
 import net.miginfocom.swing.MigLayout;
-import preference.SelectServicePanel;
+import preference.IntentCushionPanel;
 import senderView.MailSenderPanel;
 import AddressBook.PaneAddress;
 import DustBox.Dustbox_main;
@@ -102,11 +102,11 @@ public class MenuPanel extends JPanel {
 		senderView = MailSenderPanel.class;
 		// TODO: JscrollPane消しちゃったから新規作成画面の方でなんとかしてください＞＜ (to:あいやくん)
 //		senderView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		optionPanel = SelectServicePanel.class;
+		optionPanel = IntentCushionPanel.class;
 		paneDustBox = Dustbox_main.class;
 		dummyPanel = DummyPanel.class;
 
-		panelMap = new HashMap<>();
+		panelMap = new HashMap<String, Class<? extends JComponent>>();
 		panelMap.put(NEW_MAIL_IDENT, senderView);
 		panelMap.put(TRUSH_IDENT, paneDustBox);
 		panelMap.put(ADDRESSBOOK_IDENT, paneAddress);
@@ -156,6 +156,7 @@ public class MenuPanel extends JPanel {
 					JComponent newComponent = panel.newInstance();
 					TopView.addTab(name, newComponent);
 				} catch (InstantiationException | IllegalAccessException e1) {
+					e1.printStackTrace();
 					JOptionPane.showMessageDialog(null, "タブが開けません", "エラー", JOptionPane.ERROR_MESSAGE);
 				}
 			}
