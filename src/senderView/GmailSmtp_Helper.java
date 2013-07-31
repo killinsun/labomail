@@ -25,23 +25,17 @@ public class GmailSmtp_Helper implements Smtp_Interface {
 
 	/************ メンバ変数 ************/
 
-	//目的のメールサービスのSMTPサーバを設定してください（Gmailは"smtp.gmail.com"）
-	private String smtpServer;
 	//自分のアドレスを設定してください（送信元として適用されます）
 	private String myMailAddress;
 	//自分のアドレスのパスワードを設定してください（認証に使用されます）
 	private String myPassword;
-	//任意のポートを設定
-	private String port;
 
 	/************************************/
 
 	/* 選択アカウントの基本設定 */
-	public GmailSmtp_Helper(String smtpServer, String accountMailAddress, String accountPassword, String port){
-		this.smtpServer = smtpServer;
+	public GmailSmtp_Helper(String accountMailAddress, String accountPassword){
 		this.myMailAddress = accountMailAddress;
 		this.myPassword = accountPassword;
-		this.port = port;
 	}
 
 
@@ -50,7 +44,7 @@ public class GmailSmtp_Helper implements Smtp_Interface {
 
 		/* プロパティの取得と設定 */
 		Properties props = System.getProperties();
-		props.put("mail.smtp.port", port);
+		props.put("mail.smtp.port", "587");
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.starttls.enable", "true");
 
@@ -84,7 +78,7 @@ public class GmailSmtp_Helper implements Smtp_Interface {
 		/* メールの送信 */
 		Transport transport = session.getTransport("smtp");
 
-		transport.connect(smtpServer, myMailAddress, myPassword);
+		transport.connect("smtp.gmail.com", myMailAddress, myPassword);
 		transport.sendMessage(msg, msg.getAllRecipients());
 		transport.close();
 	}

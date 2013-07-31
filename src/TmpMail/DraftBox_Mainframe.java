@@ -83,6 +83,7 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 		tblcolumn.setPreferredWidth(200);
 		tblcolumn = columnModel.getColumn(2);
 		tblcolumn.setPreferredWidth(200);
+
 		/**
 		 * スクロールパネル
 		 */
