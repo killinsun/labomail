@@ -126,6 +126,8 @@ public class Dustbox_main extends JPanel implements ActionListener{
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
+		}catch(NullPointerException e2){
+			System.out.println("データが選択されていません");
 		}
 	}
 }
