@@ -20,6 +20,7 @@ import preference.IntentCushionPanel;
 import senderView.MailSenderPanel;
 import AddressBook.PaneAddress;
 import DustBox.Dustbox_main;
+import TmpMail.DraftBox_Mainframe;
 
 /** 画面上部のメニュー */
 public class MenuPanel extends JPanel {
@@ -41,7 +42,7 @@ public class MenuPanel extends JPanel {
 	JLabel newMail, receiveBox, sentBox, notSendBox, trush, addressBook, option;
 
 	// あとでインスタンス生成するため、各JComponentのクラスを保持
-	Class<? extends JComponent> paneAddress, senderView, optionPanel, paneDustBox, dummyPanel;
+	Class<? extends JComponent> paneAddress, senderView, tmpBox, optionPanel, paneDustBox, dummyPanel;
 
 	public MenuPanel() {
 
@@ -102,12 +103,14 @@ public class MenuPanel extends JPanel {
 		senderView = MailSenderPanel.class;
 		// TODO: JscrollPane消しちゃったから新規作成画面の方でなんとかしてください＞＜ (to:あいやくん)
 //		senderView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		tmpBox = DraftBox_Mainframe.class;
 		optionPanel = IntentCushionPanel.class;
 		paneDustBox = Dustbox_main.class;
 		dummyPanel = DummyPanel.class;
 
 		panelMap = new HashMap<String, Class<? extends JComponent>>();
 		panelMap.put(NEW_MAIL_IDENT, senderView);
+		panelMap.put(NOT_SEND_IDENT, tmpBox);
 		panelMap.put(TRUSH_IDENT, paneDustBox);
 		panelMap.put(ADDRESSBOOK_IDENT, paneAddress);
 		panelMap.put(OPTION_IDENT, optionPanel);

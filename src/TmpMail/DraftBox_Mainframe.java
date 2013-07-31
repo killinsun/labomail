@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -13,33 +14,48 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
+import net.miginfocom.swing.MigLayout;
 import DustBox.Dustbox_main;
 import dbHelper.DbHelper;
 
-import net.miginfocom.swing.MigLayout;
-
 public class DraftBox_Mainframe extends JPanel implements ActionListener {
+
+
+	/************ メンバ変数 ************/
+
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Integer> delTempRow = new ArrayList<>();
 	private ArrayList<Object[]> delTempData = new ArrayList<>();
+
 	// DATABASE
 	private DbHelper dh = new DbHelper();
 	String sql = "SELECT ID,MFROM,SUBJECT,DATA FROM mastertbl WHERE MBOXID=3 ;";
 	ResultSet rs = dh.executeQuery(sql);
 	HashMap<Object, Object> map = new HashMap<>();
 	int hashID = 0;
+
 	// カラムタイトル設定
 	final String[] clmTitle = { "", "from", "件名", "内容" };
+
 	// DraftBox_Tableをインスタンス化
 	public DraftBox_Table tmpmodel = new DraftBox_Table(clmTitle);
+
 	// パネルを配列にセット
-	final JPanel[] pane = { new JPanel(),// 配列0
+	final JPanel[] pane = {
+			new JPanel(),// 配列0
 			new JPanel() };// 配列1
+
 	// 配列にボタン設定
 	final JButton[] button = { new JButton("削除"), new JButton("ゴミ箱へ") };
+
 	// テーブルクラス
 	final JTable table = new JTable(tmpmodel);
+
+	/************************************/
+
+
 	public DraftBox_Mainframe() {
+
 		// レイアウト設定
 		this.setLayout(new MigLayout("wrap 1", "[grow]", "[][grow]"));
 
@@ -51,9 +67,8 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 			pane[0].add(b, "c");
 		}
 		this.add(pane[0]);
-		/**
-		 * テーブル設定
-		 */
+
+		/* テーブル設定 */
 		// AUTO_RESIZE_LAST_COLUMN:最後の列だけをサイズ自動調整
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		// ユーザーが列順序ををいじれないようにする
@@ -102,10 +117,10 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 		}
 	}
 	public void actionPerformed(ActionEvent e) {
-		/**
+
+		/*
 		 * アクション処理
 		 */
-		//
 		if (e.getSource() == button[0]) {
 			ArrayList<Integer> rowcount = new ArrayList<>();
 			// getrowcountで行数を得る
@@ -125,9 +140,10 @@ public class DraftBox_Mainframe extends JPanel implements ActionListener {
 				sendcount++;
 			}
 		}
+
 		/**
 		 * もし配列1(ゴミ箱へ)のボタンが押されたら
-		 **/
+		 */
 		else if (e.getSource() == button[1]) {
 			/** ゴミ箱へ送る処理 **/
 			try {
