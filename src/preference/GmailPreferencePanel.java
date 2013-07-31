@@ -84,12 +84,12 @@ public class GmailPreferencePanel extends JPanel implements ActionListener{
 
 		//XMLに書き込む内容を配列にまとめる
 		String[] property = new String[]{
-			txtAcMailAddr.getText(),
-			txtAcPassword.getText(),
-			"smtp.gmail.com",
-			"587",
-			"imap.gmail.com",
-			"993"
+				txtAcMailAddr.getText(),
+				txtAcPassword.getText(),
+				"smtp.gmail.com",
+				"587",
+				"imap.gmail.com",
+				"993"
 		};
 
 		try {

@@ -26,10 +26,10 @@ public class FrmSoftwareCredit extends JFrame {
 		//明示文を設置
 		String creadit =
 				"\nLabo Mailer for Gmail\n\n" +
-				"Version: 1.0\n" +
-				"Release: 2013-07-31\n\n" +
-				"Created by FJB Labo Members\n" +
-				"And FJB Graphic Menbers";
+						"Version: 1.0\n" +
+						"Release: 2013-07-31\n\n" +
+						"Created by FJB Labo Members\n" +
+						"And FJB Graphic Menbers";
 
 		JTextArea txtCredit = new JTextArea(creadit);
 		txtCredit.setFont(new Font("ＭＳ Ｐゴシック", Font.BOLD, 15));

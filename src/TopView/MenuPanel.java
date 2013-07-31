@@ -13,11 +13,10 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
 
 import net.miginfocom.swing.MigLayout;
-import preference.SelectHostPreferencePanel;
+import preference.SelectServicePanel;
 import senderView.MailSenderPanel;
 import AddressBook.PaneAddress;
 import DustBox.Dustbox_main;
@@ -103,10 +102,10 @@ public class MenuPanel extends JPanel {
 		senderView = MailSenderPanel.class;
 		// TODO: JscrollPane消しちゃったから新規作成画面の方でなんとかしてください＞＜ (to:あいやくん)
 //		senderView.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		optionPanel = SelectHostPreferencePanel.class;
+		optionPanel = SelectServicePanel.class;
 		paneDustBox = Dustbox_main.class;
 		dummyPanel = DummyPanel.class;
-		
+
 		panelMap = new HashMap<>();
 		panelMap.put(NEW_MAIL_IDENT, senderView);
 		panelMap.put(TRUSH_IDENT, paneDustBox);
@@ -160,10 +159,10 @@ public class MenuPanel extends JPanel {
 					JOptionPane.showMessageDialog(null, "タブが開けません", "エラー", JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			
+
 		}
-		
-		
+
+
 	}
 
 }
