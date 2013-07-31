@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -17,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
+import javax.swing.border.MatteBorder;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -95,8 +98,21 @@ public class MailViewPanel extends JPanel {
 				File file = new File("data/tmp/tmp.html");
 				file.createNewFile();
 				
-				PrintWriter pw = new PrintWriter(file);
-				pw.print(mailTextPane.getText());
+				PrintWriter pw = new PrintWriter(file, "UTF-8");
+				String text = mailTextPane.getText();
+
+				// HTML部分のみ書き出す
+				String regex = "<html.*>.*</html>";
+				Pattern pattern = Pattern.compile(
+						regex, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+				Matcher matcher = pattern.matcher(text);
+				
+				if(matcher.find()) {
+					pw.print(matcher.group());
+				}
+				else {
+					pw.print(text);
+				}
 				pw.close();
 				
 				// ブラウザを起動してファイルを開く
