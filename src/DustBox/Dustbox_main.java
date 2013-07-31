@@ -13,12 +13,10 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
-import transceiver.MailObject;
-
 import net.miginfocom.swing.MigLayout;
 import dbHelper.DbHelper;
 
-public class Dustbox_main extends JPanel implements ActionListener{
+public class Dustbox_main extends JPanel implements ActionListener,Runnable{
 	private static final long serialVersionUID = 1L;
 
 
@@ -28,8 +26,7 @@ public class Dustbox_main extends JPanel implements ActionListener{
 			"to",
 			"件名",
 	"内容"};
-	public 
-	Dustbox_tablemodel model = new Dustbox_tablemodel(clmTitle);
+	private Dustbox_tablemodel model = new Dustbox_tablemodel(clmTitle);
 
 	final JPanel[] pane ={
 			new JPanel(),
@@ -81,14 +78,25 @@ public class Dustbox_main extends JPanel implements ActionListener{
 				"[grow]"));
 		pane[1].add(scrpane,"grow");
 		this.add(pane[1],"grow");
-
-
-		MailObject[] defmail = MailObject.createMailObjects("SELECT * FROM mastertbl where mboxid=4");
-		for(int i=0;i<defmail.length;i++){
-			model.add(defmail[i]);
-		}
-
+		
+		Thread reload = new Thread(this);
+		reload.start();
 	}
+	
+	public synchronized void sleep(long msec){	//指定ミリ秒実行を止めるメソッド
+		try{
+			wait(msec);
+		}catch(InterruptedException e){
+		}
+	}
+	
+	public void run() {
+		while(true){	
+		model.reload();
+		this.sleep(600000);
+		}
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		try {
 			ArrayList<Integer> rowcount = new ArrayList<>();
@@ -114,7 +122,7 @@ public class Dustbox_main extends JPanel implements ActionListener{
 					dbGetId = new DbHelper();
 					rs = dbGetId.executeQuery("select * from mastertbl where id='"+model.getmailID(rowcount.get(i))+"'");
 					id=rs.getInt(3);
-					System.out.println("boxid="+rs.getInt(2));
+
 					dbGetId.close();
 					dbUpdate = new DbHelper();
 					dbUpdate.execute("update mastertbl" +
@@ -123,11 +131,14 @@ public class Dustbox_main extends JPanel implements ActionListener{
 					model.removeRow(rowcount.get(i));
 					rs.close();
 				}
-			}
-		} catch (SQLException e1) {
+			} 
+		}catch (SQLException e1) {
 			e1.printStackTrace();
 		}catch(NullPointerException e2){
 			System.out.println("データが選択されていません");
 		}
+		
 	}
+
+
 }

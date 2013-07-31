@@ -90,7 +90,6 @@ public class MailObject {
 						rs.getString("data"),
 						Timestamp.valueOf(rs.getString("date")),
 						rs.getString("path")));
-				System.out.println(rs.getInt("id") );
 			}
 			dbhelper.close();
 			rs.close(); 
