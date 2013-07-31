@@ -1,9 +1,9 @@
 package senderView;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.ResultSet;
@@ -15,13 +15,22 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JPopupMenu;
 import javax.swing.ListCellRenderer;
-import javax.swing.event.ListSelectionEvent;
 
 import AddressBook.PaneAddress;
 import Util.MyUtils;
 import dbHelper.DbHelper;
-//killinsun
+
+/************************************/
+/*									*/
+/*		「！！完成しました！！」	*/
+/*									*/
+/************ 既知のバグ ************/
+/*	下からアドレスを追加			*/
+/*	しようとしてはいけません。		*/
+/************************************/
+
 
 public class AddressSelectPanel extends PaneAddress implements MouseListener {
 
@@ -35,16 +44,16 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 	//このパネルを格納するフレームの参照(disposeに使用)
 	private JFrame superFrame;
 
-	//データベースのコネクション
-	private DbHelper dh; //killinsun
-
 	//宛先追加用ボタン
 	private JButton addButton;
 
 	//スーパークラスのリストを元に独自リストを生成
 	private JList<JCheckBox> nameList;
 	private DefaultListModel<JCheckBox> listModel;
-	private boolean[] checkList;
+	private int[] checkList;	//0:選択なし, 1:PCメール選択, 2:PHONEメール選択. 3:両方選択
+
+	//名前でDBのPCアドレス、Phoneメールを格納
+	private String[][] addressDimension;
 
 
 	/************ インナークラス ************/
@@ -79,33 +88,11 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 		//こちらからdispose()を行なうための参照を受け取る
 		this.superFrame = superFrame;
 
-		//初期値設定
-		dh = new DbHelper();
-
 /*
-		try {
-			//DBファイルのチェック
-			if( !new File("labomailer.db").exists() ){
-				throw new FileNotFoundException("DBファイルが見つかりません");
-			}
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection("jdbc:sqlite:labomailer.db");
-		} catch (ClassNotFoundException e) {
-			JOptionPane.showConfirmDialog(null, "データベースの接続に失敗しました\n" + e.fillInStackTrace(),
-					"エラー", JOptionPane.OK_OPTION, JOptionPane.WARNING_MESSAGE);
-		} catch (SQLException e) {
-			JOptionPane.showConfirmDialog(null, "データベースの接続に失敗しました\n" + e.fillInStackTrace(),
-					"エラー", JOptionPane.OK_OPTION, JOptionPane.WARNING_MESSAGE);
-		} catch (FileNotFoundException e) {
-			  labomailer.dbファイルとテーブルでも作りましょうかね。
 			 ∧＿∧
 			( ･ω･) ＜ ほっと一息
 			( つ旦O
 			と＿)＿)
-			e.printStackTrace();
-		}
-
-	}
 */
 
 		//親クラスのボタンを取り除く
@@ -119,15 +106,18 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 		String[] names = tmpNames.substring(1, tmpNames.length()-1).split(",");
 		for(String listLabel : names){
 			JCheckBox nameBox = new JCheckBox(listLabel);
-			nameBox.setBackground(Color.WHITE);
 			listModel.addElement(nameBox);
 		}
 		nameList = new JList<JCheckBox>(listModel);
 
+
+		/* アドレスクエリの発行 */
+		addressDimension = getAddressQuery();
+
 		/* チェック状態を表す配列を初期設定 */
-		checkList = new boolean[listModel.size()];
+		checkList = new int[listModel.size()];
 		for(int i=0; i<checkList.length; i++){
-			checkList[i] = false;
+			checkList[i] = 0;
 		}
 
 		/* チェックボックス機能を有効化 */
@@ -153,16 +143,43 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 	public void actionPerformed(ActionEvent e){
 		switch (e.getActionCommand()) {
 		case "挿入":
-			ArrayList<String> addListArray = new ArrayList<String>();
+			ArrayList<String> addressList = new ArrayList<String>();
 			for(int i=0; i<checkList.length; i++){
-				if(checkList[i]){
+				//checkList要素は０～２でなければならない
+				assert 0<=checkList[i] && checkList[i]<=2;
+				if(checkList[i] != 0){
 					//JListは一つのコンポーネントであり、まとまりである。
-					String nameOfListNumber = MyUtils.getText(nameList.getModel().getElementAt(i));
-					addListArray.add( getAddressQuery(nameOfListNumber) );
+					String[] addressOfName;
+					//追加するアドレスを判別
+					switch (checkList[i]) {
+					case 1:
+						addressOfName = new String[1];
+						addressOfName[0] = addressDimension[i][0];
+						break;
+					case 2:
+						addressOfName = new String[1];
+						addressOfName[0] = addressDimension[i][1];
+						break;
+					case 3:
+						addressOfName = new String[2];
+						addressOfName[0] = addressDimension[i][0];
+						addressOfName[1] = addressDimension[i][1];
+						break;
+					default:
+						addressOfName = new String[1];
+						addressOfName[0] = "unknow check in AddressSelectPanel";
+						break;
+					}
+
+					//割り出したアドレスを最終結果に追加
+					for(String added : addressOfName){
+						addressList.add(added);
+					}
 				}
 			}
-			String[] addList = addListArray.toArray(new String[addListArray.size()]);
+			String[] addList = addressList.toArray(new String[addressList.size()]);
 
+			//呼び出し元に結果をコールバックする
 			receiveClass.setResult(addList, callNumber);
 			break;
 
@@ -172,48 +189,91 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 
 		//親フレームの画面を閉じる
 		superFrame.dispose();
-
 	}
 
-	// 指定のNameカラムのアドレスを選択
-	private String getAddressQuery(String name){
-		//戻り値用変数の宣言
-		String address = "not found";
 
+	// PCとPhoneのアドレスカラムを文字列配列で取得
+	@SuppressWarnings({ "unchecked", "rawtypes" })//気にしないでよし
+	private String[][] getAddressQuery(){
+		ArrayList[] addressList = new ArrayList[2];
+		addressList[0] = new ArrayList<String>();
+		addressList[1] = new ArrayList<String>();
+		DbHelper helper = new DbHelper();
+		String addressQuery =
+				"SELECT pcmail, phonemail" +
+				" FROM " + DbHelper.ADDRESS_TABLE;
+		ResultSet rs = helper.executeQuery(addressQuery);
 		try {
-			ResultSet rs = dh.executeQuery("SELECT pcmail FROM addresstable WHERE name='"+name+"';");
-			rs.next();
-			address = rs.getString("pcmail");
-			dh.close();
-		} catch (SQLException e) {
+			while(rs.next()){
+				addressList[0].add(rs.getString("pcmail"));
+				addressList[1].add(rs.getString("phonemail"));
+			}
+		} catch(SQLException e) {
 			e.printStackTrace();
+			return null;
+		} finally {
+			try {
+				rs.close();
+				helper.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
-
-		return address;
-	}
-
-	/* リスト要素クリック時 */
-	@Override
-	public void valueChanged(ListSelectionEvent e){
-		System.out.println("act");
+		String[][] retValue = {
+				UtilsForThisPackage.listToArray(addressList[0]),
+				UtilsForThisPackage.listToArray(addressList[1])
+		};
+		return retValue;
 	}
 
 	/* チェックボックスリスナー */
 	@Override
 	public void mouseClicked(MouseEvent e) {
+
 		/* クリックされた座標からインデックスを割り出す */
 		Point p = e.getPoint();
 		int index = nameList.locationToIndex(p);
 
 		/* チェックボックス状態の書き換え、記録 */
-		JCheckBox checkBox = listModel.getElementAt(index);
-		if(checkBox.isSelected()){
-			checkBox.setSelected(false);
-			checkList[index] = false;
-		}else{
-			checkBox.setSelected(true);
-			checkList[index] = true;
+//		JCheckBox checkBox = listModel.getElementAt(index);
+//		if(checkBox.isSelected()){
+//			checkBox.setSelected(false);
+//			checkList[index] = false;
+//		}else{
+//			checkBox.setSelected(true);
+//			checkList[index] = true;
+//		}
+
+		//ポップアップメニューに表示する(PC|Phone)メールアドレスを取得
+		DbHelper helper = new DbHelper();
+		String name = MyUtils.getText(listModel.getElementAt(index));
+		ResultSet rs = helper.executeQuery(
+				"select PCMAIL, PHONEMAIL from addresstable" +
+				" where NAME='"+name+"';");
+		JCheckBox address1 = null;
+		JCheckBox address2 = null;
+		try{
+			rs.next();
+			if(!rs.getString("PCMAIL").equals("")) address1 = new JCheckBox(rs.getString("PCMAIL"));
+			if(!rs.getString("PHONEMAIL").equals("")) address2 = new JCheckBox(rs.getString("PHONEMAIL"));
+		} catch (SQLException e2) {
+			e2.printStackTrace();
+		} finally {
+			//リソースのクローズ
+			try{ helper.close(); rs.close(); }
+			catch(SQLException e1){ e1.printStackTrace(); }
 		}
+
+		if(address1!=null) address1.addActionListener(new GetResultNumber());
+		if(address2!=null) address2.addActionListener(new GetResultNumber());
+
+		/* ポップアップメニューを表示 */
+		JPopupMenu pop = new JPopupMenu();
+		if(address1!=null) pop.add(address1);
+		if(address2!=null) pop.add(address2);
+		//TODO: 出現範囲を限定
+		pop.show(this, e.getX(), e.getY());
 
 		/* 再描画 */
 		nameList.repaint();
@@ -223,6 +283,34 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 	@Override public void mouseReleased(MouseEvent e) {}
 	@Override public void mouseEntered(MouseEvent e) {}
 	@Override public void mouseExited(MouseEvent e) {}
+
+	class GetResultNumber implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String selectedAddress = e.getActionCommand();
+			int[] pointXY = new int[2];
+			pointXY[0] = -1;
+			pointXY[1] = -1;
+			for(int i=0; i<addressDimension[0].length; i++){
+				for(int j=0; j<addressDimension.length; j++){
+					if(selectedAddress.equals(addressDimension[i][j])){
+						pointXY[0] = i;
+						pointXY[1] = j;
+					}
+				}
+			}
+			//結果を戻す
+			if(checkList[pointXY[0]] != 0){
+				if((checkList[pointXY[0]]-1) == pointXY[1]+1){
+					checkList[pointXY[0]] = pointXY[1] + 1;
+				}else{
+					checkList[pointXY[0]] += pointXY[1] + 1;
+				}
+			}else{
+				checkList[pointXY[0]] = pointXY[1] + 1;
+			}
+		}
+	}
 
 	/****************************************/
 

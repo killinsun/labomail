@@ -55,7 +55,7 @@ public class AutoInsert implements CaretListener, KeyListener, GetResult {
 	@Override
 	public void startForResult(GetResult receiveClass, int callNumber) {
 		Inserter insert = new Inserter(this);
-		insert.setSize(700, 300);
+		insert.setSize(900, 500);
 		insert.setLocationRelativeTo(null);
 		insert.setVisible(true);
 	}
