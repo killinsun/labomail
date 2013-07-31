@@ -6,7 +6,6 @@ import javax.swing.table.DefaultTableModel;
 
 public class DraftBox_Table extends DefaultTableModel {
 	private static final long serialVersionUID = 1L;
-
 	// Boolean型のリスト
 	ArrayList<Boolean> cbox = new ArrayList<>();
 
