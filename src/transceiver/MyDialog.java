@@ -6,7 +6,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public class MyDialog extends JFrame {
+public class MyDialog extends JDialog {
 
 	public MyDialog(Frame owner, boolean modal, String message, String title) {
 

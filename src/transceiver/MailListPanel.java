@@ -14,6 +14,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -198,8 +199,8 @@ public class MailListPanel extends JPanel {
 		public ImapState() {
 			
 			// TODO: Gmail接続中に表示するダイアログ
-			MyDialog dialog = new MyDialog(null, false, "接続中...", "");
-			dialog.setVisible(true);
+//			MyDialog dialog = new MyDialog(null, false, "接続中．．．", "");
+//			dialog.setVisible(true);
 			
 			String[] pref = null;
 			try {
@@ -220,7 +221,7 @@ public class MailListPanel extends JPanel {
 						null, "設定ファイルの読み込みに失敗しました。", 
 						"エラー", JOptionPane.ERROR_MESSAGE);
 			} finally {
-				dialog.setVisible(false);
+//				dialog.setVisible(false);
 			}
 		}
 		
@@ -234,20 +235,30 @@ public class MailListPanel extends JPanel {
 		@Override
 		public List<MailObject> getMailList() throws MessagingException, IOException, IllegalStateException {
 			
+			if(index < 1) {
+				JOptionPane.showMessageDialog(
+						null, "すべてのメールを読み込んでいます。", 
+						"", JOptionPane.INFORMATION_MESSAGE);
+				return imapMails;
+			}
+			
 			// TODO: メール受信中に表示するダイアログ
-			MyDialog dialog = new MyDialog(null, false, "受信中...", "");
+			JDialog dialog = new MyDialog(null, false, "受信中...", "");
 			dialog.setVisible(true);
-
+//			WaitDialog dialog = new WaitDialog(null, false, "受信中．．．", "");
+			WaitDialog wDialog = new WaitDialog(dialog);
+			wDialog.execute();
 			
 			List<MailObject> mails = imap.getMail(index - 9, index);
 			index -= 10;
 			Collections.reverse(mails);
 			imapMails.addAll(mails);
 			
-			dialog.setVisible(false);
+			wDialog.setFlag(false);
 			
 			return imapMails;
 		}
+		
 
 		@Override
 		public Icon getIcon() {
