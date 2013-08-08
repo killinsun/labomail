@@ -154,16 +154,16 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 					switch (checkList[i]) {
 					case 1:
 						addressOfName = new String[1];
-						addressOfName[0] = addressDimension[i][0];
+						addressOfName[0] = addressDimension[0][i];
 						break;
 					case 2:
 						addressOfName = new String[1];
-						addressOfName[0] = addressDimension[i][1];
+						addressOfName[0] = addressDimension[1][i];
 						break;
 					case 3:
 						addressOfName = new String[2];
-						addressOfName[0] = addressDimension[i][0];
-						addressOfName[1] = addressDimension[i][1];
+						addressOfName[0] = addressDimension[0][i];
+						addressOfName[1] = addressDimension[1][i];
 						break;
 					default:
 						addressOfName = new String[1];
@@ -203,6 +203,7 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 				"SELECT pcmail, phonemail" +
 				" FROM " + DbHelper.ADDRESS_TABLE;
 		ResultSet rs = helper.executeQuery(addressQuery);
+		boolean succeedFlag = true;
 		try {
 			while(rs.next()){
 				addressList[0].add(rs.getString("pcmail"));
@@ -210,11 +211,12 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
-			return null;
+			succeedFlag = false;
 		} finally {
 			try {
 				rs.close();
 				helper.close();
+				if(!succeedFlag) return null;
 			} catch(SQLException e) {
 				e.printStackTrace();
 				return null;
@@ -244,6 +246,13 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 //			checkBox.setSelected(true);
 //			checkList[index] = true;
 //		}
+		//ポップアップの出現するクリック位置条件を指定
+		if(
+				(e.getX() - nameList.indexToLocation(index).getX()) > 50 ||
+				e.getY() - nameList.indexToLocation(index).getY() > 50)
+		{
+			return;
+		}
 
 		//ポップアップメニューに表示する(PC|Phone)メールアドレスを取得
 		DbHelper helper = new DbHelper();
@@ -272,7 +281,6 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 		JPopupMenu pop = new JPopupMenu();
 		if(address1!=null) pop.add(address1);
 		if(address2!=null) pop.add(address2);
-		//TODO: 出現範囲を限定
 		pop.show(this, e.getX(), e.getY());
 
 		/* 再描画 */
@@ -291,11 +299,13 @@ public class AddressSelectPanel extends PaneAddress implements MouseListener {
 			int[] pointXY = new int[2];
 			pointXY[0] = -1;
 			pointXY[1] = -1;
-			for(int i=0; i<addressDimension[0].length; i++){
+			boolean got = false;
+			for(int i=0; i<addressDimension[0].length && !got; i++){
 				for(int j=0; j<addressDimension.length; j++){
-					if(selectedAddress.equals(addressDimension[i][j])){
+					if(selectedAddress.equals(addressDimension[j][i])){
 						pointXY[0] = i;
 						pointXY[1] = j;
+						got = true;
 					}
 				}
 			}
